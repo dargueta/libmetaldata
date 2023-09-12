@@ -128,10 +128,10 @@ export PKGINFO_TEXT
 $(PKGCONFIG_FILE): Makefile.in | $(BUILD_DIR)
 	echo "$${PKGINFO_TEXT}" > $@
 
-tests/%.o: tests/%.c $(CONFIG_HEADER_FILE) __in_debug_mode
+tests/%.$(OBJECT_FILE_EXT): tests/%.c $(CONFIG_HEADER_FILE) __in_debug_mode
 	$(COMPILE_COMMAND) -D MDL_CURRENTLY_COMPILING_TESTS=1 -I./tests -o $@ $<
 
-%.o: %.c $(CONFIG_HEADER_FILE)
+%.$(OBJECT_FILE_EXT): %.c $(CONFIG_HEADER_FILE)
 	$(COMPILE_COMMAND) -D MDL_CURRENTLY_COMPILING_LIBRARY=1 $(CFLAGS_FREESTANDING) -o $@ $<
 
 $(BUILD_DIR):

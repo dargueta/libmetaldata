@@ -116,7 +116,7 @@ format: $(LIBRARY_C_SOURCE_FILES) $(LIBRARY_C_ALL_HEADER_FILES) \
 	clang-format --verbose --style=file -i --Werror $^
 
 $(STATIC_LIBRARY): $(LIBRARY_OBJECT_FILES) | $(BUILD_DIR)
-	$(AR) rcu $@ $^
+	$(AR) rcus $@ $^
 
 $(DYNAMIC_LIBRARY): $(STATIC_LIBRARY)
 	$(LD) $(LDFLAGS) $(SHARED_LIB_FLAG) $(MY_LDFLAGS) -o $@ $^

@@ -6,6 +6,7 @@
 *.o
 *.obj
 *.so
+*.sym
 
 src/metaldata/configuration.h
 Makefile.in

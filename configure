@@ -125,7 +125,8 @@ cat <<EOF > src/metaldata/configuration.h
                          MDL_VERSION_PATCH)
 #define MDL_VERSION_FULL_STRING "$VERSION_FULL"
 #define MDL_COMPILED_AS_UNHOSTED $unhosted
-#ifdef __STDC_HOSTED__
+#if !defined(MDL_CURRENTLY_COMPILING_LIBRARY) &&                                         \\
+    !defined(MDL_CURRENTLY_COMPILING_TESTS) && defined(__STDC_HOSTED__)
 #    if !MDL_COMPILED_AS_UNHOSTED && !__STDC_HOSTED__
 #        error "Program is unhosted. Recompile MetalData for unhosted code."
 #    endif

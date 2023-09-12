@@ -1,6 +1,7 @@
 Data Structures for Low-Level Software
 ======================================
 
+Data structures and abstractions for low-level software
 
 Building
 --------
@@ -11,7 +12,7 @@ System Requirements
 ~~~~~~~~~~~~~~~~~~~
 
 * Make (NMake will not work)
-* C compiler implementing C99 and accepting a limited subset of GCC-like
+* C compiler implementing C99 and accepting at least a limited subset of GCC-like
   command-line arguments.
 
 Compilers I'm attempting to support:

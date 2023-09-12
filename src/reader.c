@@ -82,13 +82,15 @@ int mdl_reader_ungetc(MDLReader *reader, int c)
 
 size_t mdl_reader_read(MDLReader *reader, void *buf, size_t size)
 {
-    for (size_t i = 0; i < size; i++, buf++)
+    char *current_byte = (char *)buf;
+
+    for (size_t i = 0; i < size; i++, current_byte++)
     {
         int value = mdl_reader_getc(reader);
         if (value == MDL_EOF)
             return i;
 
-        *(char *)buf = (char)value;
+        *current_byte = (char)value;
     }
     return size;
 }

@@ -1,0 +1,31 @@
+name: CI
+
+on: [ push ]
+
+jobs:
+  testing:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system:
+          - ubuntu-latest
+          - macos-latest
+        compiler:
+          - binary: clang
+            configure-flags: ""
+          - binary: gcc
+            configure-flags: ""
+          - binary: tcc
+            configure-flags: w
+        unhosted-flag:
+          - ""
+          - "u"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure
+        run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
+      - name: Compile
+        run: make library CC=${{ matrix.compiler.binary }}
+      - name: Run Tests
+        run: make test CC=${{ matrix.compiler.binary }}

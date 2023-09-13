@@ -4,8 +4,9 @@
 #include "../annotations.h"
 #include "../memblklist.h"
 
-MDL_ANNOTN__NONNULL_ARGS(1)
-MDLMemBlkListNode *mdl_memblklist_findnode(const MDLMemBlkList *list, const void *value);
+MDL_ANNOTN__NONNULL
+MDLMemBlkListNode *mdl_memblklist_findnode(const MDLMemBlkList *list, const void *value,
+                                           mdl_comparator_fptr cmp);
 
 MDL_ANNOTN__NONNULL
 void mdl_memblklist_movenodeafter(MDLMemBlkListNode *new_node,

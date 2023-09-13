@@ -22,8 +22,7 @@ MDL_ANNOTN__NONNULL
 static MDLMemBlkListNode *get_node_at_relative_index(const MDLMemBlkList *list,
                                                      int index);
 
-int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size,
-                        mdl_comparator_fptr elem_comparator)
+int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size)
 {
     list->head = mdl_malloc(ds, sizeof(*list->head));
     if (list->head == NULL)
@@ -35,16 +34,10 @@ int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size,
     list->elem_size = elem_size;
     list->head->next = list->head;
     list->head->prev = list->head;
-
-    if (elem_comparator == NULL)
-        list->elem_comparator = mdl_default_ptr_comparator;
-    else
-        list->elem_comparator = elem_comparator;
     return 0;
 }
 
-MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size,
-                                  mdl_comparator_fptr elem_comparator)
+MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size)
 {
     int init_result;
     MDLMemBlkList *list = mdl_malloc(ds, sizeof(*list));
@@ -52,7 +45,7 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size,
     if (list == NULL)
         return NULL;
 
-    init_result = mdl_memblklist_init(ds, list, elem_size, elem_comparator);
+    init_result = mdl_memblklist_init(ds, list, elem_size);
     if (init_result == MDL_OK)
     {
         list->owned = true;
@@ -257,14 +250,15 @@ void mdl_memblklist_clear(MDLMemBlkList *list)
     }
 }
 
-MDLMemBlkListNode *mdl_memblklist_findnode(const MDLMemBlkList *list, const void *value)
+MDLMemBlkListNode *mdl_memblklist_findnode(const MDLMemBlkList *list, const void *value,
+                                           mdl_comparator_fptr cmp)
 {
     size_t index;
     MDLMemBlkListNode *node = list->head;
 
     for (index = 0; index < list->length; ++index)
     {
-        if (list->elem_comparator(list->ds, node->data, value, list->elem_size) == 0)
+        if (cmp(list->ds, node->data, value, list->elem_size) == 0)
             return node;
 
         node = node->next;
@@ -273,9 +267,10 @@ MDLMemBlkListNode *mdl_memblklist_findnode(const MDLMemBlkList *list, const void
     return NULL;
 }
 
-int mdl_memblklist_find(const MDLMemBlkList *list, const void *value, const void **ptr)
+int mdl_memblklist_find(const MDLMemBlkList *list, const void *value,
+                        mdl_comparator_fptr cmp, const void **ptr)
 {
-    const MDLMemBlkListNode *node = mdl_memblklist_findnode(list, value);
+    const MDLMemBlkListNode *node = mdl_memblklist_findnode(list, value, cmp);
 
     if (node == NULL)
         return MDL_ERROR_NOT_FOUND;
@@ -284,15 +279,15 @@ int mdl_memblklist_find(const MDLMemBlkList *list, const void *value, const void
     return MDL_OK;
 }
 
-int mdl_memblklist_findindex(const MDLMemBlkList *list, const void *value)
+int mdl_memblklist_findindex(const MDLMemBlkList *list, const void *value,
+                             mdl_comparator_fptr cmp)
 {
     int index;
     const MDLMemBlkListNode *current_node = list->head;
 
     for (index = 0; (size_t)index < list->length; ++index)
     {
-        if (list->elem_comparator(list->ds, current_node->data, value, list->elem_size) ==
-            0)
+        if (cmp(list->ds, current_node->data, value, list->elem_size) == 0)
             return index;
 
         current_node = current_node->next;
@@ -301,7 +296,8 @@ int mdl_memblklist_findindex(const MDLMemBlkList *list, const void *value)
     return -1;
 }
 
-int mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value)
+int mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value,
+                              mdl_comparator_fptr cmp)
 {
     int index;
     MDLMemBlkListNode *current_node = list->head->prev;
@@ -313,8 +309,7 @@ int mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value)
 
     for (index = (int)list->length - 1; index >= 0; --index)
     {
-        if (list->elem_comparator(list->ds, current_node->data, value, list->elem_size) ==
-            0)
+        if (cmp(list->ds, current_node->data, value, list->elem_size) == 0)
             return index;
 
         current_node = current_node->prev;
@@ -341,9 +336,10 @@ int mdl_memblklist_rotate(MDLMemBlkList *list, int places)
     return MDL_OK;
 }
 
-int mdl_memblklist_removevalue(MDLMemBlkList *list, const void *value)
+int mdl_memblklist_removevalue(MDLMemBlkList *list, const void *value,
+                               mdl_comparator_fptr cmp)
 {
-    MDLMemBlkListNode *node = mdl_memblklist_findnode(list, value);
+    MDLMemBlkListNode *node = mdl_memblklist_findnode(list, value, cmp);
     if (node == NULL)
         return 0;
 

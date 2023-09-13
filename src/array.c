@@ -27,7 +27,7 @@ int mdl_array_init(MDLState *ds, MDLArray *array, mdl_comparator_fptr elem_compa
 {
     int result;
 
-    result = mdl_memblklist_init(ds, &array->block_list, sizeof(MDLArrayBlock), NULL);
+    result = mdl_memblklist_init(ds, &array->block_list, sizeof(MDLArrayBlock));
     if (result != MDL_OK)
         return result;
 

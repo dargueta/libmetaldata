@@ -71,7 +71,6 @@ struct MDLMemBlkListNode_
 struct MDLMemBlkList_
 {
     MDLState *ds;
-    mdl_comparator_fptr elem_comparator;
     size_t elem_size;
     MDLMemBlkListNode *head;
     size_t length;
@@ -103,11 +102,7 @@ struct MDLMemBlkListIterator_
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__NODISCARD
-MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size,
-                                  mdl_comparator_fptr elem_comparator);
-
-#define mdl_memblklist_basicnew(ds, s)                                                   \
-    mdl_memblklist_new((ds), (s), mdl_default_ptr_comparator)
+MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size);
 
 /**
  * Initialize an allocated list.
@@ -128,11 +123,7 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size,
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size,
-                        mdl_comparator_fptr elem_comparator);
-
-#define mdl_memblklist_basicinit(ds, list, size)                                         \
-    mdl_memblklist_init((ds), (list), (size), mdl_default_ptr_comparator)
+int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size);
 
 /**
  * Destroy a double-ended queue.
@@ -285,11 +276,13 @@ void mdl_memblklist_clear(MDLMemBlkList *list);
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_find(const MDLMemBlkList *list, const void *value, const void **ptr);
+int mdl_memblklist_find(const MDLMemBlkList *list, const void *value,
+                        mdl_comparator_fptr cmp, const void **ptr);
 
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_findindex(const MDLMemBlkList *list, const void *value);
+int mdl_memblklist_findindex(const MDLMemBlkList *list, const void *value,
+                             mdl_comparator_fptr cmp);
 
 /**
  * Like @ref mdl_memblklist_find except this searches the queue back to front.
@@ -300,11 +293,13 @@ int mdl_memblklist_findindex(const MDLMemBlkList *list, const void *value);
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_rfind(const MDLMemBlkList *list, const void *value, void **ptr);
+int mdl_memblklist_rfind(const MDLMemBlkList *list, const void *value,
+                         mdl_comparator_fptr cmp, void **ptr);
 
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value);
+int mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value,
+                              mdl_comparator_fptr cmp);
 
 /**
  * Rotate the list forward or backward without copying any data.
@@ -329,7 +324,8 @@ int mdl_memblklist_rotate(MDLMemBlkList *list, int places);
 
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_removevalue(MDLMemBlkList *list, const void *value);
+int mdl_memblklist_removevalue(MDLMemBlkList *list, const void *value,
+                               mdl_comparator_fptr cmp);
 
 MDL_ANNOTN__NODISCARD
 MDL_ANNOTN__NONNULL

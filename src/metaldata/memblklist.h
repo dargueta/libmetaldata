@@ -106,7 +106,8 @@ MDL_ANNOTN__NODISCARD
 MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size,
                                   mdl_comparator_fptr elem_comparator);
 
-#define mdl_memblklist_basicnew(ds, s) mdl_memblklist_new((ds), (s), NULL, NULL)
+#define mdl_memblklist_basicnew(ds, s)                                                   \
+    mdl_memblklist_new((ds), (s), mdl_default_ptr_comparator)
 
 /**
  * Initialize an allocated list.
@@ -324,7 +325,7 @@ MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklist_rotate(MDLMemBlkList *list, int places);
 
-#define mdl_memblklist_rotateone(list) mdl_memblklist_rotateone((list), 1)
+#define mdl_memblklist_rotateone(list) mdl_memblklist_rotate((list), 1)
 
 MDL_API
 MDL_ANNOTN__NONNULL

@@ -22,7 +22,7 @@ static void *test_setup(const MunitParameter params[], void *user_data)
     (void)params, (void)user_data;
     MDLState *state = munit_malloc(sizeof(*state));
 
-    mdl_state_initwithalloc(state, mdl_default_alloc, NULL);
+    mdl_initstate(state, mdl_default_alloc, NULL);
     return state;
 }
 

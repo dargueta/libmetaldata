@@ -27,15 +27,10 @@
 typedef void *(*mdl_alloc_fptr)(void *ptr, size_t size, size_t type_or_old_size,
                                 void *ud);
 
-MDL_ANNOTN__NONNULL
-MDL_ANNOTN__NORETURN
-typedef void (*mdl_panic_fptr)(const char *message, int error, void *userdata);
-
 typedef struct MDLState_
 {
     void *userdata;
     mdl_alloc_fptr allocator;
-    mdl_panic_fptr panic;
 } MDLState;
 
 MDL_API
@@ -44,12 +39,7 @@ void mdl_state_defaultinit(MDLState *ds, void *userdata);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-void mdl_state_initwithalloc(MDLState *ds, mdl_alloc_fptr alloc, void *userdata);
-
-MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1, 2, 3)
-void mdl_state_init(MDLState *ds, mdl_alloc_fptr alloc, mdl_panic_fptr panic,
-                    void *userdata);
+void mdl_initstate(MDLState *ds, mdl_alloc_fptr alloc, void *userdata);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
@@ -71,15 +61,6 @@ GNU_ATTRIBUTE(unavailable("This function is unavailable because MetalData was co
                           " for unhosted code. You must recompile it."))
 #endif /* MDL_COMPILED_AS_UNHOSTED */
 void *mdl_default_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);
-
-MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
-MDL_ANNOTN__NORETURN
-#if !MDL_HAVE_DEFAULT_PANIC_IMPLEMENTATION
-GNU_ATTRIBUTE(error(
-    "The default panic function can't be implemented in unhosted mode on this platform."))
-#endif
-void mdl_default_panic(const char *message, int error, void *userdata);
 
 typedef void (*mdl_copy_fptr)(MDLState *ds, const void *restrict source,
                               void *restrict dest, size_t dest_size);

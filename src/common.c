@@ -6,25 +6,16 @@
 #if !MDL_COMPILED_AS_UNHOSTED
 #    include <stdio.h>
 #    include <stdlib.h>
-#endif
 
-#if !MDL_COMPILED_AS_UNHOSTED
 void mdl_initdefaultstate(MDLState *ds, void *userdata)
 {
-    mdl_state_init(ds, mdl_default_alloc, mdl_default_panic, userdata);
+    mdl_initstate(ds, mdl_default_alloc, userdata);
 }
 #endif
 
-void mdl_state_initwithalloc(MDLState *ds, mdl_alloc_fptr alloc, void *userdata)
-{
-    mdl_state_init(ds, alloc, mdl_default_panic, userdata);
-}
-
-void mdl_state_init(MDLState *ds, mdl_alloc_fptr alloc, mdl_panic_fptr panic,
-                    void *userdata)
+void mdl_initstate(MDLState *ds, mdl_alloc_fptr alloc, void *userdata)
 {
     ds->allocator = alloc;
-    ds->panic = panic;
     ds->userdata = userdata;
 }
 
@@ -53,22 +44,6 @@ void mdl_default_noop_destructor(MDLState *ds, void *item)
 #if !MDL_COMPILED_AS_UNHOSTED
 #    include "metaldata/internal/default_allocator.h"
 #endif
-
-void mdl_default_panic(const char *message, int error, void *userdata)
-{
-    (void)userdata;
-#if !MDL_COMPILED_AS_UNHOSTED
-    /* Target platform is hosted */
-    fprintf(stderr, "Panic in MetalData library (error %d): %s", error, message);
-    abort();
-#elif MDL_LIBC_HAVE_BUILTIN_ABORT
-    /* Target platform is unhosted, but we can still abort the program */
-    (void)userdata, (void)message, (void)error;
-    __builtin_trap();
-#else
-    (void)userdata, (void)message, (void)error;
-#endif
-}
 
 void mdl_free(MDLState *ds, void *pointer, size_t old_size)
 {

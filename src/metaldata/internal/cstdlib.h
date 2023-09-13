@@ -19,11 +19,10 @@
 #        define MDL_LIBC_HAVE_BUILTIN_STRCMP __has_builtin(__builtin_strcmp)
 #        define MDL_LIBC_HAVE_BUILTIN_ABORT __has_builtin(__builtin_trap)
 #    elif defined(__GNUC__)
-#        define MDL_LIBC_HAVE_BUILTIN_MEMCPY (__GNUC__ >= 4)
-#        define MDL_LIBC_HAVE_BUILTIN_MEMSET (__GNUC__ >= 4)
-#        define MDL_LIBC_HAVE_BUILTIN_STRCMP (__GNUC__ >= 4)
-#        define MDL_LIBC_HAVE_BUILTIN_ABORT                                              \
-            ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 2)))
+#        define MDL_LIBC_HAVE_BUILTIN_MEMCPY MINIMUM_GNU_VERSION(4, 0, 0)
+#        define MDL_LIBC_HAVE_BUILTIN_MEMSET MINIMUM_GNU_VERSION(4, 0, 0)
+#        define MDL_LIBC_HAVE_BUILTIN_STRCMP MINIMUM_GNU_VERSION(4, 0, 0)
+#        define MDL_LIBC_HAVE_BUILTIN_ABORT MINIMUM_GNU_VERSION(4, 2, 0)
 #    else
 #        define MDL_LIBC_HAVE_BUILTIN_MEMCPY 0
 #        define MDL_LIBC_HAVE_BUILTIN_MEMSET 0
@@ -51,26 +50,6 @@
 #    define MDL_LIBC_HAVE_BUILTIN_MEMSET 0
 #    define MDL_LIBC_HAVE_BUILTIN_STRCMP 0
 #    define MDL_LIBC_HAVE_BUILTIN_ABORT 0
-#endif
-
-#define MDL_HAVE_DEFAULT_PANIC_IMPLEMENTATION                                            \
-    ((!MDL_COMPILED_AS_UNHOSTED) || MDL_LIBC_HAVE_BUILTIN_ABORT)
-
-#if MDL_LIBC_NEED_CUSTOM_ASSERT
-#    ifdef NDEBUG
-#        define mdl_assert(ds, expr)
-#    else
-#        define MDL_ASSERT_TOKENPASTE(x, y) x #y
-#        define MDL_ASSERT_TOKENPASTE2(x, y) MDL_ASSERT_TOKENPASTE(x, y)
-#        define mdl_assert(ds, expr)                                                     \
-            if (!(expr))                                                                 \
-            {                                                                            \
-                (ds)->panic(MDL_ASSERT_TOKENPASTE2(                                      \
-                                "MetalData assertion failed in " __FILE__ "(",           \
-                                __LINE__) "): " #expr,                                   \
-                            MDL_ERROR_ASSERT_FAILED, (ds)->userdata);                    \
-            }
-#    endif /* NDEBUG */
 #endif
 
 #if MDL_LIBC_NEED_CUSTOM_MEMCPY

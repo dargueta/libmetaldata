@@ -111,8 +111,6 @@ int mdl_memblklist_pop(MDLMemBlkList *list)
 
     /* Because we always allocate a new node every time the tail is full */
     item_index = list->length % MDL_LLIST_ELEMENTS;
-    mdl_assert(list->ds, item_index < MDL_LLIST_ELEMENTS);
-
     list->length--;
 
     /* If we just removed the last item from the tail node (and that tail is not the head

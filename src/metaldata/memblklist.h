@@ -17,6 +17,7 @@
 #include "annotations.h"
 #include "configuration.h"
 #include "metaldata.h"
+#include <stdbool.h>
 #include <stddef.h>
 
 #ifndef MDL_LLIST_ELEMENTS
@@ -74,7 +75,7 @@ struct MDLMemBlkList_
     size_t elem_size;
     MDLMemBlkListNode *head;
     size_t length;
-    int owned;
+    bool owned;
 };
 
 struct MDLMemBlkListIterator_
@@ -83,7 +84,7 @@ struct MDLMemBlkListIterator_
     MDLMemBlkListNode *end;
     MDLMemBlkList *list;
     int reverse;
-    int owned;
+    bool owned;
 };
 
 /**
@@ -331,11 +332,12 @@ int mdl_memblklist_removevalue(MDLMemBlkList *list, const void *value);
 
 MDL_ANNOTN__NODISCARD
 MDL_ANNOTN__NONNULL
-MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list, int reverse);
+MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list,
+                                                  bool reverse);
 
 MDL_ANNOTN__NONNULL
 int mdl_memblklist_inititerator(const MDLMemBlkList *list,
-                                MDLMemBlkListIterator *iterator, int reverse);
+                                MDLMemBlkListIterator *iterator, bool reverse);
 
 MDL_ANNOTN__NONNULL
 void *mdl_memblklistiter_get(MDLMemBlkListIterator *iter);

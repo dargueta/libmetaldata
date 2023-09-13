@@ -1,10 +1,10 @@
-#include <stddef.h>
-
+#include "metaldata/internal/memblklist.h"
 #include "metaldata/errors.h"
 #include "metaldata/internal/cstdlib.h"
-#include "metaldata/internal/memblklist.h"
 #include "metaldata/memblklist.h"
 #include "metaldata/metaldata.h"
+#include <stdbool.h>
+#include <stddef.h>
 
 MDL_ANNOTN__NONNULL
 static void unlink_node(MDLMemBlkListNode *node);
@@ -29,7 +29,7 @@ int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size,
     if (list->head == NULL)
         return MDL_ERROR_NOMEM;
 
-    list->owned = 0;
+    list->owned = false;
     list->ds = ds;
     list->length = 0;
     list->elem_size = elem_size;
@@ -55,7 +55,7 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size,
     init_result = mdl_memblklist_init(ds, list, elem_size, elem_comparator);
     if (init_result == MDL_OK)
     {
-        list->owned = 1;
+        list->owned = true;
         return list;
     }
 
@@ -361,7 +361,7 @@ int mdl_memblklist_removevalue(MDLMemBlkList *list, const void *value)
     return 1;
 }
 
-MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list, int reverse)
+MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list, bool reverse)
 {
     MDLMemBlkListIterator *iter;
 
@@ -370,18 +370,18 @@ MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list, int
         return NULL;
 
     mdl_memblklist_inititerator(list, iter, reverse);
-    iter->owned = 1;
+    iter->owned = true;
     return iter;
 }
 
 int mdl_memblklist_inititerator(const MDLMemBlkList *list,
-                                MDLMemBlkListIterator *iterator, int reverse)
+                                MDLMemBlkListIterator *iterator, bool reverse)
 {
 
     iterator->current = list->head;
     iterator->reverse = reverse;
     iterator->end = iterator->current->prev;
-    iterator->owned = 0;
+    iterator->owned = false;
     return 0;
 }
 

@@ -28,7 +28,7 @@ int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size)
     if (list->head == NULL)
         return MDL_ERROR_NOMEM;
 
-    list->owned = false;
+    list->was_allocated = false;
     list->ds = ds;
     list->length = 0;
     list->elem_size = elem_size;
@@ -48,7 +48,7 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size)
     init_result = mdl_memblklist_init(ds, list, elem_size);
     if (init_result == MDL_OK)
     {
-        list->owned = true;
+        list->was_allocated = true;
         return list;
     }
 
@@ -59,7 +59,7 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size)
 int mdl_memblklist_destroy(MDLMemBlkList *list)
 {
     mdl_memblklist_clear(list);
-    if (list->owned)
+    if (list->was_allocated)
         mdl_free(list->ds, list, sizeof(*list));
     return MDL_OK;
 }
@@ -356,7 +356,7 @@ MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list, boo
         return NULL;
 
     mdl_memblklist_inititerator(list, iter, reverse);
-    iter->owned = true;
+    iter->was_allocated = true;
     return iter;
 }
 
@@ -367,7 +367,7 @@ int mdl_memblklist_inititerator(const MDLMemBlkList *list,
     iterator->current = list->head;
     iterator->reverse = reverse;
     iterator->end = iterator->current->prev;
-    iterator->owned = false;
+    iterator->was_allocated = false;
     return 0;
 }
 
@@ -395,7 +395,7 @@ int mdl_memblklistiter_hasnext(const MDLMemBlkListIterator *iter)
 
 void mdl_memblklistiter_destroy(MDLMemBlkListIterator *iter)
 {
-    if (iter->owned)
+    if (iter->was_allocated)
         mdl_free(iter->list->ds, iter, sizeof(*iter));
 }
 

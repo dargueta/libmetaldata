@@ -74,7 +74,7 @@ struct MDLMemBlkList_
     size_t elem_size;
     MDLMemBlkListNode *head;
     size_t length;
-    bool owned;
+    bool was_allocated;
 };
 
 struct MDLMemBlkListIterator_
@@ -83,7 +83,7 @@ struct MDLMemBlkListIterator_
     MDLMemBlkListNode *end;
     MDLMemBlkList *list;
     int reverse;
-    bool owned;
+    bool was_allocated;
 };
 
 /**

@@ -25,7 +25,7 @@
  *      The custom userdata given when the MetalData state was created.
  */
 typedef void *(*mdl_alloc_fptr)(void *ptr, size_t size, size_t type_or_old_size,
-                                void *ud);
+                                void *ud)MDL_REENTRANT_MARKER;
 
 typedef struct MDLState_
 {
@@ -65,11 +65,11 @@ void *mdl_default_alloc(void *ptr, size_t size, size_t type_or_old_size, void *u
 typedef void (*mdl_copy_fptr)(MDLState *ds, const void *restrict source,
                               void *restrict dest, size_t dest_size);
 
-typedef void (*mdl_destructor_fptr)(MDLState *ds, void *item);
+typedef void (*mdl_destructor_fptr)(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
 
 MDL_ANNOTN__NONNULL_ARGS(1)
 typedef int (*mdl_comparator_fptr)(MDLState *ds, const void *left, const void *right,
-                                   size_t size);
+                                   size_t size) MDL_REENTRANT_MARKER;
 
 /**
  * Free raw memory allocated by @ref mdl_malloc and its related functions.

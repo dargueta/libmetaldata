@@ -229,6 +229,12 @@
 #    define MDL_ANNOTN__GCC_MALLOC(...)
 #endif
 
+#ifdef __SDCC
+#    define MDL_REENTRANT_MARKER __reentrant
+#else
+#    define MDL_REENTRANT_MARKER
+#endif
+
 /**
  * @def MDL_API
  *

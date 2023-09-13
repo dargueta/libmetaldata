@@ -14,7 +14,7 @@
 struct MDLReader_;
 typedef struct MDLReader_ MDLReader;
 
-typedef int (*mdl_reader_getc_fptr)(MDLReader *reader, void *udata);
+typedef int (*mdl_reader_getc_fptr)(MDLReader *reader, void *udata) MDL_REENTRANT_MARKER;
 
 /**
  * A byte-oriented reader that abstracts away details of the source.

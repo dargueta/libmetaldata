@@ -1,8 +1,7 @@
 #include "metaldata/array.h"
 #include "metaldata/metaldata.h"
 
-MDLArray *mdl_array_new(MDLState *ds, mdl_comparator_fptr elem_comparator,
-                        mdl_destructor_fptr elem_destructor)
+MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor)
 {
     int result;
     MDLArray *array;
@@ -11,19 +10,18 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_comparator_fptr elem_comparator,
     if (array == NULL)
         return NULL;
 
-    result = mdl_array_init(ds, array, elem_comparator, elem_destructor);
+    result = mdl_array_init(ds, array, elem_destructor);
     if (result != MDL_OK)
     {
         mdl_free(ds, array, sizeof(*array));
         return NULL;
     }
 
-    array->owned = 1;
+    array->was_allocated = true;
     return array;
 }
 
-int mdl_array_init(MDLState *ds, MDLArray *array, mdl_comparator_fptr elem_comparator,
-                   mdl_destructor_fptr elem_destructor)
+int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destructor)
 {
     int result;
 
@@ -32,8 +30,7 @@ int mdl_array_init(MDLState *ds, MDLArray *array, mdl_comparator_fptr elem_compa
         return result;
 
     array->length = 0;
-    array->owned = 0;
-    array->elem_comparator = elem_comparator;
+    array->was_allocated = false;
     array->elem_destructor = elem_destructor;
     return MDL_OK;
 }
@@ -61,7 +58,7 @@ int mdl_array_destroy(MDLArray *array)
 
     error = mdl_memblklist_destroy(&array->block_list);
 
-    if (array->owned)
+    if (array->was_allocated)
         mdl_free(array->block_list.ds, array, sizeof(*array));
     return error;
 }

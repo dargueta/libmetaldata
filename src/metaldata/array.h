@@ -15,6 +15,7 @@
 #include "configuration.h"
 #include "memblklist.h"
 #include "metaldata.h"
+#include <stdbool.h>
 #include <stddef.h>
 
 #ifndef MDL_DEFAULT_ARRAY_BLOCK_SIZE
@@ -27,9 +28,8 @@ typedef struct MDLArray_
 {
     MDLMemBlkList block_list;
     size_t length;
-    mdl_comparator_fptr elem_comparator;
     mdl_destructor_fptr elem_destructor;
-    int owned;
+    bool was_allocated;
 } MDLArray;
 
 typedef struct MDLArrayIterator_
@@ -37,6 +37,7 @@ typedef struct MDLArrayIterator_
     MDLArray *array;
     MDLMemBlkListIterator block_iterator;
     size_t block_element_index;
+    bool was_allocated;
 } MDLArrayIterator;
 
 /**
@@ -56,11 +57,9 @@ typedef struct MDLArrayIterator_
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__NODISCARD
-MDLArray *mdl_array_new(MDLState *ds, mdl_comparator_fptr elem_comparator,
-                        mdl_destructor_fptr elem_destructor);
+MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor);
 
-#define mdl_array_basicnew(ds)                                                           \
-    mdl_array_new((ds), mdl_default_ptr_comparator, mdl_default_destructor)
+#define mdl_array_basicnew(ds) mdl_array_new((ds), mdl_default_destructor)
 
 /**
  * Initialize an allocated array.
@@ -80,8 +79,7 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_comparator_fptr elem_comparator,
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-int mdl_array_init(MDLState *ds, MDLArray *array, mdl_comparator_fptr elem_comparator,
-                   mdl_destructor_fptr elem_destructor);
+int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destructor);
 
 /**
  * Destroy a array.
@@ -177,7 +175,7 @@ int mdl_array_insertafter(MDLArray *array, int index, void *new_value);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-int mdl_array_remove(MDLArray *array, int index, void **value);
+int mdl_array_removeat(MDLArray *array, int index, void **value);
 
 /**
  * Remove all items in the queue.
@@ -199,8 +197,8 @@ void mdl_array_clear(MDLArray *array);
  * number if no match was found.
  */
 MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
-int mdl_array_find(const MDLArray *array, const void *value);
+MDL_ANNOTN__NONNULL_ARGS(1, 3)
+int mdl_array_find(const MDLArray *array, const void *value, mdl_comparator_fptr cmp);
 
 /**
  * Like @ref mdl_array_find except this searches the queue back to front.
@@ -211,11 +209,11 @@ int mdl_array_find(const MDLArray *array, const void *value);
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-int mdl_array_rfind(const MDLArray *array, const void *value);
+int mdl_array_rfind(const MDLArray *array, const void *value, mdl_comparator_fptr cmp);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-int mdl_array_removevalue(MDLArray *array, const void *value);
+int mdl_array_removevalue(MDLArray *array, const void *value, mdl_comparator_fptr cmp);
 
 MDL_API
 MDL_ANNOTN__NODISCARD

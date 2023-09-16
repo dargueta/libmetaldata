@@ -29,14 +29,11 @@ General-Purpose Flags
     Default: $install_top
 -m
     Only pass minimal flags to the compiler. Use this as the lowest common
-    denominator when a compiler doesn't support GCC's most common flags. This is
-    cannot be used with -u.
+    denominator when a compiler doesn't support GCC's most common flags.
 -u
     Unhosted mode -- do not use the C standard library. Functions such as strcmp
     will use compiler intrinsics if possible, or otherwise fall back to naive
-    implementations. The default memory allocator won't be available at all, and
-    depending on the compiler and target architecture, the default panic function
-    may or may not be available.
+    implementations. The default memory allocator won't be available at all.
 -w
     Make warnings not fatal. Required for compiling tests with TCC on certain
     platforms.
@@ -63,15 +60,6 @@ while getopts ':dD:hi:muw' flag; do
       ;;
   esac
 done
-
-if [ "$unhosted" -ne 0 ] && [ "$minimal_flags" -ne 0 ]; then
-  # shellcheck disable=SC2016
-  echo '
--m and -u are mutually exclusive. You must pass the flag to `make` using CFLAGS,
-e.g. `make CFLAGS=-ffreestanding`.
-'
-  exit 1
-fi
 
 int_to_yesno() {
   if [ "$1" -eq 0 ]; then

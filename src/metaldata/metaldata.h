@@ -62,8 +62,8 @@ GNU_ATTRIBUTE(unavailable("This function is unavailable because MetalData was co
 #endif /* MDL_COMPILED_AS_UNHOSTED */
 void *mdl_default_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);
 
-typedef void (*mdl_copy_fptr)(MDLState *ds, const void *restrict source,
-                              void *restrict dest, size_t dest_size);
+typedef void (*mdl_copy_fptr)(MDLState *ds, const void *MDL_ANNOTN_RESTRICT source,
+                              void *MDL_ANNOTN_RESTRICT dest, size_t dest_size);
 
 typedef void (*mdl_destructor_fptr)(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
 

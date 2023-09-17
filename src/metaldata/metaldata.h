@@ -81,12 +81,9 @@ typedef int (*mdl_comparator_fptr)(MDLState *ds, const void *left, const void *r
 MDL_API void mdl_free(MDLState *ds, void *pointer, size_t old_size);
 
 MDL_API
-MDL_ANNOTN__GCC_MALLOC(mdl_free, 2)
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD
 void *mdl_malloc(MDLState *ds, size_t size);
-
-MDL_API void *mdl_typedmalloc(MDLState *ds, size_t size, size_t type);
 
 MDL_API
 void *mdl_realloc(MDLState *ds, void *pointer, size_t new_size, size_t old_size);

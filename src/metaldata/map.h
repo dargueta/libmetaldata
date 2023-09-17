@@ -5,7 +5,6 @@
 #include "metaldata.h"
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 
 #ifndef MDL_DEFAULT_INITIAL_BUCKETS
 #    define MDL_DEFAULT_INITIAL_BUCKETS 7

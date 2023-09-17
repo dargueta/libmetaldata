@@ -145,13 +145,6 @@
 #    endif
 #endif
 
-/* Clang and PCC don't accept arguments for the `malloc` annotation. */
-#if defined(__clang__) || defined(__PCC__)
-#    define MDL_ANNOTN__GCC_MALLOC(...) GNU_ATTRIBUTE(malloc)
-#elif defined(__GNUC__)
-#    define MDL_ANNOTN__GCC_MALLOC(...) GNU_ATTRIBUTE(malloc(__VA_ARGS__))
-#endif
-
 /* Visual Studio */
 #ifdef _MSC_VER
 #    define MDL_API __dllspec(export)
@@ -236,10 +229,6 @@
 
 #ifndef MDL_ANNOTN__RETURNS_NONNULL
 #    define MDL_ANNOTN__RETURNS_NONNULL
-#endif
-
-#ifndef MDL_ANNOTN__GCC_MALLOC
-#    define MDL_ANNOTN__GCC_MALLOC(...)
 #endif
 
 #ifndef MDL_ANNOTN__RESTRICT

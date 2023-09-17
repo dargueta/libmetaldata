@@ -856,7 +856,9 @@ munit_atomic_cas(ATOMIC_UINT32_T* dest, ATOMIC_UINT32_T* expected, ATOMIC_UINT32
 #  define munit_atomic_store(dest, value)         __atomic_store_n(dest, value, __ATOMIC_SEQ_CST)
 #  define munit_atomic_load(src)                  __atomic_load_n(src, __ATOMIC_SEQ_CST)
 #  define munit_atomic_cas(dest, expected, value) __atomic_compare_exchange_n(dest, expected, value, 1, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
-#elif defined(__GNUC__) && (__GNUC__ >= 4)
+// https://github.com/nemequ/munit/issues/98
+#elif defined(__GNUC__) && (__GNUC__ >= 4) && !defined(__PCC__)
+//                                         ^^^^^^^^^^^^^^^^^^^^
 #  define munit_atomic_store(dest,value)          do { *(dest) = (value); } while (0)
 #  define munit_atomic_load(src)                  (*(src))
 #  define munit_atomic_cas(dest, expected, value) __sync_bool_compare_and_swap(dest, *expected, value)

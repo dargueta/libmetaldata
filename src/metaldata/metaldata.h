@@ -57,8 +57,8 @@ void mdl_default_noop_destructor(MDLState *ds, void *item);
 
 MDL_API
 #if MDL_COMPILED_AS_UNHOSTED && !defined(MDL_CURRENTLY_COMPILING_TESTS)
-GNU_ATTRIBUTE(unavailable("This function is unavailable because MetalData was compiled"
-                          " for unhosted code. You must recompile it."))
+MDL_ANNOTN__UNAVAILABLE("This function is unavailable because MetalData was compiled"
+                        " for unhosted code. You must recompile it.")
 #endif /* MDL_COMPILED_AS_UNHOSTED */
 void *mdl_default_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);
 

@@ -100,6 +100,10 @@
 #        define MDL_ANNOTN__NONNULL GNU_ATTRIBUTE(nonnull)
 #        define MDL_ANNOTN__NONNULL_ARGS(...) GNU_ATTRIBUTE(nonnull(__VA_ARGS__))
 #    endif
+
+#    if __has_attribute(unavailable)
+#        define MDL_ANNOTN__UNAVAILABLE(x) GNU_ATTRIBUTE(unavailable(x))
+#    endif
 #elif defined(__GNUC__)
 /* GCC versions that don't have __has_attribute(), non-Windows ICC, TCC... */
 #    define MDL_API GNU_ATTRIBUTE(visibility("default"))
@@ -135,9 +139,14 @@
 #    if !defined(MDL_FALLTHROUGH_MARKER)
 #        define MDL_FALLTHROUGH_MARKER GNU_ATTRIBUTE(fallthrough)
 #    endif
+
+#    if !defined(MDL_ANNOTN__UNAVAILABLE) && !defined(__PCC__)
+#        define MDL_ANNOTN__UNAVAILABLE(x) GNU_ATTRIBUTE(unavailable(x))
+#    endif
 #endif
 
-#if defined(__clang__)
+/* Clang and PCC don't accept arguments for the `malloc` annotation. */
+#if defined(__clang__) || defined(__PCC__)
 #    define MDL_ANNOTN__GCC_MALLOC(...) GNU_ATTRIBUTE(malloc)
 #elif defined(__GNUC__)
 #    define MDL_ANNOTN__GCC_MALLOC(...) GNU_ATTRIBUTE(malloc(__VA_ARGS__))
@@ -241,6 +250,10 @@
 #    define MDL_REENTRANT_MARKER __reentrant
 #else
 #    define MDL_REENTRANT_MARKER
+#endif
+
+#ifndef MDL_ANNOTN__UNAVAILABLE
+#    define MDL_ANNOTN__UNAVAILABLE(m)
 #endif
 
 /**

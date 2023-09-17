@@ -131,6 +131,7 @@ extern "C" {
 #  define MUNIT_UNUSED
 #endif
 
+// https://github.com/nemequ/munit/issues/97
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L) && !defined(__PGI) && !defined(__TINYC__)
 //                                                                                ^^^^^^^^^^^^^^^^^^^^^^
 #  define MUNIT_ARRAY_PARAM(name) name

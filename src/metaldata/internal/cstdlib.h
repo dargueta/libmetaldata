@@ -67,7 +67,7 @@
 MDL_INTERNAL
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__RETURNS_NONNULL
-void *mdl_memcpy(void *MDL_ANNOTN_RESTRICT dest, const void *MDL_ANNOTN_RESTRICT src,
+void *mdl_memcpy(void *MDL_ANNOTN__RESTRICT dest, const void *MDL_ANNOTN__RESTRICT src,
                  size_t size);
 #elif MDL_LIBC_HAVE_BUILTIN_MEMCPY
 #    define mdl_memcpy __builtin_memcpy

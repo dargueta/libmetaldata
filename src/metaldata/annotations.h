@@ -46,7 +46,7 @@
 #    endif     /* C20 */
 
 #    if __STDC_VERSION__ >= 199901L
-#        define MDL_ANNOTN_RESTRICT restrict
+#        define MDL_ANNOTN__RESTRICT restrict
 #    endif /* C99 */
 #endif     /* __STDC_VERSION__ */
 
@@ -233,8 +233,8 @@
 #    define MDL_ANNOTN__GCC_MALLOC(...)
 #endif
 
-#ifndef MDL_ANNOTN_RESTRICT
-#    define MDL_ANNOTN_RESTRICT
+#ifndef MDL_ANNOTN__RESTRICT
+#    define MDL_ANNOTN__RESTRICT
 #endif
 
 #ifdef __SDCC

@@ -24,9 +24,4 @@
 #    define MDL_ERROR_OUT_OF_RANGE 7
 #endif /* !MDL_COMPILED_AS_UNHOSTED */
 
-#define mdl_mustsucceed(state, expr)                                                     \
-    if (!(expr))                                                                         \
-    (state)->panic(__FILE__##"("##__LINE__##") Assertion failed: "##expr,                \
-                   MDL_ERROR_ASSERT_FAILED, (state)->userdata)
-
-#endif
+#endif /* INCLUDE_METALDATA_ERRORS_H_ */

@@ -18,9 +18,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#ifndef MDL_DEFAULT_ARRAY_BLOCK_SIZE
-#    define MDL_DEFAULT_ARRAY_BLOCK_SIZE 8
-#endif
+#define MDL_DEFAULT_ARRAY_BLOCK_SIZE 8
 
 typedef void *MDLArrayBlock[MDL_DEFAULT_ARRAY_BLOCK_SIZE];
 

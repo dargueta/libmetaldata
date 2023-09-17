@@ -423,7 +423,7 @@ static void unlink_and_free_node(MDLState *ds, MDLMemBlkListNode *node)
 static void unlink_and_maybe_free_node(MDLMemBlkList *list, MDLMemBlkListNode *node)
 {
     unlink_node(node);
-    if (node!=list->head)
+    if (node != list->head)
         mdl_free(list->ds, node, sizeof(*node));
 }
 

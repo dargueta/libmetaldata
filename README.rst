@@ -29,7 +29,7 @@ Compilers I'm attempting to support:
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| GCC             | MacOS    |          |            |          |            |
+| GCC_            | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
@@ -41,7 +41,7 @@ Compilers I'm attempting to support:
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| MinGW           | MacOS    |          |            |          |            |
+| MinGW_          | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y [#]_   |            | Y        |            |
 |                 +----------+----------+------------+----------+------------+
@@ -53,15 +53,15 @@ Compilers I'm attempting to support:
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| PCC_            | MacOS    |          |            |          |            |
+| PCC_ [#]_       | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
-|                 | Linux    |          |            |          |            |
+|                 | Linux    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
 | SDCC_           | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y        |            | Y        | N/A        |
+|                 | Linux    | Y        |            | Y        |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
@@ -77,7 +77,6 @@ Compilers I'm attempting to support:
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-
 
 
 Developing
@@ -96,12 +95,17 @@ Footnotes
 ---------
 
 .. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
+.. [#] Tests don't compile unless warnings are non-fatal, and linking tests
+       fails without `this fix <https://github.com/nemequ/munit/issues/98>`_ If
+       you're just building the library, none of that is necessary.
 .. [#] Tests don't compile without `this fix <https://github.com/nemequ/munit/issues/97>`_.
 .. [#] 64-bit only. 32-bit is missing a header on my system.
 .. [#] On Linux, if testing you must configure this with the ``-w`` ("non-fatal
        warnings") flag. If you're just building the library, it's not necessary.
 
 .. _Clang: https://clang.llvm.org/
+.. _GCC: https://gcc.gnu.org/
+.. _MinGW: https://sourceforge.net/projects/mingw/
 .. _PCC: http://pcc.ludd.ltu.se/
 .. _SDCC: https://sdcc.sourceforge.net/
 .. _TCC: https://bellard.org/tcc/

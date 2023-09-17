@@ -20,14 +20,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#ifndef MDL_LLIST_ELEMENTS
-#    define MDL_LLIST_ELEMENTS 8
-#endif
-
-#if (MDL_LLIST_ELEMENTS <= 0) || (MDL_LLIST_ELEMENTS % 2 != 0)
-#    error MDL_LLIST_ELEMENTS must be an even number greater than 0.
-#endif
-
 struct MDLMemBlkListNode_;
 typedef struct MDLMemBlkListNode_ MDLMemBlkListNode;
 
@@ -147,9 +139,20 @@ MDL_ANNOTN__NONNULL
 size_t mdl_memblklist_length(const MDLMemBlkList *list);
 
 /**
- * Get the first data in the queue.
+ * Get the size of an element data block, in bytes.
  *
- * This is marginally more efficient than @ref mdl_memblklist_get.
+ * @param list The list to operate on.
+ *
+ * @return The size of a data block, in bytes.
+ */
+MDL_API
+MDL_ANNOTN__NONNULL
+size_t mdl_memblklist_getelementsize(const MDLMemBlkList *list);
+
+/**
+ * Get the first data block in the list.
+ *
+ * This is marginally more efficient than @ref mdl_memblklist_getblockat.
  *
  * @param list The list to operate on.
  *
@@ -161,11 +164,11 @@ MDL_ANNOTN__NONNULL
 void *mdl_memblklist_head(const MDLMemBlkList *list);
 
 /**
- * Get the last data in the queue.
+ * Get the last data block in the list.
  *
- * @param list The queue to operate on.
+ * @param list The list to operate on.
  *
- * @return NULL if the list is empty, otherwise a pointer to the value of the first
+ * @return NULL if the list is empty, otherwise a pointer to the value of the last
  *         element in the list.
  */
 MDL_API
@@ -173,16 +176,16 @@ MDL_ANNOTN__NONNULL
 void *mdl_memblklist_tail(const MDLMemBlkList *list);
 
 /**
- * Append a new memory block to the end of the list.
+ * Append a new data block to the end of the list.
  *
  * @param list The list to operate on.
  *
  * @return A pointer to the block of memory in the new element, or NULL if allocation
- *         failed.
+ *         failed. If the operation fails, the list is unmodified.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-void *mdl_memblklist_appendblock(MDLMemBlkList *list);
+void *mdl_memblklist_push(MDLMemBlkList *list);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
@@ -199,13 +202,21 @@ MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_memblklist_pop(MDLMemBlkList *list);
 
+/**
+ * Like @ref mdl_memblklist_pop, but copies the data block to @a buf before removing the
+ * element.
+ *
+ * @param list The list to operate on.
+ *
+ * @return @ref MDL_OK on success, @ref MDL_ERROR_EMPTY if the list is empty.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklist_popcopy(MDLMemBlkList *list, void *buf);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-void *mdl_memblklist_prependblock(MDLMemBlkList *list);
+void *mdl_memblklist_pushfront(MDLMemBlkList *list);
 
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -215,25 +226,31 @@ MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_memblklist_popfront(MDLMemBlkList *list);
 
+/**
+ * Like @ref mdl_memblklist_popfront, but copies the data block to @a buf before removing
+ * the element.
+ *
+ * @param list The list to operate on.
+ *
+ * @return @ref MDL_OK on success, @ref MDL_ERROR_EMPTY if the list is empty. If an error
+ *         occurs, @a buf is left unmodified.
+ */
+
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_memblklist_popfrontcopy(MDLMemBlkList *list, void *buf);
 
 /**
+ * Get a pointer to the data block at the given index of the list.
  *
  * @param list The list to operate on.
  * @param index The index of the data to access. Negative values index from the end of
  *              the list, i.e. -1 is the last data, -2 is second-to-last, etc.
- * @param ptr
- * @return @ref MKL_OK if the item was found, an error code otherwise.
+ * @return A pointer to the data block, or NULL if the index is invalid.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_getblockat(const MDLMemBlkList *list, int index, void **ptr);
-
-MDL_API
-MDL_ANNOTN__NONNULL
-int mdl_memblklist_copyblockat(const MDLMemBlkList *list, int index, void *buf);
+void *mdl_memblklist_getblockat(const MDLMemBlkList *list, int index);
 
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -251,6 +268,21 @@ MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklist_removeat(MDLMemBlkList *list, int index);
 
+/**
+ * Copy the memory block at the given index, then remove it.
+ *
+ * This is functionally equivalent to copying the block in @ref mdl_memblklist_getat
+ * followed by @ref mdl_memblklist_removeat, however it's much more efficient because it
+ * only makes one pass through the list.
+ *
+ * @param list          The list to operate on.
+ * @param index         The index of the element to remove. Negative numbers index from
+ *                      the end of the list.
+ * @param[out] buf      A block of memory to copy.
+ *
+ * @return @ref MDL_OK on success, @ref MDL_ERROR_EMPTY if the list is empty. If the list
+ *         is empty, @a buf is unmodified.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklist_removeatcopy(MDLMemBlkList *list, int index, void *buf);

@@ -109,7 +109,7 @@ int mdl_array_push(MDLArray *array, void *item)
      * `block` will contain a pointer to the block we need to append the data to. */
     if (element_offset == 0)
     {
-        block = mdl_memblklist_appendblock(&array->block_list);
+        block = mdl_memblklist_push(&array->block_list);
         if (block == NULL)
             return MDL_ERROR_NOMEM;
     }

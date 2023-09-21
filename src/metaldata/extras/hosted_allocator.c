@@ -1,8 +1,7 @@
 #ifndef INCLUDE_METALDATA_DEFAULT_ALLOCATOR_H_
 #define INCLUDE_METALDATA_DEFAULT_ALLOCATOR_H_
-#include "../annotations.h"
-#include "../configuration.h"
-#include "../metaldata.h"
+
+#include <stddef.h>
 
 #if (MDL_COMPILED_AS_UNHOSTED && defined(MDL_CURRENTLY_COMPILING_LIBRARY)) ||            \
     (!MDL_COMPILED_AS_UNHOSTED && defined(MDL_CURRENTLY_COMPILING_TESTS))
@@ -10,12 +9,15 @@
 #    define MDL_DO_NOT_DEFINE_ALLOC
 #endif /* MDL_COMPILED_AS_UNHOSTED */
 
-void *mdl_default_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);
+void *mdl_default_hosted_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);
 
 #if !defined(MDL_HOSTED_DEFAULT_ALLOC_IMPLEMENTED) && !defined(MDL_DO_NOT_DEFINE_ALLOC)
 #    define MDL_HOSTED_DEFAULT_ALLOC_IMPLEMENTED
 #    include <stdlib.h>
-void *mdl_default_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud)
+#include "../configuration.h"
+#include "../metaldata.h"
+
+void *mdl_default_hosted_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud)
 {
     (void)type_or_old_size, (void)ud;
     /* If the size is non-zero then the caller wants to either allocate new memory (`ptr`

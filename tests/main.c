@@ -1,7 +1,8 @@
-#include "metaldata/internal/default_allocator.h"
 #include "metaldata/metaldata.h"
 #include "munit/munit.h"
 #include <stddef.h>
+
+#include "metaldata/extras/hosted_allocator.c"
 
 #define import_test(suite, name)                                                         \
     extern MunitResult test_##suite##__##name(const MunitParameter params[],             \
@@ -22,7 +23,7 @@ static void *test_setup(const MunitParameter params[], void *user_data)
     (void)params, (void)user_data;
     MDLState *state = munit_malloc(sizeof(*state));
 
-    mdl_initstate(state, mdl_default_alloc, NULL);
+    mdl_initstate(state, mdl_default_hosted_alloc, NULL);
     return state;
 }
 

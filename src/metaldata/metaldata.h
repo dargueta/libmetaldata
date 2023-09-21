@@ -55,12 +55,10 @@ MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 void mdl_default_noop_destructor(MDLState *ds, void *item);
 
+#if !MDL_COMPILED_AS_UNHOSTED
 MDL_API
-#if MDL_COMPILED_AS_UNHOSTED && !defined(MDL_CURRENTLY_COMPILING_TESTS)
-MDL_ANNOTN__UNAVAILABLE("This function is unavailable because MetalData was compiled"
-                        " for unhosted code. You must recompile it.")
+void *mdl_default_hosted_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);
 #endif /* MDL_COMPILED_AS_UNHOSTED */
-void *mdl_default_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);
 
 typedef void (*mdl_copy_fptr)(MDLState *ds, const void *MDL_ANNOTN__RESTRICT source,
                               void *MDL_ANNOTN__RESTRICT dest, size_t dest_size);

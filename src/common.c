@@ -3,16 +3,6 @@
 #include "metaldata/metaldata.h"
 #include <stddef.h>
 
-#if !MDL_COMPILED_AS_UNHOSTED
-#    include <stdio.h>
-#    include <stdlib.h>
-
-void mdl_initdefaultstate(MDLState *ds, void *userdata)
-{
-    mdl_initstate(ds, mdl_default_alloc, userdata);
-}
-#endif
-
 void mdl_initstate(MDLState *ds, mdl_alloc_fptr alloc, void *userdata)
 {
     ds->allocator = alloc;
@@ -42,7 +32,7 @@ void mdl_default_noop_destructor(MDLState *ds, void *item)
 }
 
 #if !MDL_COMPILED_AS_UNHOSTED
-#    include "metaldata/internal/default_allocator.h"
+#    include "metaldata/extras/hosted_allocator.c"
 #endif
 
 void mdl_free(MDLState *ds, void *pointer, size_t old_size)

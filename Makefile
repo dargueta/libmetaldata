@@ -16,6 +16,7 @@ LIBRARY_C_PUBLIC_HEADERS=$(wildcard src/metaldata/*.h)
 LIBRARY_C_PRIVATE_HEADERS=$(wildcard src/metaldata/internal/*.h)
 LIBRARY_C_ALL_HEADER_FILES=$(LIBRARY_C_PUBLIC_HEADERS) $(LIBRARY_C_PRIVATE_HEADERS)
 LIBRARY_OBJECT_FILES=$(LIBRARY_C_SOURCE_FILES:%.c=%.$(OBJECT_FILE_EXT))
+LIBRARY_EXTRAS=$(wildcard src/metaldata/extras/*.c) $(wildcard src/metaldata/extras/*.h)
 
 TEST_C_SOURCE_FILES=$(wildcard tests/*.c)
 TEST_C_HEADERS=$(wildcard tests/*.h)
@@ -95,10 +96,11 @@ include make/pkginfo-template.mk
 all: library $(PKGCONFIG_FILE)
 
 .PHONY: install
-install: all $(LIBRARY_C_ALL_HEADER_FILES)
+install: all $(LIBRARY_C_ALL_HEADER_FILES) $(LIBRARY_EXTRAS)
 	$(INSTALL) -t $(INSTALL_LIB) $(STATIC_LIBRARY)
 	$(INSTALL) -t $(INSTALL_INCLUDE)/metaldata $(LIBRARY_C_PUBLIC_HEADERS)
 	$(INSTALL) -t $(INSTALL_INCLUDE)/metaldata/internal $(LIBRARY_C_PRIVATE_HEADERS)
+	$(INSTALL) -t $(INSTALL_INCLUDE)/metaldata/extras $(LIBRARY_EXTRAS)
 	$(INSTALL) -t $(INSTALL_PKGCONFIG) $(PKGCONFIG_FILE)
 
 .PHONY: library
@@ -118,7 +120,7 @@ clean:
 
 .PHONY: format
 format: $(LIBRARY_C_SOURCE_FILES) $(LIBRARY_C_ALL_HEADER_FILES) \
-        $(TEST_C_SOURCE_FILES) $(TEST_C_HEADERS)
+        $(TEST_C_SOURCE_FILES) $(TEST_C_HEADERS) $(LIBRARY_EXTRAS)
 	clang-format --verbose --style=file -i --Werror $^
 
 $(STATIC_LIBRARY): $(LIBRARY_OBJECT_FILES) | $(BUILD_DIR)

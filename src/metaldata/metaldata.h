@@ -33,10 +33,16 @@ typedef struct MDLState_
     mdl_alloc_fptr allocator;
 } MDLState;
 
-MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
-void mdl_state_defaultinit(MDLState *ds, void *userdata);
-
+/**
+ * Initialize a new MetalData state.
+ *
+ * @param[in] ds
+ * @param alloc    The function to use for memory allocation. Hosted implementations can
+ *                 use @ref mdl_default_hosted_alloc by including @file hosted_allocator.c
+ *                 in their sources.
+ * @param userdata User-defined data to store on the state, made available to callbacks.
+ *                 MetalData ignores this.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
 void mdl_initstate(MDLState *ds, mdl_alloc_fptr alloc, void *userdata);

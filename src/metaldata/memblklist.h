@@ -92,7 +92,7 @@ struct MDLMemBlkListIterator_
  * @see mdl_memblklist_init
  */
 MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
+MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD
 MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size);
 
@@ -114,7 +114,7 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size);
  * @see mdl_memblklist_destroy
  */
 MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1, 2)
+MDL_ANNOTN__NONNULL
 int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size);
 
 /**
@@ -188,7 +188,7 @@ MDL_ANNOTN__NONNULL
 void *mdl_memblklist_push(MDLMemBlkList *list);
 
 MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
+MDL_ANNOTN__NONNULL
 void *mdl_memblklist_pushcopy(MDLMemBlkList *list, const void *data);
 
 /**
@@ -199,7 +199,7 @@ void *mdl_memblklist_pushcopy(MDLMemBlkList *list, const void *data);
  * @return @ref MDL_OK on success, @ref MDL_ERROR_EMPTY if the list is empty.
  */
 MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
+MDL_ANNOTN__NONNULL
 int mdl_memblklist_pop(MDLMemBlkList *list);
 
 /**
@@ -215,7 +215,7 @@ MDL_ANNOTN__NONNULL
 int mdl_memblklist_popcopy(MDLMemBlkList *list, void *buf);
 
 MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
+MDL_ANNOTN__NONNULL
 void *mdl_memblklist_pushfront(MDLMemBlkList *list);
 
 MDL_API
@@ -223,7 +223,7 @@ MDL_ANNOTN__NONNULL
 void *mdl_memblklist_pushfrontcopy(MDLMemBlkList *list, const void *data);
 
 MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
+MDL_ANNOTN__NONNULL
 int mdl_memblklist_popfront(MDLMemBlkList *list);
 
 /**
@@ -235,9 +235,8 @@ int mdl_memblklist_popfront(MDLMemBlkList *list);
  * @return @ref MDL_OK on success, @ref MDL_ERROR_EMPTY if the list is empty. If an error
  *         occurs, @a buf is left unmodified.
  */
-
 MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
+MDL_ANNOTN__NONNULL
 int mdl_memblklist_popfrontcopy(MDLMemBlkList *list, void *buf);
 
 /**
@@ -252,6 +251,16 @@ MDL_API
 MDL_ANNOTN__NONNULL
 void *mdl_memblklist_getblockat(const MDLMemBlkList *list, int index);
 
+/**
+ * Copy @a src to the list element at @a index.
+ *
+ * @param list    The list to operate on.
+ * @param index   The index of the element to modify. Negative values index from the end
+ *                of the array.
+ * @param[in] src A pointer to the data to copy.
+ *
+ * @return 0 on success, @ref MDL_ERROR_OUT_OF_RANGE if the index is invalid.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklist_set(MDLMemBlkList *list, int index, const void *src);
@@ -264,6 +273,15 @@ MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklist_insertaftercopy(MDLMemBlkList *list, int index, const void *buf);
 
+/**
+ * Remove an item from the list.
+ *
+ * @param list  The list to operate on.
+ * @param index The index of the element to remove. Negative values index from the end of
+ *              the array.
+ *
+ * @return 0 on success, an error code otherwise (most likely @ref MDL_ERROR_OUT_OF_RANGE)
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklist_removeat(MDLMemBlkList *list, int index);
@@ -278,7 +296,7 @@ int mdl_memblklist_removeat(MDLMemBlkList *list, int index);
  * @param list          The list to operate on.
  * @param index         The index of the element to remove. Negative numbers index from
  *                      the end of the list.
- * @param[out] buf      A block of memory to copy.
+ * @param[out] buf      The buffer that the memory block will be copied to.
  *
  * @return @ref MDL_OK on success, @ref MDL_ERROR_EMPTY if the list is empty. If the list
  *         is empty, @a buf is unmodified.
@@ -298,7 +316,7 @@ MDL_ANNOTN__NONNULL
 void mdl_memblklist_clear(MDLMemBlkList *list);
 
 /**
- * Search the queue for the first data matching @a value.
+ * Search the list for the first data matching @a value.
  *
  * @param list
  * @param value

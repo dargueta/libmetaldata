@@ -9,8 +9,25 @@ void mdl_initstate(MDLState *ds, mdl_alloc_fptr alloc, void *userdata)
     ds->userdata = userdata;
 }
 
-int mdl_default_ptr_comparator(MDLState *ds, const void *left, const void *right,
-                               size_t size)
+int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *right,
+                                  size_t size)
+{
+    (void)ds;
+    const char *p_left, *p_right;
+
+    p_left = (const char *)left;
+    p_right = (const char *)right;
+    for (size_t i = 0; i < size; i++)
+    {
+        int cmp = (int)*p_left - (int)*p_right;
+        if (cmp != 0)
+            return cmp;
+    }
+    return 0;
+}
+
+int mdl_default_ptr_value_comparator(MDLState *ds, const void *left, const void *right,
+                                     size_t size)
 {
     (void)ds, (void)size;
     if (left < right)
@@ -18,17 +35,6 @@ int mdl_default_ptr_comparator(MDLState *ds, const void *left, const void *right
     else if (left > right)
         return 1;
     return 0;
-}
-
-int mdl_default_str_comparator(MDLState *ds, const void *left, const void *right)
-{
-    (void)ds;
-    return mdl_strcmp((const char *)left, (const char *)right);
-}
-
-void mdl_default_noop_destructor(MDLState *ds, void *item)
-{
-    (void)ds, (void)item;
 }
 
 #if !MDL_COMPILED_AS_UNHOSTED

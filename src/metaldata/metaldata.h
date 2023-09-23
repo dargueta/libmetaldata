@@ -49,17 +49,17 @@ void mdl_initstate(MDLState *ds, mdl_alloc_fptr alloc, void *userdata);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
+MDL_ANNOTN__ACCESS_SIZED(read_only, 2, 4)
 MDL_ANNOTN__ACCESS_SIZED(read_only, 3, 4)
-int mdl_default_ptr_comparator(MDLState *ds, const void *left, const void *right,
-                               size_t size);
+int mdl_default_ptr_value_comparator(MDLState *ds, const void *left, const void *right,
+                                     size_t size);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-int mdl_default_str_comparator(MDLState *ds, const void *left, const void *right);
-
-MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
-void mdl_default_noop_destructor(MDLState *ds, void *item);
+MDL_ANNOTN__ACCESS_SIZED(read_only, 2, 4)
+MDL_ANNOTN__ACCESS_SIZED(read_only, 3, 4)
+int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *right,
+                                  size_t size);
 
 #if !MDL_COMPILED_AS_UNHOSTED
 MDL_API

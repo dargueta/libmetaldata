@@ -36,6 +36,7 @@ import_test(memblklist, length_zero);
 import_test(reader, buffer_init_static);
 import_test(reader, buffer_init_malloc);
 import_test(reader, buffer_getc);
+import_test(reader, buffer_getc_initially_empty);
 
 static MunitTest memblklist_tests[] = {
     define_plain_test_case(memblklist, length_zero),
@@ -45,8 +46,8 @@ static MunitTest reader_tests[] = {
     define_plain_test_case(reader, buffer_init_static),
     define_plain_test_case(reader, buffer_init_malloc),
     define_plain_test_case(reader, buffer_getc),
+    define_plain_test_case(reader, buffer_getc_initially_empty),
     {NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}};
-;
 
 static MunitSuite all_subsuites[] = {
     define_test_suite(memblklist), define_test_suite(reader), {.prefix = NULL}};

@@ -28,6 +28,25 @@ MunitResult test_reader__buffer_init_malloc(const MunitParameter params[], void 
     return MUNIT_OK;
 }
 
+MunitResult test_reader__buffer_getc_initially_empty(const MunitParameter params[],
+                                                     void *userdata)
+{
+    (void)params;
+    MDLState *ds = (MDLState *)userdata;
+    MDLReader reader;
+
+    mdl_reader_initfrombuffer(ds, &reader, "", 0);
+
+    for (size_t i = 0; i < 3; i++)
+    {
+        munit_assert_int(mdl_reader_getc(&reader), ==, MDL_EOF);
+        munit_assert_size(0, ==, reader.buffer_position);
+    }
+
+    mdl_reader_close(&reader);
+    return MUNIT_OK;
+}
+
 MunitResult test_reader__buffer_getc(const MunitParameter params[], void *userdata)
 {
     (void)params;

@@ -46,9 +46,10 @@ jobs:
       - name: Install TCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'tcc'
         run: |
+          set -e
           curl -O https://download.savannah.gnu.org/releases/tinycc/tcc-0.9.27.tar.bz2 ;
           ls -lAh ;
-          tar -xzvf tcc-0.9.27.tar.bz2 ;
+          tar -xvf tcc-0.9.27.tar.bz2 ;
           ls -lAh ;
           sudo make -C tcc-0.9.27 install ;
       - name: Configure

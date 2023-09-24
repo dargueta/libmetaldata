@@ -1,22 +1,38 @@
 Data Structures for Low-Level Software
 ======================================
 
-Data structures and abstractions for low-level software
+If you need linked lists, maps, and basic I/O that works on bare metal (*no*
+operating system), then this library is for you.
+
+I've found that for `MetalC <https://github.com/dargueta/metalc>`_ and a couple
+other things I'm doing, I'm reusing a lot of the same code. I decided to extract
+it into a separate library.
 
 Building
 --------
 
-You can use
+.. code-block:: sh
+
+    # Set up the build system for your desired target platform
+    ./configure [options]
+
+    # Build everything
+    make
+
+    # Install the library
+    make install
+
+For a list of options, run `./configure -h`.
 
 System Requirements
 ~~~~~~~~~~~~~~~~~~~
 
 * Make (NMake will not work)
-* C compiler implementing C99 and accepting at least a limited subset of GCC-like
-  command-line arguments.
+* C compiler implementing most of C99 and accepting at least a limited subset of
+  GCC-like command-line arguments.
 
-Compilers I'm attempting to support:
-
+Supported Platforms
+~~~~~~~~~~~~~~~~~~~
 
 +-----------------+----------+-----------------------+-----------------------+
 | Compiler        | OS       | Hosted                | Unhosted              |
@@ -78,9 +94,34 @@ Compilers I'm attempting to support:
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
 
+Common Needs
+~~~~~~~~~~~~
+
+Here is a quick reference for needs you may encounter:
+
+Installing to a specific directory
+**********************************
+
+Everything is installed relative to ``/usr/share`` on *NIX systems, or ``C:\Windows\System32``
+on Windows. You can change where the files are installed in one of two ways,
+either when you're configuring or when running ``make install``:
+
+* ``./configure -i path/to/directory``
+* ``make install INSTALL_TOP=path/to/directory``
+
+The directory will be created if it doesn't already exist. The structure of the
+directory follows the typical Unix convention, namely:
+
+* Headers go in ``INSTALL_TOP/include/metaldata``
+* Library goes in ``INSTALL_TOP/lib``
+* PKG-CONFIG file goes in ``INSTALL_TOP/lib/pkgconfig``
+
+This is also followed on Windows for the sake of simplicity.
 
 Developing
 ----------
+
+(TODO)
 
 License
 -------

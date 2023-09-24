@@ -18,6 +18,8 @@ jobs:
             configure-flags: ""
           - binary: tcc
             configure-flags: w
+          - binary: sdcc
+            configure-flags: m
         unhosted-flag:
           - ""
           - "u"
@@ -26,8 +28,9 @@ jobs:
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:
-          apt: tcc
-          choco: tcc
+          apt: tcc sdcc
+          brew: sdcc
+          choco: tcc sdcc
       # TCC can't be installed via Homebrew on recent versions of macOS because
       # of an "upstream incompatibility".
       - name: Install TCC on MacOS
@@ -42,4 +45,6 @@ jobs:
       - name: Compile
         run: make library CC=${{ matrix.compiler.binary }}
       - name: Run Tests
+        # We can't run cross-platform tests on SDCC
+        if: matrix.compiler.binary != 'sdcc'
         run: make test CC=${{ matrix.compiler.binary }}

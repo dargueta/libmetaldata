@@ -59,7 +59,7 @@ Compilers I'm attempting to support:
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| SDCC_           | MacOS    |          |            |          |            |
+| SDCC_           | MacOS    | [#]_     |            |          |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        |            | Y        |            |
 |                 +----------+----------+------------+----------+------------+
@@ -96,8 +96,9 @@ Footnotes
 
 .. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
 .. [#] Tests don't compile unless warnings are non-fatal, and linking tests
-       fails without `this fix <https://github.com/nemequ/munit/issues/98>`_ If
+       fails without `this fix <https://github.com/nemequ/munit/issues/98>`_. If
        you're just building the library, none of that is necessary.
+.. [#] On macOS compiler has a bug in it that causes a crash.
 .. [#] Tests don't compile without `this fix <https://github.com/nemequ/munit/issues/97>`_.
 .. [#] 64-bit only. 32-bit is missing a header on my system.
 .. [#] On Linux, if testing you must configure this with the ``-w`` ("non-fatal

@@ -23,12 +23,22 @@ jobs:
         unhosted-flag:
           - ""
           - "u"
+        # include:
+        #   - operating-system: ubuntu-latest
+        #     compiler:
+        #       binary: pcc
+        #       configure-flags: w
+        exclude:
+          # SDCC has a bug in it on macOS that causes compilation to fail.
+          - operating-system: macos-latest
+            compiler:
+              binary: sdcc
     steps:
       - uses: actions/checkout@v3
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:
-          apt: tcc sdcc
+          apt: pcc sdcc tcc
           brew: sdcc
           choco: tcc sdcc
       # TCC can't be installed via Homebrew on recent versions of macOS because
@@ -36,10 +46,9 @@ jobs:
       - name: Install TCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'tcc'
         run: |
-          curl -O https://download.savannah.gnu.org/releases/tinycc/tcc-0.9.27.tar.bz2
-          tar -xvf tcc-0.9.27.tar.bz2
-          ls -lAh
-          cd tcc-0.9.27 && sudo gmake install
+          curl https://download.savannah.gnu.org/releases/tinycc/tcc-0.9.27.tar.bz2 | tar -xv ;
+          ls -lAh ;
+          cd tcc-0.9.27 && sudo gmake install ;
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
       - name: Compile

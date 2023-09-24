@@ -23,6 +23,12 @@ jobs:
           - "u"
     steps:
       - uses: actions/checkout@v3
+      - name: Install Compilers
+        uses: ConorMacBride/install-package@v1
+        with:
+          brew: tcc
+          apt: tcc
+          choco: tcc
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
       - name: Compile

@@ -23,11 +23,17 @@ jobs:
         unhosted-flag:
           - ""
           - "u"
-        # include:
-        #   - operating-system: ubuntu-latest
-        #     compiler:
-        #       binary: pcc
-        #       configure-flags: w
+        include:
+          - operating-system: ubuntu-latest
+            compiler:
+              binary: pcc
+              configure-flags: w
+            unhosted-flag: ""
+          - operating-system: ubuntu-latest
+            compiler:
+              binary: pcc
+              configure-flags: w
+            unhosted-flag: u
         exclude:
           # SDCC has a bug in it on macOS that causes compilation to fail.
           - operating-system: macos-latest

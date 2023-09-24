@@ -11,6 +11,7 @@ jobs:
         operating-system:
           - ubuntu-latest
           - macos-latest
+          - windows-latest
         compiler:
           - binary: clang
             configure-flags: ""
@@ -46,7 +47,7 @@ jobs:
         with:
           apt: pcc sdcc tcc
           brew: sdcc
-          choco: tcc sdcc
+          choco: mingw
       # TCC can't be installed via Homebrew on recent versions of macOS because
       # of an "upstream incompatibility".
       - name: Install TCC on MacOS

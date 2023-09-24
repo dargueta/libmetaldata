@@ -123,8 +123,21 @@ int mdl_strcmp(const char *left, const char *right);
  * and can be pretty sure it'll work for any compiler. Probably. In an ideal world. Then
  * again, 2020 wouldn't've happened in an ideal world... */
 #if MDL_CURRENTLY_COMPILING_LIBRARY && defined(__GNUC__)
-/* n.b. we can't poison assert() */
-#    pragma GCC poison memcpy memset strcmp
+/* You can't poison a macro, and which identifiers are macros depends on the OS. */
+#    ifdef __APPLE__
+#        if !MDL_COMPILED_AS_UNHOSTED
+/* assert() is a macro in hosted mode, so we can't poison it. */
+#            pragma GCC poison strcmp
+#            undef assert
+#        else
+#            pragma GCC poison assert strcmp
+#        endif /* MDL_COMPILED_AS_UNHOSTED */
+#        undef memcpy
+#        undef memset
+#    else
+#        pragma GCC poison memcpy memset strcmp
+#        undef assert
+#    endif
 #endif
 
 #endif /* INCLUDE_METALDATA_INTERNAL_CSTDLIB_H_ */

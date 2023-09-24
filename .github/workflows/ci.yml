@@ -35,6 +35,10 @@ jobs:
               binary: sdcc
     steps:
       - uses: actions/checkout@v3
+      # macOS doesn't have /usr/local/bin in its PATH for some reason
+      - name: Fix PATH on *NIX
+        if: matrix.operating-system == 'macos-latest' || matrix.operating-system == 'ubuntu-latest'
+        run: echo "/usr/local/bin" >> $GITHUB_PATH
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:

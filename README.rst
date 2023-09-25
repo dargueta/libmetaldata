@@ -43,13 +43,13 @@ Supported Platforms
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  |          |            |          |            |
+|                 | Windows  | Y        | Y [#]_     | Y        | Y          |
 +-----------------+----------+----------+------------+----------+------------+
 | GCC_            | MacOS    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  |          |            |          |            |
+|                 | Windows  | Y        | Y          | Y        | Y          |
 +-----------------+----------+----------+------------+----------+------------+
 | Intel           | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
@@ -135,6 +135,7 @@ This uses `µunit <https://nemequ.github.io/munit>`_ for running tests.
 Footnotes
 ---------
 
+.. [#] On Windows, tests must be compiled the non-fatal warnings feature enabled.
 .. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
 .. [#] Tests don't compile unless warnings are non-fatal, and linking tests
        fails without `this fix <https://github.com/nemequ/munit/issues/98>`_. If

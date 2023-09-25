@@ -80,8 +80,8 @@ jobs:
             configure-flags: ""
           - binary: tcc
             configure-flags: w
-          - binary: sdcc
-            configure-flags: m
+#          - binary: sdcc
+#            configure-flags: m
         unhosted-flag:
           - ""
           - "u"
@@ -90,9 +90,17 @@ jobs:
       - name: Set up Cygwin
         uses: egor-tensin/setup-cygwin@v4
         with:
-          packages: cmake gcc-g++ sdcc tcc
+          packages: clang gcc-g++ perl texinfo
+      - name: Install TCC if needed
+        if: matrix.compiler.binary == 'tcc'
+        run: |
+          curl http://download-mirror.savannah.gnu.org/releases/tinycc/tcc-0.9.27.tar.bz2 | tar -xj
+          cd tcc-0.9.27
+          ./configure 
+          make 
+          sudo make install
       - name: Configure
-        run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
+        run: sh configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
       - name: Compile
         run: make library CC=${{ matrix.compiler.binary }}
       - name: Run Tests

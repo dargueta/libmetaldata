@@ -147,7 +147,10 @@
 
 /* Visual Studio */
 #ifdef _MSC_VER
-#    define MDL_API __dllspec(export)
+#    ifndef MDL_API
+#        define MDL_API __dllspec(export)
+#    endif /* MDL_API */
+
 #    if (_MSC_VER >= 1700) && !defined(MDL_ANNOTN__NODISCARD)
 #        define MDL_ANNOTN__NODISCARD _Must_inspect_result_
 #    endif

@@ -100,7 +100,7 @@ jobs:
           cd tcc-0.9.27
           ./configure 
           make 
-          sudo make install
+          make install
       - name: Configure
         run: |
           pwd

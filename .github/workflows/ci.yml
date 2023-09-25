@@ -67,6 +67,8 @@ jobs:
 
   testing-windows:
     runs-on: windows-latest
+    env:
+      SHELLOPTS: igncr
     defaults:
       run:
         shell: C:\tools\cygwin\bin\bash.exe -o igncr '{0}'

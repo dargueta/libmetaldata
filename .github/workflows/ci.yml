@@ -100,7 +100,10 @@ jobs:
           make 
           sudo make install
       - name: Configure
-        run: sh configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
+        run: |
+          pwd
+          ls -lAh
+          configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
       - name: Compile
         run: make library CC=${{ matrix.compiler.binary }}
       - name: Run Tests

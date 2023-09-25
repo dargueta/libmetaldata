@@ -69,7 +69,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        shell: C:\tools\cygwin\bin\bash.exe --login -o igncr '{0}'
+        shell: C:\tools\cygwin\bin\bash.exe -o igncr '{0}'
     strategy:
       fail-fast: false
       matrix:
@@ -103,7 +103,7 @@ jobs:
         run: |
           pwd
           ls -lAh
-          configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
+          ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
       - name: Compile
         run: make library CC=${{ matrix.compiler.binary }}
       - name: Run Tests

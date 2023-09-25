@@ -77,7 +77,9 @@ jobs:
       matrix:
         compiler:
           - binary: clang
-            configure-flags: ""
+            # Warnings need to be non-fatal when compiling tests due to an unused
+            # static function in munit.
+            configure-flags: w
           - binary: gcc
             configure-flags: ""
           - binary: tcc

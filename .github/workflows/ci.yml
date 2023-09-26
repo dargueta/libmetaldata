@@ -51,6 +51,7 @@ jobs:
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'
         run: |
           curl http://pcc.ludd.ltu.se/ftp/pub/pcc/pcc-current.tgz | tar -xz
+          cd $(find . -maxdepth 1 -name 'pcc-*' -type d)
           ./configure
           make && sudo make install
       - name: Configure

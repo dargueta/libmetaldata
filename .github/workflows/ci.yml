@@ -41,26 +41,21 @@ jobs:
       # of an "upstream incompatibility".
       - name: Install TCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'tcc'
-        run: |
-          curl http://download-mirror.savannah.gnu.org/releases/tinycc/tcc-0.9.27.tar.bz2 | tar -xj
-          cd tcc-0.9.27
-          ./configure
-          sudo xcode-select --reset 
-          make && sudo make install
-          gcc -v -xc++ /dev/null -fsyntax-only
+        run: make -f make/compilers.mk install-pcc
+
       - name: Install PCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'
-        run: |
-          curl http://pcc.ludd.ltu.se/ftp/pub/pcc/pcc-current.tgz | tar -xz
-          cd $(find . -maxdepth 1 -name 'pcc-*' -type d)
-          ./configure
-          sudo xcode-select --reset
-          make && sudo make install
-          gcc -v -xc++ /dev/null -fsyntax-only
+        run: make -f make/compilers.mk install-pcc
+
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
+
       - name: Compile
         run: make library CC=${{ matrix.compiler.binary }}
+
+      - name: Test Installation
+        run: sudo make install
+
       - name: Run Tests
         # We can't run cross-platform tests on SDCC
         if: matrix.compiler.binary != 'sdcc'
@@ -85,6 +80,8 @@ jobs:
             configure-flags: ""
           - binary: tcc
             configure-flags: t
+          - binary: pcc
+            configure-flags: t
 #          - binary: sdcc
 #            configure-flags: m
         unhosted-flag:
@@ -96,19 +93,27 @@ jobs:
         uses: egor-tensin/setup-cygwin@v4
         with:
           packages: clang gcc perl texinfo
+
+      - name: Tweak PATH
+        run: echo "/usr/local/bin" >> $GITHUB_PATH
+
       - name: Install TCC if needed
         if: matrix.compiler.binary == 'tcc'
-        run: |
-          curl http://download-mirror.savannah.gnu.org/releases/tinycc/tcc-0.9.27.tar.bz2 | tar -xj
-          cd tcc-0.9.27
-          ./configure 
-          make 
-          make install
-          gcc -v -xc++ /dev/null -fsyntax-only
+        run: make -f make/compilers.mk install-tcc
+
+      - name: Install PCC if needed
+        if: matrix.compiler.binary == 'pcc'
+        run: make -f make/compilers.mk install-pcc
+
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
+
       - name: Compile
         run: make library CC=${{ matrix.compiler.binary }}
+
+      - name: Test Installation
+        run: sudo make install
+
       - name: Run Tests
         # We can't run cross-platform tests on SDCC
         if: matrix.compiler.binary != 'sdcc'

@@ -34,16 +34,29 @@ System Requirements
 Supported Platforms
 ~~~~~~~~~~~~~~~~~~~
 
+Legend
+
+* Y: Full support
+* NS: Not supported for technical reasons
+* w: Requires compiling with non-fatal warnings flag (pass ``-w`` to ``configure``)
+* m: Requires compiling with minimal flags (pass ``-m`` to ``configure``)
+
 +-----------------+----------+-----------------------+-----------------------+
 | Compiler        | OS       | Hosted                | Unhosted              |
 |                 |          +----------+------------+----------+------------+
 |                 |          | Compiles | Tests Pass | Compiles | Tests Pass |
 +=================+==========+==========+============+==========+============+
+| Amsterdam       | MacOS    |          |            |          |            |
+| Compiler        +----------+----------+------------+----------+------------+
+| Kit (ACK_)      | Linux    |          |            |          |            |
+|                 +----------+----------+------------+----------+------------+
+|                 | Windows  |          |            |          |            |
++-----------------+----------+----------+------------+----------+------------+
 | Clang_          | MacOS    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  | Y        | Y [#]_     | Y        | Y          |
+|                 | Windows  | Y        | Yw         | Y        | Yw         |
 +-----------------+----------+----------+------------+----------+------------+
 | GCC_            | MacOS    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
@@ -59,7 +72,7 @@ Supported Platforms
 +-----------------+----------+----------+------------+----------+------------+
 | MinGW_          | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y [#]_   |            | Y        |            |
+|                 | Linux    | Y [#]_   | NS         | Y        | NS         |
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
@@ -69,21 +82,21 @@ Supported Platforms
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| PCC_ [#]_       | MacOS    |          |            |          |            |
+| PCC_            | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y        | Y          | Y        | Y          |
-|                 +----------+----------+------------+----------+------------+
-|                 | Windows  |          |            |          |            |
-+-----------------+----------+----------+------------+----------+------------+
-| SDCC_           | MacOS    | [#]_     |            |          |            |
-|                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y        |            | Y        |            |
+|                 | Linux    | Y        | Yw         | Y        | Yw         |
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| TCC_ [#]_ [#]_  | MacOS    |          |            | Y        |            |
+| SDCC_           | MacOS    | NS [#]_                                       |
 |                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y        | Y [#]_     | Y        | Y          |
+|                 | Linux    | Ym       | NS         | Ym       | NS         |
+|                 +----------+----------+------------+----------+------------+
+|                 | Windows  |          |            |          |            |
++-----------------+----------+----------+------------+----------+------------+
+| TCC_ [#]_       | MacOS    |          |            | Y        |            |
+|                 +----------+----------+------------+----------+------------+
+|                 | Linux    | Y        | Yw         | Y        | Yw         |
 |                 +----------+----------+------------+----------+------------+
 |                 | Windows  |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
@@ -135,17 +148,11 @@ This uses `µunit <https://nemequ.github.io/munit>`_ for running tests.
 Footnotes
 ---------
 
-.. [#] On Windows, tests must be compiled the non-fatal warnings feature enabled.
 .. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
-.. [#] Tests don't compile unless warnings are non-fatal, and linking tests
-       fails without `this fix <https://github.com/nemequ/munit/issues/98>`_. If
-       you're just building the library, none of that is necessary.
 .. [#] On macOS compiler has a bug in it that causes a crash.
-.. [#] Tests don't compile without `this fix <https://github.com/nemequ/munit/issues/97>`_.
 .. [#] 64-bit only. 32-bit is missing a header on my system.
-.. [#] On Linux, if testing you must configure this with the ``-w`` ("non-fatal
-       warnings") flag. If you're just building the library, it's not necessary.
 
+.. _ACK: https://tack.sourceforge.net/
 .. _Clang: https://clang.llvm.org/
 .. _GCC: https://gcc.gnu.org/
 .. _MinGW: https://sourceforge.net/projects/mingw/

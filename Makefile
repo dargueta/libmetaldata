@@ -6,7 +6,7 @@ MY_LDFLAGS=
 
 # If you don't have the install command on your system, you may need to change
 # this to something else.
-INSTALL=install -vpD -m 0644
+INSTALL=install -vp -m 0644
 
 # End users shouldn't need to modify anything below this line. =================
 

@@ -20,20 +20,11 @@ jobs:
             configure-flags: w
           - binary: sdcc
             configure-flags: m
+          - binary: pcc
+            configure-flags: w
         unhosted-flag:
           - ""
           - "u"
-        include:
-          - operating-system: ubuntu-latest
-            compiler:
-              binary: pcc
-              configure-flags: w
-            unhosted-flag: ""
-          - operating-system: ubuntu-latest
-            compiler:
-              binary: pcc
-              configure-flags: w
-            unhosted-flag: u
         exclude:
           # SDCC has a bug in it on macOS that causes compilation to fail.
           - operating-system: macos-latest
@@ -44,7 +35,7 @@ jobs:
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:
-          apt: pcc sdcc tcc
+          apt: mingw-w64 pcc sdcc tcc
           brew: sdcc
       # TCC can't be installed via Homebrew on recent versions of macOS because
       # of an "upstream incompatibility".
@@ -56,6 +47,12 @@ jobs:
           ./configure 
           make 
           sudo make install
+      - name: Install PCC on MacOS
+        if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'
+        run: |
+          curl http://pcc.ludd.ltu.se/ftp/pub/pcc/pcc-current.tgz | tar -xz
+          ./configure
+          make && sudo make install
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
       - name: Compile
@@ -104,10 +101,7 @@ jobs:
           make 
           make install
       - name: Configure
-        run: |
-          pwd
-          ls -lAh
-          ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
+        run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
       - name: Compile
         run: make library CC=${{ matrix.compiler.binary }}
       - name: Run Tests

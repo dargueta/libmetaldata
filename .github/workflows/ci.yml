@@ -44,16 +44,19 @@ jobs:
         run: |
           curl http://download-mirror.savannah.gnu.org/releases/tinycc/tcc-0.9.27.tar.bz2 | tar -xj
           cd tcc-0.9.27
-          ./configure 
-          make 
-          sudo make install
+          ./configure
+          sudo xcode-select --reset 
+          make && sudo make install
+          gcc -v -xc++ /dev/null -fsyntax-only
       - name: Install PCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'
         run: |
           curl http://pcc.ludd.ltu.se/ftp/pub/pcc/pcc-current.tgz | tar -xz
           cd $(find . -maxdepth 1 -name 'pcc-*' -type d)
           ./configure
+          sudo xcode-select --reset
           make && sudo make install
+          gcc -v -xc++ /dev/null -fsyntax-only
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
       - name: Compile
@@ -92,7 +95,7 @@ jobs:
       - name: Set up Cygwin
         uses: egor-tensin/setup-cygwin@v4
         with:
-          packages: clang gcc-g++ perl texinfo
+          packages: clang gcc perl texinfo
       - name: Install TCC if needed
         if: matrix.compiler.binary == 'tcc'
         run: |
@@ -101,6 +104,7 @@ jobs:
           ./configure 
           make 
           make install
+          gcc -v -xc++ /dev/null -fsyntax-only
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
       - name: Compile

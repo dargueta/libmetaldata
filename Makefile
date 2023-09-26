@@ -66,9 +66,16 @@ else
 endif
 
 ifneq ($(NO_FATAL_WARNINGS),0)
-    WARNING_FLAGS=-Wall -Wextra
+    # No fatal warnings at all
+    BUILD_WARNING_FLAGS=-Wall -Wextra
+    TEST_WARNING_FLAGS=$(BUILD_WARNING_FLAGS)
+else ifneq ($(NO_FATAL_TEST_WARNINGS),0)
+    # No fatal warnings only when building tests.
+    BUILD_WARNING_FLAGS=-Wall -Wextra -Werror
+    TEST_WARNING_FLAGS=-Wall -Wextra
 else
-    WARNING_FLAGS=-Wall -Wextra -Werror
+    BUILD_WARNING_FLAGS=-Wall -Wextra -Werror
+    TEST_WARNING_FLAGS=$(BUILD_WARNING_FLAGS)
 endif
 
 # For each feature macro named X, generate a CLI argument "-DX=$(X)" that we can
@@ -81,7 +88,7 @@ PUBLIC_COMPILE_FLAGS=$(strip $(MACROS_FROM_CONFIGURE) $(FEATURE_MACRO_FLAGS_DEFI
 
 # This is the minimal set of flags needed to compile the library. It's
 ADDL_CFLAGS_MINIMAL=-I./src $(PUBLIC_COMPILE_FLAGS) $(MY_CFLAGS)
-ADDL_CFLAGS_FULL=$(ADDL_CFLAGS_MINIMAL) $(WARNING_FLAGS) -std=c99 $(CFLAGS_OPTIMIZATION)
+ADDL_CFLAGS_FULL=$(ADDL_CFLAGS_MINIMAL) -std=c99 $(CFLAGS_OPTIMIZATION)
 
 ifeq ($(USE_MINIMAL_FLAGS),0)
     COMPILE_COMMAND=$(CC) $(CFLAGS) $(ADDL_CFLAGS_FULL) -c
@@ -137,10 +144,10 @@ $(PKGCONFIG_FILE): Makefile.in | $(BUILD_DIR)
 	echo "$${PKGINFO_TEXT}" > $@
 
 tests/%.$(OBJECT_FILE_EXT): tests/%.c $(CONFIG_HEADER_FILE) __in_debug_mode
-	$(COMPILE_COMMAND) -D MDL_CURRENTLY_COMPILING_TESTS=1 -I./tests -o $@ $<
+	$(COMPILE_COMMAND) $(TEST_WARNING_FlAGS) -D MDL_CURRENTLY_COMPILING_TESTS=1 -I./tests -o $@ $<
 
 %.$(OBJECT_FILE_EXT): %.c $(CONFIG_HEADER_FILE)
-	$(COMPILE_COMMAND) -D MDL_CURRENTLY_COMPILING_LIBRARY=1 $(CFLAGS_FREESTANDING) -o $@ $<
+	$(COMPILE_COMMAND) $(BUILD_WARNING_FlAGS) -D MDL_CURRENTLY_COMPILING_LIBRARY=1 $(CFLAGS_FREESTANDING) -o $@ $<
 
 $(BUILD_DIR):
 	mkdir -p $@

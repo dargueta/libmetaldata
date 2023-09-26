@@ -12,6 +12,7 @@ additional_defines=
 install_top=/usr/local
 minimal_flags=0
 no_fatal_warnings=0
+no_fatal_test_warnings=0
 
 HELP_TEXT="
 General-Purpose Flags
@@ -34,19 +35,22 @@ General-Purpose Flags
     Unhosted mode -- do not use the C standard library. Functions such as strcmp
     will use compiler intrinsics if possible, or otherwise fall back to naive
     implementations. The default memory allocator won't be available at all.
+-t
+    Make warnings not fatal, but *only* when compiling tests.
 -w
-    Make warnings not fatal. Required for compiling tests with TCC on certain
-    platforms.
+    Make warnings never fatal, neither when compiling the library nor when
+    compiling the tests.
 "
 
 
-while getopts ':dD:hi:muw' flag; do
+while getopts ':dD:hi:mtuw' flag; do
   case "$flag" in
     d ) debug=1 ;;
     D ) additional_defines="$additional_defines -D$OPTARG" ;;
     i ) install_top=$OPTARG ;;
     m ) minimal_flags=1 ;;
     w ) no_fatal_warnings=1 ;;
+    t ) no_fatal_test_warnings=1 ;;
     u ) unhosted=1 ;;
     h )
       echo "$HELP_TEXT"
@@ -99,6 +103,7 @@ VERSION_PATCH=$PATCH
 VERSION_FULL=\$(VERSION_MAJOR).\$(VERSION_MINOR).\$(VERSION_PATCH)
 USE_MINIMAL_FLAGS=$minimal_flags
 NO_FATAL_WARNINGS=$no_fatal_warnings
+NO_FATAL_TEST_WARNINGS=$no_fatal_test_warnings
 EOF
 
 echo "Generating configuration header..."

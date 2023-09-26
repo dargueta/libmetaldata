@@ -17,11 +17,11 @@ jobs:
           - binary: gcc
             configure-flags: ""
           - binary: tcc
-            configure-flags: w
+            configure-flags: t
           - binary: sdcc
             configure-flags: m
           - binary: pcc
-            configure-flags: w
+            configure-flags: t
         unhosted-flag:
           - ""
           - "u"
@@ -76,11 +76,11 @@ jobs:
           - binary: clang
             # Warnings need to be non-fatal when compiling tests due to an unused
             # static function in munit.
-            configure-flags: w
+            configure-flags: t
           - binary: gcc
             configure-flags: ""
           - binary: tcc
-            configure-flags: w
+            configure-flags: t
 #          - binary: sdcc
 #            configure-flags: m
         unhosted-flag:

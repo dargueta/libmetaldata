@@ -44,11 +44,11 @@ jobs:
       # of an "upstream incompatibility".
       - name: Install TCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'tcc'
-        run: make -f make/compilers.mk install-pcc
+        run: make -C make -f compilers.mk install-pcc
 
       - name: Install PCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'
-        run: make -f make/compilers.mk install-pcc
+        run: make -C make -f compilers.mk install-pcc
 
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
@@ -97,11 +97,7 @@ jobs:
 
       - name: Install TCC if needed
         if: matrix.compiler.binary == 'tcc'
-        run: make -f make/compilers.mk install-tcc
-
-      - name: Install PCC if needed
-        if: matrix.compiler.binary == 'pcc'
-        run: make -f make/compilers.mk install-pcc
+        run: make -C make -f compilers.mk install-tcc
 
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}

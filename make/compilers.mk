@@ -1,4 +1,4 @@
-include ./os.mk
+include os.mk
 
 TCC_VERSION = 0.9.27
 TCC_URL = http://download-mirror.savannah.gnu.org/releases/tinycc/tcc-$(TCC_VERSION).tar.bz2

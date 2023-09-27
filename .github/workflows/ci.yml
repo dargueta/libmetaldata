@@ -32,6 +32,9 @@ jobs:
               binary: sdcc
     steps:
       - uses: actions/checkout@v3
+      # On macOS, TCC installs itself at /usr/local/libexec instead of /usr/local/bin
+      - name: Fix PATH on MacOS for TCC
+        run: echo "/usr/local/libexec" >> $GITHUB_PATH
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:
@@ -91,9 +94,6 @@ jobs:
         uses: egor-tensin/setup-cygwin@v4
         with:
           packages: clang gcc perl texinfo
-
-      - name: Tweak PATH
-        run: echo "/usr/local/bin" >> $GITHUB_PATH
 
       - name: Install TCC if needed
         if: matrix.compiler.binary == 'tcc'

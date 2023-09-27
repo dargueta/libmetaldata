@@ -46,7 +46,7 @@ jobs:
       # of an "upstream incompatibility".
       - name: Install TCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'tcc'
-        run: make -C make -f compilers.mk install-pcc
+        run: make -C make -f compilers.mk install-tcc
 
       - name: Install PCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'

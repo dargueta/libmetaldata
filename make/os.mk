@@ -14,7 +14,8 @@ SHARED_LIB_FLAG=
 FREESTANDING_FLAG=
 ALLOW_VERSIONED_DYNAMIC_LIBRARY=0
 
-IS_WINDOWS=$(strip $(or $(findstring $(OS),Windows_NT) $(findstring $(OS),CYGWIN_NT)))
+IS_CYGWIN=$(strip $(findstring $(OS),CYGWIN_NT))
+IS_WINDOWS=$(strip $(or $(findstring $(OS),Windows_NT) $(IS_CYGWIN)))
 
 ifneq ($(IS_WINDOWS),)
     STATIC_LIB_EXT=lib

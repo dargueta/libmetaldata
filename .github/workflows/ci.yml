@@ -110,7 +110,8 @@ jobs:
         run: make library CC=${{ matrix.compiler.binary }}
 
       - name: Test Installation
-        run: sudo make install
+        # Cygwin doesn't have sudo
+        run: make install
 
       - name: Run Tests
         # We can't run cross-platform tests on SDCC

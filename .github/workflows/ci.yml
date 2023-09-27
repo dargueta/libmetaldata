@@ -102,7 +102,7 @@ jobs:
         run: make -C make -f compilers.mk install-tcc
 
       - name: Fix PATH for TCC
-        run: echo "/usr/local/bin" >> $GITHUB_PATH
+        run: echo "/cygdrive/c/Program Files" >> $GITHUB_PATH
 
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}

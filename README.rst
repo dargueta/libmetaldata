@@ -50,55 +50,55 @@ Legend
 | Compiler        +----------+----------+------------+----------+------------+
 | Kit (ACK_)      | Linux    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  |          |            |          |            |
+|                 | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
 | Clang_          | MacOS    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  | Y        | Yw         | Y        | Yw         |
+|                 | Cygwin   | Y        | Yw         | Y        | Yw         |
 +-----------------+----------+----------+------------+----------+------------+
 | GCC_            | MacOS    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  | Y        | Y          | Y        | Y          |
+|                 | Cygwin   | Y        | Y          | Y        | Y          |
 +-----------------+----------+----------+------------+----------+------------+
 | Intel           | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  |          |            |          |            |
+|                 | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
 | MinGW_          | Linux    | Y [#]_   | NS         | Y        | NS         |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  |          |            |          |            |
+|                 | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
 | OpenWatcom      | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  |          |            |          |            |
+|                 | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
 | PCC_            | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Yw         | Y        | Yw         |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  |          |            |          |            |
+|                 | Cygwin   | NS [#]_                                       |
 +-----------------+----------+----------+------------+----------+------------+
 | SDCC_           | MacOS    | NS [#]_                                       |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Ym       | NS         | Ym       | NS         |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  |          |            |          |            |
+|                 | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
 | TCC_ [#]_       | MacOS    |          |            | Y        |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Yw         | Y        | Yw         |
 |                 +----------+----------+------------+----------+------------+
-|                 | Windows  |          |            |          |            |
+|                 | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| Visual Studio   | Windows  |          |            |          |            |
+| Visual Studio   | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
 
 Common Needs
@@ -109,8 +109,8 @@ Here is a quick reference for needs you may encounter:
 Installing to a specific directory
 **********************************
 
-Everything is installed relative to ``/usr/share`` on *NIX systems, or ``C:\Windows\System32``
-on Windows. You can change where the files are installed in one of two ways,
+Everything is installed relative to ``/usr/share`` on *NIX systems, or ``C:\Cygwin \System32``
+on Cygwin . You can change where the files are installed in one of two ways,
 either when you're configuring or when running ``make install``:
 
 * ``./configure -i path/to/directory``
@@ -123,7 +123,7 @@ directory follows the typical Unix convention, namely:
 * Library goes in ``INSTALL_TOP/lib``
 * PKG-CONFIG file goes in ``INSTALL_TOP/lib/pkgconfig``
 
-This is also followed on Windows for the sake of simplicity.
+This is also followed on Cygwin  for the sake of simplicity.
 
 Developing
 ----------
@@ -142,8 +142,9 @@ This uses `µunit <https://nemequ.github.io/munit>`_ for running tests.
 Footnotes
 ---------
 
-.. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
+.. [#] I used a cross-compiler here because my Cygwin  partition kicked the bucket.
 .. [#] On macOS compiler has a bug in it that causes a crash.
+.. [#] PCC doesn't support Cygwin so I can't even install the compiler.
 .. [#] 64-bit only. 32-bit is missing a header on my system.
 
 .. _ACK: https://tack.sourceforge.net/

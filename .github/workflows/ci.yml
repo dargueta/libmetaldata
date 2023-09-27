@@ -35,11 +35,13 @@ jobs:
       # On macOS, TCC installs itself at /usr/local/libexec instead of /usr/local/bin
       - name: Fix PATH on MacOS for TCC
         run: echo "/usr/local/libexec" >> $GITHUB_PATH
+
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:
           apt: mingw-w64 pcc sdcc tcc
           brew: sdcc
+
       # TCC can't be installed via Homebrew on recent versions of macOS because
       # of an "upstream incompatibility".
       - name: Install TCC on MacOS
@@ -98,6 +100,9 @@ jobs:
       - name: Install TCC if needed
         if: matrix.compiler.binary == 'tcc'
         run: make -C make -f compilers.mk install-tcc
+
+      - name: Fix PATH for TCC
+        run: echo "/usr/local/bin" >> $GITHUB_PATH
 
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}

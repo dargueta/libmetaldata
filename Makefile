@@ -6,17 +6,27 @@ MY_LDFLAGS=
 
 # If you don't have the install command on your system, you may need to change
 # this to something else.
-INSTALL=install -vp -m 0644
+CMD_INSTALL=install -m644
+CMD_INSTALL_BIN=install -m755
+
+INSTALL_BINARY = $(if $1,mkdir -p $2 && $(CMD_INSTALL_BIN) $1 $2)
+INSTALL_BINARY_WILDCARD = $(call INSTALL_BINARY,$(wildcard $1),$2)
+INSTALL_FILE = $(if $1,mkdir -p $2 && $(CMD_INSTALL) $1 $2)
+INSTALL_FILE_WILDCARD = $(call INSTALL_FILE,$(wildcard $1),$2)
+INSTALL_RECURSIVE = mkdir -p $2 && cp -r $1/. $2
+
 
 # End users shouldn't need to modify anything below this line. =================
+SOURCE_ROOT=src
+HEADER_ROOT=$(SOURCE_ROOT)/metaldata
 
 # Source stuff
-LIBRARY_C_SOURCE_FILES=$(wildcard src/*.c)
-LIBRARY_C_PUBLIC_HEADERS=$(wildcard src/metaldata/*.h)
-LIBRARY_C_PRIVATE_HEADERS=$(wildcard src/metaldata/internal/*.h)
+LIBRARY_C_SOURCE_FILES=$(wildcard $(SOURCE_ROOT)/*.c)
+LIBRARY_C_PUBLIC_HEADERS=$(wildcard $(HEADER_ROOT)/*.h)
+LIBRARY_C_PRIVATE_HEADERS=$(wildcard $(HEADER_ROOT)/internal/*.h)
 LIBRARY_C_ALL_HEADER_FILES=$(LIBRARY_C_PUBLIC_HEADERS) $(LIBRARY_C_PRIVATE_HEADERS)
 LIBRARY_OBJECT_FILES=$(LIBRARY_C_SOURCE_FILES:%.c=%.$(OBJECT_FILE_EXT))
-LIBRARY_EXTRAS=$(wildcard src/metaldata/extras/*.c) $(wildcard src/metaldata/extras/*.h)
+LIBRARY_EXTRAS=$(wildcard $(HEADER_ROOT)/extras/*.c) $(wildcard $(HEADER_ROOT)/extras/*.h)
 
 TEST_C_SOURCE_FILES=$(wildcard tests/*.c)
 TEST_C_HEADERS=$(wildcard tests/*.h)
@@ -43,10 +53,10 @@ ifndef INSTALL_TOP
     INSTALL_TOP=$(DEFAULT_INSTALL_TOP)
 endif
 
-INSTALL_LIB=$(INSTALL_TOP)/lib
-INSTALL_INCLUDE=$(INSTALL_TOP)/include/metaldata
-INSTALL_BIN=$(INSTALL_TOP)/bin
-INSTALL_PKGCONFIG=$(INSTALL_LIB)/pkgconfig
+INSTALL_TARGET_LIB=$(INSTALL_TOP)/lib
+INSTALL_TARGET_INCLUDE=$(INSTALL_TOP)/include/metaldata
+INSTALL_TARGET_BIN=$(INSTALL_TOP)/bin
+INSTALL_TARGET_PKGCONFIG=$(INSTALL_TARGET_LIB)/pkgconfig
 
 
 ifneq ($(DEBUG_MODE),0)
@@ -104,13 +114,9 @@ all: library $(PKGCONFIG_FILE)
 
 .PHONY: install
 install: all $(LIBRARY_C_ALL_HEADER_FILES) $(LIBRARY_EXTRAS)
-	# Because -D is invalid on macOS we need to create the directories ourselves.
-	mkdir -p $(INSTALL_INCLUDE)/internal $(INSTALL_INCLUDE)/extras $(INSTALL_LIB) $(INSTALL_PKGCONFIG)
-	$(INSTALL) -t $(INSTALL_LIB) $(STATIC_LIBRARY)
-	$(INSTALL) -t $(INSTALL_INCLUDE) $(LIBRARY_C_PUBLIC_HEADERS)
-	$(INSTALL) -t $(INSTALL_INCLUDE)/internal $(LIBRARY_C_PRIVATE_HEADERS)
-	$(INSTALL) -t $(INSTALL_INCLUDE)/extras $(LIBRARY_EXTRAS)
-	$(INSTALL) -t $(INSTALL_PKGCONFIG) $(PKGCONFIG_FILE)
+	$(call INSTALL_FILE,$(STATIC_LIBRARY),$(INSTALL_TARGET_LIB))
+	$(call INSTALL_RECURSIVE,$(HEADER_ROOT),$(INSTALL_TARGET_INCLUDE))
+	$(call INSTALL_FILE,$(PKGCONFIG_FILE),$(INSTALL_TARGET_PKGCONFIG))
 
 .PHONY: library
 library: $(STATIC_LIBRARY)

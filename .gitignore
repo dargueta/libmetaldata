@@ -22,3 +22,6 @@ venv/
 .idea/
 .vscode/
 .DS_Store
+
+# Detritus from our compiler installation helper script
+__libmetaldata_install_downloads__/

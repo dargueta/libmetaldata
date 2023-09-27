@@ -33,14 +33,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Fix PATH on MacOS for TCC
-        run: echo "/usr/local/bin" >> $GITHUB_PATH
-
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:
           apt: mingw-w64 pcc sdcc tcc
-          brew: sdcc
+          brew: gcc sdcc
 
       # TCC can't be installed via Homebrew on recent versions of macOS because
       # of an "upstream incompatibility".
@@ -51,6 +48,10 @@ jobs:
       - name: Install PCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'
         run: make -C make -f compilers.mk install-pcc
+
+      - name: Fix header path on MacOS
+        if: matrix.operating-system == 'macos-latest' && (matrix.compiler.binary == 'pcc' || matrix.compiler.binary == 'tcc')
+        run: gcc -v /dev/null -o /dev/null
 
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
@@ -102,7 +103,7 @@ jobs:
         run: make -C make -f compilers.mk install-tcc
 
       - name: Fix PATH for TCC
-        run: echo "/cygdrive/c/Program Files" >> $GITHUB_PATH
+        run: find /cygdrive -name 'tcc'
 
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}

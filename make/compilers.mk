@@ -19,7 +19,7 @@ SDCC_BIN = $(PREFIX)/bin/sdcc
 SUDO = $(shell /usr/bin/which sudo)
 
 UNIX_BUILD = \
-    cd $1 && ./configure --prefix $(PREFIX) \
+    cd $1 && ./configure --prefix $(PREFIX) $(CONFIGURE_ARGS) \
     $(MAKE) -C $1 \
     $(SUDO) $(MAKE) -C $1 install
 

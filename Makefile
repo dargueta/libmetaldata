@@ -75,17 +75,22 @@ else
 	CFLAGS_FREESTANDING=
 endif
 
-ifneq ($(NO_FATAL_WARNINGS),0)
-    # No fatal warnings at all
-    BUILD_WARNING_FLAGS=-Wall -Wextra
-    TEST_WARNING_FLAGS=$(BUILD_WARNING_FLAGS)
-else ifneq ($(NO_FATAL_TEST_WARNINGS),0)
-    # No fatal warnings only when building tests.
-    BUILD_WARNING_FLAGS=-Wall -Wextra -Werror
-    TEST_WARNING_FLAGS=-Wall -Wextra
+ifneq ($(USE_MINIMAL_FLAGS),0)
+    BUILD_WARNING_FLAGS=
+    TEST_WARNING_FLAGS=
 else
-    BUILD_WARNING_FLAGS=-Wall -Wextra -Werror
-    TEST_WARNING_FLAGS=$(BUILD_WARNING_FLAGS)
+    ifneq ($(NO_FATAL_WARNINGS),0)
+        # No fatal warnings at all
+        BUILD_WARNING_FLAGS=-Wall -Wextra
+        TEST_WARNING_FLAGS=$(BUILD_WARNING_FLAGS)
+    else ifneq ($(NO_FATAL_TEST_WARNINGS),0)
+        # No fatal warnings only when building tests.
+        BUILD_WARNING_FLAGS=-Wall -Wextra -Werror
+        TEST_WARNING_FLAGS=-Wall -Wextra
+    else
+        BUILD_WARNING_FLAGS=-Wall -Wextra -Werror
+        TEST_WARNING_FLAGS=$(BUILD_WARNING_FLAGS)
+    endif
 endif
 
 # For each feature macro named X, generate a CLI argument "-DX=$(X)" that we can

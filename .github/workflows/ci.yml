@@ -30,6 +30,13 @@ jobs:
           - operating-system: macos-latest
             compiler:
               binary: sdcc
+          # TODO (dargueta): Figure out what to do about incompatible headers
+          - operating-system: macos-latest
+            compiler:
+              binary: tcc
+          - operating-system: macos-latest
+            compiler:
+              binary: pcc
     steps:
       - uses: actions/checkout@v3
 
@@ -57,12 +64,13 @@ jobs:
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
 
       - name: Compile
-        env:
-          # Only needed on OSX for TCC/PCC. This is very hacky and will break if
-          # they upgrade XCode on the Mac runners.
-          CFLAGS: >-
-            -I/Applications/Xcode_14.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
-            -I/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
+       # env:
+       #   # Only needed on OSX for TCC/PCC. This is very hacky and will break if
+       #   # they upgrade XCode on the Mac runners.
+       #   CFLAGS: >-
+       #     -I/Applications/Xcode_14.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
+       #     -I/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
+       #     -I/Applications/Xcode_14.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include
         run: make library CC=${{ matrix.compiler.binary }}
 
       - name: Test Installation
@@ -92,6 +100,8 @@ jobs:
             configure-flags: ""
           - binary: tcc
             configure-flags: t
+          - binary: sdcc
+            configure-flags: m
         unhosted-flag:
           - ""
           - "u"
@@ -104,13 +114,11 @@ jobs:
 
       - name: Install TCC if needed
         if: matrix.compiler.binary == 'tcc'
-        run: make -C make -f compilers.mk install-tcc
+        run: make -C make -f compilers.mk install-tcc PREFIX=/usr/local
 
-      - name: Fix PATH for TCC
-        shell: bash
-        run: |
-          echo "/cygdrive/c/Program Files/" >> $GITHUB_PATH
-          export
+      - name: Install SDCC if needed
+        if: matrix.compiler.binary == 'sdcc'
+        run: make -C make -f compilers.mk install-sdcc PREFIX=/usr/local
 
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}

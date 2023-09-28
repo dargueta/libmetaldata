@@ -9,13 +9,6 @@ MY_LDFLAGS=
 CMD_INSTALL=install -m644
 CMD_INSTALL_BIN=install -m755
 
-INSTALL_BINARY = $(if $1,mkdir -p $2 && $(CMD_INSTALL_BIN) $1 $2)
-INSTALL_BINARY_WILDCARD = $(call INSTALL_BINARY,$(wildcard $1),$2)
-INSTALL_FILE = $(if $1,mkdir -p $2 && $(CMD_INSTALL) $1 $2)
-INSTALL_FILE_WILDCARD = $(call INSTALL_FILE,$(wildcard $1),$2)
-INSTALL_RECURSIVE = mkdir -p $2 && cp -r $1/. $2
-
-
 # End users shouldn't need to modify anything below this line. =================
 SOURCE_ROOT=src
 HEADER_ROOT=$(SOURCE_ROOT)/metaldata
@@ -49,13 +42,13 @@ CONFIG_HEADER_FILE=src/metaldata/configuration.h
 PKGCONFIG_FILE=$(BUILD_DIR)/$(LIB_NAME_STEM).pc
 
 
-ifndef INSTALL_TOP
-    INSTALL_TOP=$(DEFAULT_INSTALL_TOP)
+ifndef PREFIX
+    PREFIX=$(DEFAULT_PREFIX)
 endif
 
-INSTALL_TARGET_LIB=$(INSTALL_TOP)/lib
-INSTALL_TARGET_INCLUDE=$(INSTALL_TOP)/include/metaldata
-INSTALL_TARGET_BIN=$(INSTALL_TOP)/bin
+INSTALL_TARGET_LIB=$(PREFIX)/lib
+INSTALL_TARGET_INCLUDE=$(PREFIX)/include/metaldata
+INSTALL_TARGET_BIN=$(PREFIX)/bin
 INSTALL_TARGET_PKGCONFIG=$(INSTALL_TARGET_LIB)/pkgconfig
 
 
@@ -110,6 +103,12 @@ ifeq ($(USE_MINIMAL_FLAGS),0)
 else
     COMPILE_COMMAND=$(CC) $(CFLAGS) $(ADDL_CFLAGS_MINIMAL) -c
 endif
+
+INSTALL_BINARY = $(if $1,mkdir -p $2 && $(CMD_INSTALL_BIN) $1 $2)
+INSTALL_BINARY_WILDCARD = $(call INSTALL_BINARY,$(wildcard $1),$2)
+INSTALL_FILE = $(if $1,mkdir -p $2 && $(CMD_INSTALL) $1 $2)
+INSTALL_FILE_WILDCARD = $(call INSTALL_FILE,$(wildcard $1),$2)
+INSTALL_RECURSIVE = mkdir -p $2 && cp -r $1/. $2
 
 # This must be included only after all variables are defined.
 include make/pkginfo-template.mk

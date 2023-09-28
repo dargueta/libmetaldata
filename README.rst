@@ -34,7 +34,7 @@ System Requirements
 Supported Platforms
 ~~~~~~~~~~~~~~~~~~~
 
-Legend
+Legend:
 
 * Y: Full support
 * NS: Not supported for technical reasons
@@ -92,7 +92,7 @@ Legend
 |                 +----------+----------+------------+----------+------------+
 |                 | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| TCC_ [#]_       | MacOS    |          |            | Y        |            |
+| TCC_            | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Yw         | Y        | Yw         |
 |                 +----------+----------+------------+----------+------------+
@@ -109,19 +109,19 @@ Here is a quick reference for needs you may encounter:
 Installing to a specific directory
 **********************************
 
-Everything is installed relative to ``/usr/share`` on *NIX systems, or ``C:\Cygwin \System32``
-on Cygwin . You can change where the files are installed in one of two ways,
-either when you're configuring or when running ``make install``:
+Everything is installed relative to ``/usr/share`` on *NIX systems, including
+Cygwin. You can change where the files are installed in one of two ways, either
+when you're configuring or when running ``make install``:
 
 * ``./configure -i path/to/directory``
-* ``make install INSTALL_TOP=path/to/directory``
+* ``make install PREFIX=path/to/directory``
 
 The directory will be created if it doesn't already exist. The structure of the
 directory follows the typical Unix convention, namely:
 
-* Headers go in ``INSTALL_TOP/include/metaldata``
-* Library goes in ``INSTALL_TOP/lib``
-* PKG-CONFIG file goes in ``INSTALL_TOP/lib/pkgconfig``
+* Headers go in ``PREFIX/include/metaldata``
+* Library goes in ``PREFIX/lib``
+* PKG-CONFIG file goes in ``PREFIX/lib/pkgconfig``
 
 This is also followed on Cygwin  for the sake of simplicity.
 
@@ -145,7 +145,6 @@ Footnotes
 .. [#] I used a cross-compiler here because my Cygwin  partition kicked the bucket.
 .. [#] On macOS compiler has a bug in it that causes a crash.
 .. [#] PCC doesn't support Cygwin so I can't even install the compiler.
-.. [#] 64-bit only. 32-bit is missing a header on my system.
 
 .. _ACK: https://tack.sourceforge.net/
 .. _Clang: https://clang.llvm.org/

@@ -97,7 +97,7 @@ cat <<EOF > Makefile.in
 UNHOSTED_IMPLEMENTATION=$unhosted
 DEBUG_MODE=$debug
 MACROS_FROM_CONFIGURE=$additional_defines
-INSTALL_TOP=$absolute_top
+PREFIX=$absolute_top
 VERSION_MAJOR=$MAJOR
 VERSION_MINOR=$MINOR
 VERSION_PATCH=$PATCH

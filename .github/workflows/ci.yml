@@ -51,12 +51,18 @@ jobs:
 
       - name: Fix header path on MacOS
         if: matrix.operating-system == 'macos-latest' && (matrix.compiler.binary == 'pcc' || matrix.compiler.binary == 'tcc')
-        run: gcc -v /dev/null -o /dev/null
+        run: $(gcc -print-prog-name=cpp) -v < /dev/null
 
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
 
       - name: Compile
+        env:
+          # Only needed on OSX for TCC/PCC. This is very hacky and will break if
+          # they upgrade XCode on the Mac runners.
+          CFLAGS: >-
+            -I/Applications/Xcode_14.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
+            -I/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
         run: make library CC=${{ matrix.compiler.binary }}
 
       - name: Test Installation
@@ -86,8 +92,6 @@ jobs:
             configure-flags: ""
           - binary: tcc
             configure-flags: t
-#          - binary: sdcc
-#            configure-flags: m
         unhosted-flag:
           - ""
           - "u"
@@ -103,7 +107,10 @@ jobs:
         run: make -C make -f compilers.mk install-tcc
 
       - name: Fix PATH for TCC
-        run: find /cygdrive -name 'tcc'
+        shell: bash
+        run: |
+          echo "/cygdrive/c/Program Files/" >> $GITHUB_PATH
+          export
 
       - name: Configure
         run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}

@@ -61,7 +61,11 @@ jobs:
         run: $(gcc -print-prog-name=cpp) -v < /dev/null
 
       - name: Configure
-        run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
+        run: |
+          ./configure -d \
+                      --cc=${{ matrix.compiler.binary }} \
+                      ${{ matrix.unhosted-flag }} \
+                      ${{ matrix.compiler.configure-flags }}
 
       - name: Compile
        # env:
@@ -71,7 +75,7 @@ jobs:
        #     -I/Applications/Xcode_14.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
        #     -I/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
        #     -I/Applications/Xcode_14.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include
-        run: make library CC=${{ matrix.compiler.binary }}
+        run: make library
 
       - name: Test Installation
         run: sudo make install
@@ -79,7 +83,7 @@ jobs:
       - name: Run Tests
         # We can't run cross-platform tests on SDCC
         if: matrix.compiler.binary != 'sdcc'
-        run: make test CC=${{ matrix.compiler.binary }}
+        run: make test
 
   testing-windows:
     runs-on: windows-latest
@@ -121,10 +125,14 @@ jobs:
         run: make -C make -f compilers.mk install-sdcc PREFIX=/usr
 
       - name: Configure
-        run: ./configure -d${{ matrix.unhosted-flag }}${{ matrix.compiler.configure-flags }}
+        run: |
+          ./configure -d \
+                      --cc=${{ matrix.compiler.binary }} \
+                      ${{ matrix.unhosted-flag }} \
+                      ${{ matrix.compiler.configure-flags }}
 
       - name: Compile
-        run: make library CC=${{ matrix.compiler.binary }}
+        run: make library
 
       - name: Test Installation
         # Cygwin doesn't have sudo
@@ -133,4 +141,4 @@ jobs:
       - name: Run Tests
         # We can't run cross-platform tests on SDCC
         if: matrix.compiler.binary != 'sdcc'
-        run: make test CC=${{ matrix.compiler.binary }}
+        run: make test

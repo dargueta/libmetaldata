@@ -17,14 +17,14 @@ jobs:
           - binary: gcc
             configure-flags: ""
           - binary: tcc
-            configure-flags: t
+            configure-flags: -t
           - binary: sdcc
-            configure-flags: m
+            configure-flags: -m
           - binary: pcc
-            configure-flags: t
+            configure-flags: -t
         unhosted-flag:
           - ""
-          - "u"
+          - "-u"
         exclude:
           # SDCC has a bug in it on macOS that causes compilation to fail.
           - operating-system: macos-latest
@@ -95,16 +95,16 @@ jobs:
           - binary: clang
             # Warnings need to be non-fatal when compiling tests due to an unused
             # static function in munit.
-            configure-flags: t
+            configure-flags: -t
           - binary: gcc
             configure-flags: ""
           - binary: tcc
-            configure-flags: t
+            configure-flags: -t
           # - binary: sdcc
-          #   configure-flags: m
+          #   configure-flags: -m
         unhosted-flag:
           - ""
-          - "u"
+          - "-u"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Cygwin

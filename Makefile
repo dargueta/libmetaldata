@@ -112,6 +112,7 @@ INSTALL_RECURSIVE = mkdir -p $2 && cp -r $1/. $2
 
 # This must be included only after all variables are defined.
 include make/pkginfo-template.mk
+include make/configuration-header.mk
 
 .PHONY: all
 all: library $(PKGCONFIG_FILE)
@@ -152,8 +153,12 @@ $(TEST_BINARY): $(TEST_OBJECT_FILES) $(STATIC_LIBRARY)
 	$(CC) $(LDFLAGS) $(MY_LDFLAGS) -o $@ $^
 
 export PKGINFO_TEXT
-$(PKGCONFIG_FILE): Makefile.in | $(BUILD_DIR)
+$(PKGCONFIG_FILE): Makefile.in make/pkginfo-template.mk | $(BUILD_DIR)
 	echo "$${PKGINFO_TEXT}" > $@
+
+export CONFIGURATION_HEADER_TEXT
+$(CONFIG_HEADER_FILE): Makefile.in make/configuration-header.mk
+	echo "$${CONFIGURATION_HEADER_TEXT}" | tr '`' '#' > $@
 
 tests/%.$(OBJECT_FILE_EXT): tests/%.c $(CONFIG_HEADER_FILE) __in_debug_mode
 	$(COMPILE_COMMAND) $(TEST_WARNING_FLAGS) -D MDL_CURRENTLY_COMPILING_TESTS=1 -I./tests -o $@ $<
@@ -165,7 +170,7 @@ $(BUILD_DIR):
 	mkdir -p $@
 
 # PEBKAC Rules -----------------------------------------------------------------
-Makefile.in $(CONFIG_HEADER_FILE):
+Makefile.in:
 	@echo 'You must run the `configure` script before running Make.' ; exit 1
 
 .PHONY: __in_debug_mode

@@ -9,61 +9,85 @@ VERSION_FULL=${MAJOR}.${MINOR}.${PATCH}
 unhosted=0
 debug=0
 additional_defines=
-install_top=/usr/local
+prefix=/usr/local
 minimal_flags=0
 no_fatal_warnings=0
 no_fatal_test_warnings=0
+install_target_lib=
+install_target_include=
+install_target_bin=
+install_target_pkgconfig=
 
 HELP_TEXT="
 General-Purpose Flags
 =====================
--d
+-d | --debug
     Compile with debugging information.
 -D name[=value]
     Define a macro to be passed to the preprocessor.
--h
+-h | --help
     Show this help message.
--i PATH
+-m | --minimal-flags
+    Only pass minimal flags to the compiler. Use this as the lowest common
+    denominator when a compiler doesn't support GCC's most common flags.
+-p PATH | --prefix=PATH
     Change the top-level installation path for the library and headers. The
     library is placed in 'PATH/lib', headers in 'PATH/include', etc. Directories
     are created where necessary.
-    Default: $install_top
--m
-    Only pass minimal flags to the compiler. Use this as the lowest common
-    denominator when a compiler doesn't support GCC's most common flags.
--u
+    Default: $prefix
+-u | --unhosted
     Unhosted mode -- do not use the C standard library. Functions such as strcmp
     will use compiler intrinsics if possible, or otherwise fall back to naive
     implementations. The default memory allocator won't be available at all.
--t
+-t | --no-fatal-test-warnings
     Make warnings not fatal, but *only* when compiling tests.
--w
+-w | --no-fatal-warnings
     Make warnings never fatal, neither when compiling the library nor when
     compiling the tests.
 "
 
+# TODO (dargueta): Allow overriding individual installation directories.
+while [ -n "$1" ]; do
+  flag=$(echo "$1" | cut -f1 -d=)
+  eq_flag_argument=$(echo "$1" | cut -f2 -d=)
 
-while getopts ':dD:hi:mtuw' flag; do
   case "$flag" in
-    d ) debug=1 ;;
-    D ) additional_defines="$additional_defines -D$OPTARG" ;;
-    i ) install_top=$OPTARG ;;
-    m ) minimal_flags=1 ;;
-    w ) no_fatal_warnings=1 ;;
-    t ) no_fatal_test_warnings=1 ;;
-    u ) unhosted=1 ;;
-    h )
+    -d | --debug ) debug=1 ;;
+    -D )
+      if [ -z "$2" ]; then
+        echo "A macro definition is required for -D."
+        exit 1
+      fi
+      additional_defines="$additional_defines -D$2"
+      shift
+      ;;
+    -h | --help )
       echo "$HELP_TEXT"
       exit 0
       ;;
-    * )
-      echo "Error: Unrecognized option '$OPTARG'"
-      echo
-      echo "$HELP_TEXT"
-      exit 1
+    -m | --minimal-flags) minimal_flags=1 ;;
+    -p | --pre | --prefix )
+      if [ -n "$eq_flag_argument" ]; then
+        prefix=$eq_flag_argument
+      elif [ -n "$2" ]; then
+        prefix=$2
+        shift
+      else
+        echo "A path is required for --prefix."
+        exit 1
+      fi
       ;;
+    -t | --no-fatal-test-warnings ) no_fatal_test_warnings=1 ;;
+    -u | --unhosted ) unhosted=1 ;;
+    -w | --no-fatal-warnings ) no_fatal_warnings=1 ;;
+    * )
+      echo "Unrecognized option: '$flag'"
+      exit 1
   esac
+
+  shift
 done
+
 
 int_to_yesno() {
   if [ "$1" -eq 0 ]; then
@@ -73,12 +97,12 @@ int_to_yesno() {
   fi
 }
 
-if [ "${install_top}" != "${install_top#/}" ]; then
-  absolute_top=$install_top
+if [ "${prefix}" != "${prefix#/}" ]; then
+  absolute_top=$prefix
 else
-  absolute_top=$(pwd)/$install_top
+  absolute_top=$(pwd)/$prefix
   echo "NOTE: relative path passed as installation top. Expanding:"
-  echo "$install_top -> $absolute_top"
+  echo "$prefix -> $absolute_top"
   echo
 fi
 
@@ -86,10 +110,16 @@ echo "Modes"
 echo "-----"
 echo "Debug    : $(int_to_yesno $debug)"
 echo "Unhosted : $(int_to_yesno $unhosted)"
-echo "Non-fatal warnings: $(int_to_yesno $no_fatal_warnings)"
-echo "Non-fatal test warnings: $(int_to_yesno $no_fatal_test_warnings)"
+echo "Non-fatal warnings : $(int_to_yesno $no_fatal_warnings)"
+echo "Non-fatal test warnings : $(int_to_yesno $no_fatal_test_warnings)"
 echo
-echo "Install to: $absolute_top"
+echo "Install Targets"
+echo "---------------"
+echo "  Prefix    : $absolute_top"
+echo "  Headers   : ${install_target_include:-PREFIX/include/metaldata}"
+echo "  Library   : ${install_target_lib:-PREFIX/include}"
+echo "  pkgconfig : ${install_target_pkgconfig:-LIBDIR/pkgconfig}"
+echo
 echo "User-defined macros: $additional_defines"
 echo
 echo "Generating Makefile.in..."
@@ -98,6 +128,10 @@ UNHOSTED_IMPLEMENTATION=$unhosted
 DEBUG_MODE=$debug
 MACROS_FROM_CONFIGURE=$additional_defines
 PREFIX=$absolute_top
+INSTALL_TARGET_LIB=${install_target_lib:-\$(PREFIX)/lib}
+INSTALL_TARGET_INCLUDE=${install_target_include:-\$(PREFIX)/include/metaldata}
+INSTALL_TARGET_BIN=${install_target_bin:-\$(PREFIX)/bin}
+INSTALL_TARGET_PKGCONFIG=${install_target_pkgconfig:-\$(INSTALL_TARGET_LIB)/pkgconfig}
 VERSION_MAJOR=$MAJOR
 VERSION_MINOR=$MINOR
 VERSION_PATCH=$PATCH
@@ -105,28 +139,6 @@ VERSION_FULL=\$(VERSION_MAJOR).\$(VERSION_MINOR).\$(VERSION_PATCH)
 USE_MINIMAL_FLAGS=$minimal_flags
 NO_FATAL_WARNINGS=$no_fatal_warnings
 NO_FATAL_TEST_WARNINGS=$no_fatal_test_warnings
-EOF
-
-echo "Generating configuration header..."
-cat <<EOF > src/metaldata/configuration.h
-/* AUTOGENERATED -- DO NOT MODIFY */
-#ifndef MDL_CONFIGURATION_H_
-#define MDL_CONFIGURATION_H_
-#define MDL_VERSION_MAJOR $MAJOR
-#define MDL_VERSION_MINOR $MINOR
-#define MDL_VERSION_PATCH $PATCH
-#define MDL_VERSION_FULL ((MDL_VERSION_MAJOR * 10000) + \\
-                         (MDL_VERSION_MINOR * 100) + \\
-                         MDL_VERSION_PATCH)
-#define MDL_VERSION_FULL_STRING "$VERSION_FULL"
-#define MDL_COMPILED_AS_UNHOSTED $unhosted
-#if !defined(MDL_CURRENTLY_COMPILING_LIBRARY) &&                                         \\
-    !defined(MDL_CURRENTLY_COMPILING_TESTS) && defined(__STDC_HOSTED__)
-#    if !MDL_COMPILED_AS_UNHOSTED && !__STDC_HOSTED__
-#        error "Program is unhosted. Recompile MetalData for unhosted code."
-#    endif
-#endif /* __STDC_HOSTED__ */
-#endif /* MDL_CONFIGURATION_H_ */
 EOF
 
 echo "Done."

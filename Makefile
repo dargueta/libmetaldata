@@ -182,6 +182,9 @@ export PKGINFO_TEXT
 $(PKGCONFIG_FILE): Makefile.in make/pkginfo-template.mk | $(BUILD_DIR)
 	echo "$${PKGINFO_TEXT}" > $@
 
+.PHONY: header
+header: $(CONFIG_HEADER_FILE)
+
 export CONFIGURATION_HEADER_TEXT
 $(CONFIG_HEADER_FILE): Makefile.in make/configuration-header.mk
 	echo "$${CONFIGURATION_HEADER_TEXT}" | tr '`' '#' > $@

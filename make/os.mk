@@ -21,13 +21,13 @@ IS_WINDOWS=$(if $(strip $(findstring $(OS),Windows_NT)),1,0)
 
 ifeq ($(UNAME),Linux)
     SHARED_LIB_FLAG=-shared
-    FREESTANDING_FLAG=-ffreestanding -nostdlib
+    FREESTANDING_FLAG=-ffreestanding
     ALLOW_VERSIONED_DYNAMIC_LIBRARY=1
 else ifeq ($(UNAME),Darwin)
     DYNAMIC_LIB_EXT=dylib
     DEFAULT_PREFIX=/usr
     SHARED_LIB_FLAG=-undefined dynamic_lookup
-    FREESTANDING_FLAG=-ffreestanding -nostdlib
+    FREESTANDING_FLAG=-ffreestanding
     # ALLOW_VERSIONED_DYNAMIC_LIBRARY is 1 for .so, 0 for .dylib. I think.
 else ifeq ($(IS_CYGWIN),1)
     SHARED_LIB_FLAG=-shared

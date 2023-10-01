@@ -44,11 +44,7 @@
 #            endif
 #        endif /* __has_c_attribute */
 #    endif     /* C20 */
-
-#    if __STDC_VERSION__ >= 199901L
-#        define MDL_ANNOTN__RESTRICT restrict
-#    endif /* C99 */
-#endif     /* __STDC_VERSION__ */
+#endif         /* __STDC_VERSION__ */
 
 #if defined(__GNUC__) || defined(__SUNPRO_C)
 #    define GNU_ATTRIBUTE(x) __attribute__((x))
@@ -232,10 +228,6 @@
 
 #ifndef MDL_ANNOTN__RETURNS_NONNULL
 #    define MDL_ANNOTN__RETURNS_NONNULL
-#endif
-
-#ifndef MDL_ANNOTN__RESTRICT
-#    define MDL_ANNOTN__RESTRICT
 #endif
 
 #ifdef __SDCC

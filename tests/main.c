@@ -41,7 +41,6 @@ import_test(reader, buffer_unget_at_eof);
 import_test(reader, buffer_unget_at_sof);
 import_test(reader, buffer_unget_empty_buffer);
 
-
 static MunitTest memblklist_tests[] = {
     define_plain_test_case(memblklist, length_zero),
     {NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}};

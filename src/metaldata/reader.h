@@ -45,21 +45,19 @@ MDLReader *mdl_reader_new(MDLState *ds, mdl_reader_getc_fptr getc_ptr,
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD
-MDLReader *mdl_reader_newfrombuffer(MDLState *MDL_ANNOTN__RESTRICT ds,
-                                    const void *MDL_ANNOTN__RESTRICT buffer, size_t size);
+MDLReader *mdl_reader_newfrombuffer(MDLState *restrict ds, const void *restrict buffer,
+                                    size_t size);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-void mdl_reader_init(MDLState *MDL_ANNOTN__RESTRICT ds,
-                     MDLReader *MDL_ANNOTN__RESTRICT reader,
+void mdl_reader_init(MDLState *restrict ds, MDLReader *restrict reader,
                      mdl_reader_getc_fptr getc_ptr, mdl_reader_close_fptr close_ptr,
                      void *udata);
 
 MDL_API
 MDL_ANNOTN__NONNULL
-void mdl_reader_initfrombuffer(MDLState *MDL_ANNOTN__RESTRICT ds,
-                               MDLReader *MDL_ANNOTN__RESTRICT reader,
-                               const void *MDL_ANNOTN__RESTRICT buffer, size_t size);
+void mdl_reader_initfrombuffer(MDLState *restrict ds, MDLReader *restrict reader,
+                               const void *restrict buffer, size_t size);
 
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -84,6 +82,6 @@ int mdl_reader_ungetc(MDLReader *reader, int c);
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__ACCESS_SIZED(write_only, 2, 3)
-size_t mdl_reader_read(MDLReader *MDL_ANNOTN__RESTRICT reader, void *buf, size_t size);
+size_t mdl_reader_read(MDLReader *restrict reader, void *buf, size_t size);
 
 #endif /* INCLUDE_METALDATA_READER_H_ */

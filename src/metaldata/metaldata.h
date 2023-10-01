@@ -66,8 +66,8 @@ MDL_API
 void *mdl_default_hosted_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);
 #endif /* MDL_COMPILED_AS_UNHOSTED */
 
-typedef void (*mdl_copy_fptr)(MDLState *ds, const void *MDL_ANNOTN__RESTRICT source,
-                              void *MDL_ANNOTN__RESTRICT dest, size_t dest_size);
+typedef void (*mdl_copy_fptr)(MDLState *ds, const void *restrict source,
+                              void *restrict dest, size_t dest_size);
 
 typedef void (*mdl_destructor_fptr)(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
 

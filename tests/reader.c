@@ -141,9 +141,8 @@ MunitResult test_reader__buffer_unget_at_sof(const MunitParameter params[],
     return MUNIT_OK;
 }
 
-
 MunitResult test_reader__buffer_unget_empty_buffer(const MunitParameter params[],
-                                             void *userdata)
+                                                   void *userdata)
 {
     (void)params;
     MDLState *ds = (MDLState *)userdata;

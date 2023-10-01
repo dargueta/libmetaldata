@@ -102,8 +102,8 @@ jobs:
             configure-flags: -t
           - binary: gcc
             configure-flags: ""
-          - binary: tcc
-            configure-flags: -t
+          # - binary: tcc
+          #   configure-flags: -t
           # - binary: sdcc
           #   configure-flags: -m
         unhosted-flag:

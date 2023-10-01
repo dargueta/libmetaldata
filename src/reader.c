@@ -4,13 +4,14 @@
 
 static int buffer_getc(MDLReader *reader, void *udata);
 
-MDLReader *mdl_reader_new(MDLState *ds, mdl_reader_getc_fptr getc_ptr, void *udata)
+MDLReader *mdl_reader_new(MDLState *ds, mdl_reader_getc_fptr getc_ptr,
+                          mdl_reader_close_fptr close_ptr, void *udata)
 {
     MDLReader *reader = mdl_malloc(ds, sizeof(*reader));
     if (!reader)
         return NULL;
 
-    mdl_reader_init(ds, reader, getc_ptr, udata);
+    mdl_reader_init(ds, reader, getc_ptr, close_ptr, udata);
     reader->was_allocated = true;
     return reader;
 }
@@ -27,10 +28,11 @@ MDLReader *mdl_reader_newfrombuffer(MDLState *ds, const void *buffer, size_t siz
 }
 
 void mdl_reader_init(MDLState *ds, MDLReader *reader, mdl_reader_getc_fptr getc_ptr,
-                     void *udata)
+                     mdl_reader_close_fptr close_ptr, void *udata)
 {
     reader->ds = ds;
     reader->getc_ptr = getc_ptr;
+    reader->close_ptr = close_ptr;
     reader->udata = udata;
     reader->input_buffer = NULL;
     reader->input_size = 0;
@@ -42,7 +44,7 @@ void mdl_reader_init(MDLState *ds, MDLReader *reader, mdl_reader_getc_fptr getc_
 void mdl_reader_initfrombuffer(MDLState *ds, MDLReader *reader, const void *buffer,
                                size_t size)
 {
-    mdl_reader_init(ds, reader, buffer_getc, NULL);
+    mdl_reader_init(ds, reader, buffer_getc, NULL, NULL);
     reader->input_buffer = buffer;
     reader->input_size = size;
 }
@@ -52,11 +54,12 @@ void *mdl_reader_getudata(const MDLReader *reader)
     return reader->udata;
 }
 
-int mdl_reader_close(MDLReader *reader)
+void mdl_reader_close(MDLReader *reader)
 {
+    if (reader->close_ptr)
+        reader->close_ptr(reader, reader->udata);
     if (reader->was_allocated)
         mdl_free(reader->ds, reader, sizeof(*reader));
-    return 0;
 }
 
 int mdl_reader_getc(MDLReader *reader)

@@ -10,18 +10,8 @@
 #define MDL_ERROR_NOT_FOUND 3
 #define MDL_ERROR_ALREADY_EXISTS 4
 #define MDL_ERROR_ASSERT_FAILED 5
-
-#if !MDL_COMPILED_AS_UNHOSTED
-#    include <errno.h>
-#    ifdef ENOMEM
-#        define MDL_ERROR_NOMEM ENOMEM
-#    else
-#        define MDL_ERROR_NOMEM 6
-#    endif /* ENOMEM */
-#    define MDL_ERROR_OUT_OF_RANGE EDOM
-#else
-#    define MDL_ERROR_NOMEM 6
-#    define MDL_ERROR_OUT_OF_RANGE 7
-#endif /* !MDL_COMPILED_AS_UNHOSTED */
+#define MDL_ERROR_FULL 6
+#define MDL_ERROR_NOMEM 7
+#define MDL_ERROR_OUT_OF_RANGE 8
 
 #endif /* INCLUDE_METALDATA_ERRORS_H_ */

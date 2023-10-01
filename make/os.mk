@@ -31,7 +31,7 @@ else ifeq ($(UNAME),Darwin)
     # ALLOW_VERSIONED_DYNAMIC_LIBRARY is 1 for .so, 0 for .dylib. I think.
 else ifeq ($(IS_CYGWIN),1)
     SHARED_LIB_FLAG=-shared
-    FREESTANDING_FLAG=-ffreestanding -nostdlib
+    FREESTANDING_FLAG=-ffreestanding
     ALLOW_VERSIONED_DYNAMIC_LIBRARY=1
 else ifeq ($(IS_WINDOWS),1)
     STATIC_LIB_EXT=lib

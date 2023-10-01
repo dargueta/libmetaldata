@@ -19,7 +19,7 @@ jobs:
           - binary: tcc
             configure-flags: -t
           - binary: sdcc
-            configure-flags: -m
+            configure-flags: ""
           - binary: pcc
             configure-flags: -t
         unhosted-flag:
@@ -105,7 +105,7 @@ jobs:
           # - binary: tcc
           #   configure-flags: -t
           # - binary: sdcc
-          #   configure-flags: -m
+          #   configure-flags: ""
         unhosted-flag:
           - ""
           - "-u"

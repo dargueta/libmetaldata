@@ -19,7 +19,7 @@ Building
     # Build everything
     make
 
-    # Install the library
+    # Install the library (may require sudo)
     make install
 
 For a list of options, run `./configure -h`.
@@ -88,7 +88,7 @@ Legend:
 +-----------------+----------+----------+------------+----------+------------+
 | SDCC_           | MacOS    | NS [#]_                                       |
 |                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Ym       | NS         | Ym       | NS         |
+|                 | Linux    | Y        | NS         | Y        | NS         |
 |                 +----------+----------+------------+----------+------------+
 |                 | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+

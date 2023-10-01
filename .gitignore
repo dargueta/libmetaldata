@@ -1,5 +1,6 @@
 # Build artifacts
 *.a
+*.adb
 *.asm
 *.dll
 *.dylib
@@ -8,6 +9,7 @@
 *.lst
 *.o
 *.obj
+*.rel
 *.so
 *.sym
 

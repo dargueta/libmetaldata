@@ -138,7 +138,7 @@ echo "Install Targets"
 echo "---------------"
 echo "  Prefix    : $absolute_top"
 echo "  Headers   : ${install_target_include:-PREFIX/include/metaldata}"
-echo "  Library   : ${install_target_lib:-PREFIX/include}"
+echo "  Library   : ${install_target_lib:-PREFIX/lib}"
 echo "  pkgconfig : ${install_target_pkgconfig:-LIBDIR/pkgconfig}"
 echo
 echo "User-defined macros: $additional_defines"

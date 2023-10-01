@@ -52,7 +52,7 @@ General-Purpose Flags
 # TODO (dargueta): Allow overriding individual installation directories.
 while [ -n "$1" ]; do
   flag=$(echo "$1" | cut -f1 -d=)
-  eq_flag_argument=$(echo "$1" | cut -f2 -d=)
+  eq_flag_argument=$(echo "$1" | cut -s -f2 -d=)
 
   case "$flag" in
     --cc )

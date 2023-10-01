@@ -74,3 +74,91 @@ MunitResult test_reader__buffer_getc(const MunitParameter params[], void *userda
     mdl_reader_close(&reader);
     return MUNIT_OK;
 }
+
+MunitResult test_reader__buffer_unget_at_eof(const MunitParameter params[],
+                                             void *userdata)
+{
+    (void)params;
+    MDLState *ds = (MDLState *)userdata;
+    MDLReader reader;
+    const char *data = "qwertyuiop";
+    size_t data_length = strlen(data);
+
+    mdl_reader_initfrombuffer(ds, &reader, data, data_length);
+
+    for (size_t i = 0; i < data_length; i++)
+    {
+        int read_value = mdl_reader_getc(&reader);
+        munit_assert_char(data[i], ==, read_value);
+    }
+
+    // Read the entire buffer, so we should get -1 from now on no matter how many times we
+    // call getc.
+    munit_assert_int(mdl_reader_getc(&reader), ==, MDL_EOF);
+    munit_assert_size(data_length, ==, reader.buffer_position);
+
+    // ungetc() should put something back in
+    mdl_reader_ungetc(&reader, 123);
+    munit_assert_int(mdl_reader_getc(&reader), ==, 123);
+    munit_assert_size(data_length, ==, reader.buffer_position);
+
+    // After we consume the ungetted character, we should get EOF again.
+    munit_assert_int(mdl_reader_getc(&reader), ==, MDL_EOF);
+    munit_assert_size(data_length, ==, reader.buffer_position);
+
+    mdl_reader_close(&reader);
+    return MUNIT_OK;
+}
+
+MunitResult test_reader__buffer_unget_at_sof(const MunitParameter params[],
+                                             void *userdata)
+{
+    (void)params;
+    MDLState *ds = (MDLState *)userdata;
+    MDLReader reader;
+    const char *data = "qwertyuiop";
+    size_t data_length = strlen(data);
+
+    mdl_reader_initfrombuffer(ds, &reader, data, data_length);
+
+    // Even though we're at the beginning of the stream, getc() should still return the
+    // character we inserted.
+    mdl_reader_ungetc(&reader, 123);
+    munit_assert_int(mdl_reader_getc(&reader), ==, 123);
+    munit_assert_size(0, ==, reader.buffer_position);
+
+    // Read the stream
+    for (size_t i = 0; i < data_length; i++)
+    {
+        int read_value = mdl_reader_getc(&reader);
+        munit_assert_char(data[i], ==, read_value);
+    }
+
+    munit_assert_int(mdl_reader_getc(&reader), ==, MDL_EOF);
+    munit_assert_size(data_length, ==, reader.buffer_position);
+
+    mdl_reader_close(&reader);
+    return MUNIT_OK;
+}
+
+
+MunitResult test_reader__buffer_unget_empty_buffer(const MunitParameter params[],
+                                             void *userdata)
+{
+    (void)params;
+    MDLState *ds = (MDLState *)userdata;
+    MDLReader reader;
+
+    mdl_reader_initfrombuffer(ds, &reader, "", 0);
+
+    // The stream is empty but ungetc() should still make getc() return something.
+    mdl_reader_ungetc(&reader, 123);
+    munit_assert_int(mdl_reader_getc(&reader), ==, 123);
+    munit_assert_size(0, ==, reader.buffer_position);
+
+    munit_assert_int(mdl_reader_getc(&reader), ==, MDL_EOF);
+    munit_assert_size(0, ==, reader.buffer_position);
+
+    mdl_reader_close(&reader);
+    return MUNIT_OK;
+}

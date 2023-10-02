@@ -118,14 +118,17 @@ jobs:
 
       - name: Install TCC if needed
         if: matrix.compiler.binary == 'tcc'
-        run: |
-          make -C make -f compilers.mk install-tcc
-          find /usr -name 'tcc*'
+        run: make -C make -f compilers.mk install-tcc
 
       - name: Install SDCC if needed
         if: matrix.compiler.binary == 'sdcc'
+        run: make -C make -f compilers.mk install-sdcc
+
+      - name: Env
         run: |
-          make -C make -f compilers.mk install-sdcc
+          echo "TCC"
+          find /usr -name 'tcc*'
+          echo "SDCC"
           find /usr -name 'sdcc*'
 
       - name: Configure

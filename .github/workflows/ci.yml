@@ -135,17 +135,16 @@ jobs:
         if: matrix.compiler.binary == 'sdcc'
         run: make -C make -f compilers.mk install-gputils install-sdcc
 
-      - name: Env
+      - name: Find Compiler
         run: |
-          echo "TCC"
-          find /usr -name 'tcc*'
-          echo "SDCC"
-          find /usr -name 'sdcc*'
+          # TCC is installed in /usr/local instead of /usr/local/bin for some reason
+          echo '/usr/local' >> $GITHUB_PATH
+          find /cygdrive/c/Program\ Files -name '${{ matrix.compiler.binary }}*'
 
       - name: Configure
         run: |
           ./configure -d \
-                      --cc '/cygdrive/c/Program Files/${{ matrix.compiler.binary }}' \
+                      --cc '${{ matrix.compiler.binary }}' \
                       ${{ matrix.unhosted-flag }} \
                       ${{ matrix.compiler.configure-flags }}
 

@@ -114,7 +114,18 @@ jobs:
       - name: Set up Cygwin
         uses: egor-tensin/setup-cygwin@v4
         with:
-          packages: clang gcc perl texinfo
+          packages: >-
+            binutils
+            bison
+            boost-build
+            clang
+            flex
+            gcc-g++
+            gettext
+            gettext-devel
+            libboost-devel
+            perl
+            texinfo
 
       - name: Install TCC if needed
         if: matrix.compiler.binary == 'tcc'
@@ -122,7 +133,7 @@ jobs:
 
       - name: Install SDCC if needed
         if: matrix.compiler.binary == 'sdcc'
-        run: make -C make -f compilers.mk install-sdcc
+        run: make -C make -f compilers.mk install-gputils install-sdcc
 
       - name: Env
         run: |
@@ -134,7 +145,7 @@ jobs:
       - name: Configure
         run: |
           ./configure -d \
-                      --cc=${{ matrix.compiler.binary }} \
+                      --cc '/cygdrive/c/Program Files/${{ matrix.compiler.binary }}' \
                       ${{ matrix.unhosted-flag }} \
                       ${{ matrix.compiler.configure-flags }}
 

@@ -76,7 +76,12 @@ else
 	WEXTRA_FLAG = -Wextra
 	WERROR_FLAG = -Werror
 	DEBUG_SYMBOLS_FLAG = -g
-	GENERIC_OPTIMIZATION_FLAG = -O2
+	ifeq ($(DEBUG_MODE),0)
+	    GENERIC_OPTIMIZATION_FLAG = -O2
+	else
+	    # No optimization
+	    GENERIC_OPTIMIZATION_FLAG = -O0
+	endif
 endif
 
 ifeq ($(DEBUG_MODE),1)

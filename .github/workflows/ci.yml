@@ -102,10 +102,10 @@ jobs:
             configure-flags: -t
           - binary: gcc
             configure-flags: ""
-          # - binary: tcc
-          #   configure-flags: -t
-          # - binary: sdcc
-          #   configure-flags: ""
+          - binary: tcc
+            configure-flags: -t
+          - binary: sdcc
+            configure-flags: ""
         unhosted-flag:
           - ""
           - "-u"
@@ -118,11 +118,15 @@ jobs:
 
       - name: Install TCC if needed
         if: matrix.compiler.binary == 'tcc'
-        run: make -C make -f compilers.mk install-tcc PREFIX=/usr
+        run: |
+          make -C make -f compilers.mk install-tcc
+          find /usr -name 'tcc*'
 
       - name: Install SDCC if needed
         if: matrix.compiler.binary == 'sdcc'
-        run: make -C make -f compilers.mk install-sdcc PREFIX=/usr
+        run: |
+          make -C make -f compilers.mk install-sdcc
+          find /usr -name 'sdcc*'
 
       - name: Configure
         run: |

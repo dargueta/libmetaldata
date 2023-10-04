@@ -139,7 +139,6 @@ jobs:
         run: |
           # TCC is installed in /usr/local instead of /usr/local/bin for some reason
           echo '/usr/local' >> $GITHUB_PATH
-          find /cygdrive/c/Program\ Files -name '${{ matrix.compiler.binary }}*'
 
       - name: Configure
         run: |

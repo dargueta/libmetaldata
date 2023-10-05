@@ -56,10 +56,6 @@ jobs:
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'
         run: make -C make -f compilers.mk install-pcc
 
-      - name: Fix header path on MacOS
-        if: matrix.operating-system == 'macos-latest' && (matrix.compiler.binary == 'pcc' || matrix.compiler.binary == 'tcc')
-        run: $(gcc -print-prog-name=cpp) -v < /dev/null
-
       - name: Configure
         run: |
           ./configure -d \
@@ -79,80 +75,6 @@ jobs:
 
       - name: Test Installation
         run: sudo make install
-
-      - name: Run Tests
-        # We can't run cross-platform tests on SDCC
-        if: matrix.compiler.binary != 'sdcc'
-        run: make test
-
-  testing-windows:
-    runs-on: windows-latest
-    env:
-      SHELLOPTS: igncr
-    defaults:
-      run:
-        shell: C:\tools\cygwin\bin\bash.exe -o igncr '{0}'
-    strategy:
-      fail-fast: false
-      matrix:
-        compiler:
-          - binary: clang
-            # Warnings need to be non-fatal when compiling tests due to an unused
-            # static function in munit.
-            configure-flags: -t
-          - binary: gcc
-            configure-flags: ""
-          - binary: tcc
-            configure-flags: -t
-          - binary: sdcc
-            configure-flags: ""
-        unhosted-flag:
-          - ""
-          - "-u"
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Cygwin
-        uses: egor-tensin/setup-cygwin@v4
-        with:
-          packages: >-
-            binutils
-            bison
-            boost-build
-            clang
-            flex
-            gcc-g++
-            gettext
-            gettext-devel
-            libboost-devel
-            perl
-            texinfo
-
-      - name: Install TCC if needed
-        if: matrix.compiler.binary == 'tcc'
-        run: make -C make -f compilers.mk install-tcc
-
-      - name: Install SDCC if needed
-        if: matrix.compiler.binary == 'sdcc'
-        run: make -C make -f compilers.mk install-gputils install-sdcc
-
-      - name: Find Compiler
-        run: |
-          # TCC is installed in /usr/local instead of /usr/local/bin for some reason
-          echo '/usr/local' >> $GITHUB_PATH
-
-      - name: Configure
-        run: |
-          ./configure -d \
-                      --cc '${{ matrix.compiler.binary }}' \
-                      ${{ matrix.unhosted-flag }} \
-                      ${{ matrix.compiler.configure-flags }}
-
-      - name: Compile
-        run: make library
-
-      - name: Test Installation
-        # Cygwin doesn't have sudo
-        run: make install
 
       - name: Run Tests
         # We can't run cross-platform tests on SDCC

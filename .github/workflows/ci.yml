@@ -18,18 +18,12 @@ jobs:
             configure-flags: ""
           - binary: tcc
             configure-flags: -t
-          - binary: sdcc
-            configure-flags: ""
           - binary: pcc
             configure-flags: -t
         unhosted-flag:
           - ""
           - "-u"
         exclude:
-          # SDCC has a bug in it on macOS that causes compilation to fail.
-          - operating-system: macos-latest
-            compiler:
-              binary: sdcc
           # TODO (dargueta): Figure out what to do about incompatible headers
           - operating-system: macos-latest
             compiler:
@@ -43,8 +37,8 @@ jobs:
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:
-          apt: mingw-w64 pcc sdcc tcc
-          brew: gcc sdcc
+          apt: clang mingw-w64 pcc tcc
+          brew: clang gcc
 
       # TCC can't be installed via Homebrew on recent versions of macOS because
       # of an "upstream incompatibility".
@@ -77,6 +71,38 @@ jobs:
         run: sudo make install
 
       - name: Run Tests
-        # We can't run cross-platform tests on SDCC
-        if: matrix.compiler.binary != 'sdcc'
         run: make test
+
+  testing-sdcc:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - mcs51
+          - z80
+          - z180
+          - r2k
+          - r2ka
+          - r3ka
+          - sm83
+          - tlcs90
+          - ez80_z80
+          - z80n
+          - ds390
+          - TININative
+          - ds400
+          - hc08
+          - s08
+          - stm8
+          - mos6502
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Compilers
+        uses: ConorMacBride/install-package@v1
+        with:
+          apt: sdcc
+      - name: Configure
+        run: ./configure --cc=sdcc
+      - name: Compile
+        run: make library MY_CFLAGS=-m${{ matrix.architecture }}

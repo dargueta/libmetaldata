@@ -96,17 +96,21 @@ HC08 (Motorola 68HC08) Y
 macOS ARM64            Y        Y
 MCS-51
 MOS 6502
+PDK13
+PDK14
+PDK15
 R2K
-R2KA
+R2KA                   NS
 R3KA
 S08                    Y
-SM83
+SM83                   NS
 STM8
 TININative
 TLCS 90
 x86-32
 z180
 z80
+z80n                   NS
 ====================== ======== ============
 
 Common Needs

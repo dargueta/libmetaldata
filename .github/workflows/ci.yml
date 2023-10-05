@@ -79,23 +79,26 @@ jobs:
       fail-fast: false
       matrix:
         architecture:
+          - ds390
+          - ds400
+          - ez80_z80
+          - hc08
           - mcs51
-          - z80
-          - z180
+          - mos6502
+          - pdk13
+          - pdk14
+          - pdk15
           - r2k
           - r2ka
           - r3ka
-          - sm83
-          - tlcs90
-          - ez80_z80
-          - z80n
-          - ds390
-          - TININative
-          - ds400
-          - hc08
           - s08
+          - sm83
           - stm8
-          - mos6502
+          - TININative
+          - tlcs90
+          - z180
+          - z80
+          - z80n
     steps:
       - uses: actions/checkout@v3
       - name: Install Compilers

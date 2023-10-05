@@ -82,6 +82,7 @@ jobs:
           - ds390
           - ds400
           - ez80_z80
+          - gbz80
           - hc08
           - mcs51
           - mos6502
@@ -104,7 +105,10 @@ jobs:
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:
-          apt: sdcc
+          apt: libboost-all-dev
+      - name: Install Compilers
+        # The version of SDCC in the APT repository is old
+        run: sudo make -C make -f compilers.mk install-gputils install-sdcc
       - name: Configure
         run: ./configure --cc=sdcc
       - name: Compile

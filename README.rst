@@ -91,25 +91,26 @@ Achitecture            Compiles Passes Tests
 AMD64 (x86-64)         Y        Y
 DS390                  Y
 DS400                  Y
-ez80-z80
+ez80-z80               Y
+GBZ80
 HC08 (Motorola 68HC08) Y
 macOS ARM64            Y        Y
-MCS-51
-MOS 6502
-PDK13
-PDK14
-PDK15
-R2K
+MCS-51                 Y
+MOS 6502               NS
+PDK13                  Y
+PDK14                  Y
+PDK15                  Y
+R2K                    Y
 R2KA                   NS
-R3KA
+R3KA                   Y
 S08                    Y
 SM83                   NS
-STM8
-TININative
-TLCS 90
+STM8                   Y
+TININative             NS [#]_
+TLCS 90                Y
 x86-32
-z180
-z80
+z180                   Y
+z80                    Y
 z80n                   NS
 ====================== ======== ============
 
@@ -155,7 +156,7 @@ Footnotes
 ---------
 
 .. [#] I used a cross-compiler here because my Cygwin  partition kicked the bucket.
-.. [#] PCC doesn't support Cygwin so I can't even install the compiler.
+.. [#] Triggers a bug in SDCC and crashes the compiler.
 
 .. _ACK: https://tack.sourceforge.net/
 .. _Clang: https://clang.llvm.org/

@@ -38,7 +38,7 @@ jobs:
         uses: ConorMacBride/install-package@v1
         with:
           apt: clang mingw-w64 pcc tcc
-          brew: clang gcc
+          brew: gcc
 
       # TCC can't be installed via Homebrew on recent versions of macOS because
       # of an "upstream incompatibility".

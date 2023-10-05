@@ -230,7 +230,9 @@
 #    define MDL_ANNOTN__RETURNS_NONNULL
 #endif
 
-#ifdef __SDCC
+#if defined(__SDCC_ds390) || defined(__SDCC_ds400) || defined(__SDCC_hc08) ||            \
+    defined(__SDCC_mcs51) || defined(__SDCC_s08) || defined(__SDCC_pdk13) ||             \
+    defined(__SDCC_pdk14) || defined(__SDCC_pdk15)
 #    define MDL_REENTRANT_MARKER __reentrant
 #else
 #    define MDL_REENTRANT_MARKER

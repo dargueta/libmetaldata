@@ -72,9 +72,7 @@ Legend:
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Yw         | Y        | Yw         |
 +-----------------+----------+----------+------------+----------+------------+
-| SDCC_           | MacOS    | NS [#]_                                       |
-|                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y        | NS         | Y        | NS         |
+| SDCC_           | See below for the list of architectures this compiles for|
 +-----------------+----------+----------+------------+----------+------------+
 | TCC_            | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
@@ -82,6 +80,34 @@ Legend:
 +-----------------+----------+----------+------------+----------+------------+
 | Visual Studio   | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
+
+The following architectures are tested. SDCC is the only toolchain that can be
+used for most of these, and actual tests can't run on those because there's no
+way to test the hardware.
+
+====================== ======== ============
+Achitecture            Compiles Passes Tests
+====================== ======== ============
+AMD64 (x86-64)         Y        Y
+DS390                  Y
+DS400                  Y
+ez80-z80
+HC08 (Motorola 68HC08) Y
+macOS ARM64            Y        Y
+MCS-51
+MOS 6502
+R2K
+R2KA
+R3KA
+S08                    Y
+SM83
+STM8
+TININative
+TLCS 90
+x86-32
+z180
+z80
+====================== ======== ============
 
 Common Needs
 ~~~~~~~~~~~~
@@ -125,7 +151,6 @@ Footnotes
 ---------
 
 .. [#] I used a cross-compiler here because my Cygwin  partition kicked the bucket.
-.. [#] On macOS compiler has a bug in it that causes a crash.
 .. [#] PCC doesn't support Cygwin so I can't even install the compiler.
 
 .. _ACK: https://tack.sourceforge.net/

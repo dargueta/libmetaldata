@@ -102,13 +102,13 @@ jobs:
           - z80n
     steps:
       - uses: actions/checkout@v3
-      - name: Install Compilers
+      - name: Install Dependencies
         uses: ConorMacBride/install-package@v1
         with:
           apt: libboost-all-dev
-      - name: Install Compilers
-        # The version of SDCC in the APT repository is old
-        run: sudo make -C make -f compilers.mk install-gputils install-sdcc
+      - name: Install SDCC
+        # The version of SDCC in the APT repository is old so we have to do it ourselves.
+        run: sudo make -C make -f compilers.mk install-sdcc
       - name: Configure
         run: ./configure --cc=sdcc
       - name: Compile

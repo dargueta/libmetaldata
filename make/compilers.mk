@@ -8,11 +8,17 @@ TCC_URL = http://download-mirror.savannah.gnu.org/releases/tinycc/tcc-$(TCC_VERS
 PCC_URL = http://pcc.ludd.ltu.se/ftp/pub/pcc/pcc-current.tgz
 SDCC_URL = https://versaweb.dl.sourceforge.net/project/sdcc/sdcc/$(SDCC_VERSION)/sdcc-src-$(SDCC_VERSION).tar.bz2
 GPUTILS_URL = https://cfhcable.dl.sourceforge.net/project/gputils/gputils/1.5.0/gputils-$(GPUTILS_VERSION).tar.bz2
-DOWNLOAD_DIR = __libmetaldata_install_downloads__
 PREFIX = /usr/local
 TCC_BIN = $(PREFIX)/bin/tcc
 PCC_BIN = $(PREFIX)/bin/pcc
 SDCC_BIN = $(PREFIX)/bin/sdcc
+GPUTILS_DIR = $(PREFIX)/share/gputils
+
+DOWNLOAD_DIR_BASE = /tmp/libmetaldata_install_downloads
+TCC_DOWNLOAD_DIR = $(DOWNLOAD_DIR_BASE)/tcc
+PCC_DOWNLOAD_DIR = $(DOWNLOAD_DIR_BASE)/pcc
+SDCC_DOWNLOAD_DIR = $(DOWNLOAD_DIR_BASE)/sdcc
+GPUTILS_DOWNLOAD_DIR = $(DOWNLOAD_DIR_BASE)/gputils
 
 # Systems that don't have sudo, like Cygwin, will have an empty string. We use
 # /usr/bin/which to avoid shell builtins that may emit an error message when a
@@ -31,43 +37,45 @@ endif
 
 .PHONY: install-tcc
 install-tcc: $(TCC_BIN)
-	$(RM) -r $(DOWNLOAD_DIR)
+	$(RM) -r $(TCC_DOWNLOAD_DIR)
 
 
 .PHONY: install-pcc
 install-pcc: $(PCC_BIN)
-	$(RM) -r $(DOWNLOAD_DIR)
+	$(RM) -r $(PCC_DOWNLOAD_DIR)
 
 
 .PHONY: install-sdcc
 install-sdcc: $(SDCC_BIN)
-	$(RM) -r $(DOWNLOAD_DIR)
+	$(RM) -r $(SDCC_DOWNLOAD_DIR)
 
 
 .PHONY: install-gputils
-install-gputils: $(DOWNLOAD_DIR)
+install-gputils: $(GPUTILS_DIR)
+	$(RM) -r $(GPUTILS_DOWNLOAD_DIR)
+
+
+$(GPUTILS_DIR): $(GPUTILS_DOWNLOAD_DIR)
 	cd $< && curl -sS $(GPUTILS_URL) | tar -xj --strip-components=1
 	cd $< && ./configure $(CONFIGURE_ARGS)
 	$(MAKE) -C $<
 	$(SUDO) $(MAKE) -C $< install
-	$(RM) -r $(DOWNLOAD_DIR)
 
-
-$(TCC_BIN): $(DOWNLOAD_DIR)
+$(TCC_BIN): $(TCC_DOWNLOAD_DIR)
 	cd $< && curl -sS $(TCC_URL) | tar -xj --strip-components=1
 	cd $< && ./configure --prefix=$(PREFIX) $(CONFIGURE_ARGS)
 	$(MAKE) -C $<
 	$(SUDO) $(MAKE) -C $< install
 
 
-$(PCC_BIN): $(DOWNLOAD_DIR)
+$(PCC_BIN): $(PCC_DOWNLOAD_DIR)
 	cd $< && curl -sS $(PCC_URL) | tar -xz --strip-components=1
 	cd $< && ./configure --prefix=$(PREFIX) $(CONFIGURE_ARGS)
 	$(MAKE) -C $<
 	$(SUDO) $(MAKE) -C $< install
 
 
-$(SDCC_BIN): $(DOWNLOAD_DIR)
+$(SDCC_BIN): $(SDCC_DOWNLOAD_DIR) $(GPUTILS_DIR)
 	cd $< && curl -sS $(SDCC_URL) | tar -xj --strip-components=1
 	cd $< && $(SDCC_CONFIG_COMMAND) --prefix=$(PREFIX) $(CONFIGURE_ARGS)
 	$(MAKE) -C $<
@@ -82,5 +90,5 @@ show-env:
 	-find /usr -name 'stddef.h' -type f
 
 
-$(DOWNLOAD_DIR):
+$(TCC_DOWNLOAD_DIR) $(PCC_DOWNLOAD_DIR) $(SDCC_DOWNLOAD_DIR) $(GPUTILS_DOWNLOAD_DIR):
 	mkdir -p $@

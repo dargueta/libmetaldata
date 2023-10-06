@@ -58,7 +58,7 @@ install-gputils: $(GPUTILS_DIR)
 $(GPUTILS_DIR): $(GPUTILS_DOWNLOAD_DIR)
 	cd $< && curl -sS $(GPUTILS_URL) | tar -xj --strip-components=1
 	cd $< && ./configure $(CONFIGURE_ARGS)
-	$(MAKE) -j 8 -C $<
+	$(MAKE) -C $<
 	$(SUDO) $(MAKE) -C $< install
 
 
@@ -79,7 +79,7 @@ $(PCC_BIN): $(PCC_DOWNLOAD_DIR)
 $(SDCC_BIN): $(SDCC_DOWNLOAD_DIR) $(GPUTILS_DIR)
 	cd $< && curl -sS $(SDCC_URL) | tar -xj --strip-components=1
 	cd $< && $(SDCC_CONFIG_COMMAND) --prefix=$(PREFIX) $(CONFIGURE_ARGS)
-	$(MAKE) -j 8 -C $<
+	$(MAKE) -C $<
 	$(SUDO) $(MAKE) -C $< install
 
 

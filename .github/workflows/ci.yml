@@ -111,43 +111,43 @@ jobs:
       - name: Install Dependencies
         uses: ConorMacBride/install-package@v1
         with:
-          apt: libboost-all-dev
-      # Building SDCC and gputils takes 35-45sm, so we need to cache it.
-      - name: Restore SDCC from Cache
-        id: cache-sdcc-restore
-        uses: actions/cache/restore@v3
-        with:
-          path: |
-            /usr/local/bin/as2gbmap
-            /usr/local/bin/gpasm
-            /usr/local/bin/gpdasm
-            /usr/local/bin/gplink
-            /usr/local/bin/sdas*
-            /usr/local/bin/sdcc
-            /usr/local/bin/sdld*
-            /usr/local/share/gputils
-          key: ${{ runner.os }}-sdcc
-      # The version of SDCC in the APT repository is old, so we have to install
-      # it ourselves.
-      - name: Install SDCC
-        if: steps.cache-sdcc-restore.outputs.cache-hit != 'true'
-        run: sudo make -C make -f compilers.mk install-sdcc
-
-      - name: Cache SDCC
-        id: cache-sdcc-save
-        uses: actions/cache/save@v3
-        with:
-          # This must be the same as the restore
-          path: |
-            /usr/local/bin/as2gbmap
-            /usr/local/bin/gpasm
-            /usr/local/bin/gpdasm
-            /usr/local/bin/gplink
-            /usr/local/bin/sdas*
-            /usr/local/bin/sdcc
-            /usr/local/bin/sdld*
-            /usr/local/share/gputils
-          key: ${{ steps.cache-sdcc-restore.outputs.cache-primary-key }}
+          apt: libboost-all-dev sdcc
+#      # Building SDCC and gputils takes 35-45sm, so we need to cache it.
+#      - name: Restore SDCC from Cache
+#        id: cache-sdcc-restore
+#        uses: actions/cache/restore@v3
+#        with:
+#          path: |
+#            /usr/local/bin/as2gbmap
+#            /usr/local/bin/gpasm
+#            /usr/local/bin/gpdasm
+#            /usr/local/bin/gplink
+#            /usr/local/bin/sdas*
+#            /usr/local/bin/sdcc
+#            /usr/local/bin/sdld*
+#            /usr/local/share/gputils
+#          key: ${{ runner.os }}-sdcc
+#      # The version of SDCC in the APT repository is old, so we have to install
+#      # it ourselves.
+#      - name: Install SDCC
+#        if: steps.cache-sdcc-restore.outputs.cache-hit != 'true'
+#        run: sudo make -C make -f compilers.mk install-sdcc
+#
+#      - name: Cache SDCC
+#        id: cache-sdcc-save
+#        uses: actions/cache/save@v3
+#        with:
+#          # This must be the same as the restore
+#          path: |
+#            /usr/local/bin/as2gbmap
+#            /usr/local/bin/gpasm
+#            /usr/local/bin/gpdasm
+#            /usr/local/bin/gplink
+#            /usr/local/bin/sdas*
+#            /usr/local/bin/sdcc
+#            /usr/local/bin/sdld*
+#            /usr/local/share/gputils
+#          key: ${{ steps.cache-sdcc-restore.outputs.cache-primary-key }}
       - name: Configure
         run: ./configure --cc=sdcc
       - name: Compile

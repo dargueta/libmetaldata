@@ -23,6 +23,10 @@ jobs:
         unhosted-flag:
           - ""
           - "-u"
+        include:
+          - operating-system: ubuntu-latest
+            compiler:
+              binary: x86_64-w64-mingw32-gcc
         exclude:
           # TODO (dargueta): Figure out what to do about incompatible headers
           - operating-system: macos-latest
@@ -37,8 +41,8 @@ jobs:
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:
-          apt: clang mingw-w64 pcc tcc
-          brew: gcc
+          apt: clang gcc-mingw-w64 pcc tcc
+          brew: gcc mingw-w64
 
       # TCC can't be installed via Homebrew on recent versions of macOS because
       # of an "upstream incompatibility".
@@ -108,7 +112,7 @@ jobs:
         uses: ConorMacBride/install-package@v1
         with:
           apt: libboost-all-dev
-      # Building SDCC and gputils takes >20m, so we need to cache it.
+      # Building SDCC and gputils takes 35-45sm, so we need to cache it.
       - name: Restore SDCC from Cache
         id: cache-sdcc-restore
         uses: actions/cache/restore@v3

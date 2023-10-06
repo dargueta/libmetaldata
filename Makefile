@@ -70,7 +70,7 @@ else ifeq ($(USE_MINIMAL_FLAGS),1)
 else
 	C_STANDARD_FLAG = -std=c99
 	NOSTDLIB_FLAG = -nostdlib
-	BASE_WARNING_FLAGS = -Wall -Wextra -Wpedantic
+	BASE_WARNING_FLAGS = -Wall -Wextra
 	WERROR_FLAG = -Werror
 	DEBUG_SYMBOLS_FLAG = -g
 	ifeq ($(DEBUG_MODE),0)

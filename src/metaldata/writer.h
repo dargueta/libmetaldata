@@ -45,20 +45,18 @@ MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD
 MDL_ANNOTN__ACCESS_SIZED(read_only, 2, 3)
-MDLWriter *mdl_writer_newfrombuffer(MDLState *restrict ds, void *restrict buffer,
-                                    size_t size);
+MDLWriter *mdl_writer_newfrombuffer(MDLState *ds, void *buffer, size_t size);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-void mdl_writer_init(MDLState *restrict ds, MDLWriter *restrict writer,
-                     mdl_writer_putc_fptr putc_ptr, mdl_writer_close_fptr close_ptr,
-                     void *udata);
+void mdl_writer_init(MDLState *ds, MDLWriter *writer, mdl_writer_putc_fptr putc_ptr,
+                     mdl_writer_close_fptr close_ptr, void *udata);
 
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__ACCESS_SIZED(write_only, 3, 4)
-void mdl_writer_initfrombuffer(MDLState *restrict ds, MDLWriter *restrict writer,
-                               void *restrict buffer, size_t size);
+void mdl_writer_initfrombuffer(MDLState *ds, MDLWriter *writer, void *buffer,
+                               size_t size);
 
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -75,6 +73,6 @@ int mdl_writer_putc(MDLWriter *writer, int chr);
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__ACCESS_SIZED(read_only, 2, 3)
-size_t mdl_writer_write(MDLWriter *restrict writer, const void *data, size_t size);
+size_t mdl_writer_write(MDLWriter *writer, const void *data, size_t size);
 
 #endif /* INCLUDE_METALDATA_WRITER_H_ */

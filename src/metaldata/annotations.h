@@ -242,11 +242,6 @@
 #    define MDL_ANNOTN__UNAVAILABLE(m)
 #endif
 
-/* Because this header only contains preprocessor directives, once processed it's an empty
- * file. Some compilers treat this as a violation of ISO C and will fail the build, so
- * we need to mollify them with something fake. */
-void mdl_unimplementedfakefunctiondonotuse(void);
-
 /**
  * @def MDL_API
  *

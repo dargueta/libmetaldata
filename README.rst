@@ -38,7 +38,6 @@ Legend:
 
 * Y: Full support
 * NS: Not supported for technical reasons
-* w: Requires compiling tests with non-fatal warnings (pass ``-t`` to ``configure``)
 * m: Requires compiling with minimal flags (pass ``-m`` to ``configure``)
 
 +-----------------+----------+-----------------------+-----------------------+
@@ -70,13 +69,13 @@ Legend:
 +-----------------+----------+----------+------------+----------+------------+
 | PCC_            | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y        | Yw         | Y        | Yw         |
+|                 | Linux    | Y        | Y          | Y        | Y          |
 +-----------------+----------+----------+------------+----------+------------+
 | SDCC_           | See below for the list of architectures this compiles for|
 +-----------------+----------+----------+------------+----------+------------+
 | TCC_            | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y        | Yt         | Y        | Yt         |
+|                 | Linux    | Y        | Y          | Y        | Y          |
 +-----------------+----------+----------+------------+----------+------------+
 | Visual Studio   | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
@@ -122,12 +121,12 @@ Here is a quick reference for needs you may encounter:
 Installing to a specific directory
 **********************************
 
-Everything is installed relative to ``/usr/share`` on *NIX systems, including
-Cygwin. You can change where the files are installed in one of two ways, either
-when you're configuring or when running ``make install``:
+By default, everything is installed relative to ``/usr/share`` on *NIX systems,
+including Cygwin. You can change where the files are installed during configuration:
 
-* ``./configure -i path/to/directory``
-* ``make install PREFIX=path/to/directory``
+.. code-block:: sh
+
+    ./configure --prefix=path/to/directory
 
 The directory will be created if it doesn't already exist. The structure of the
 directory follows the typical Unix convention, namely:
@@ -155,7 +154,7 @@ This uses `µunit <https://nemequ.github.io/munit>`_ for running tests.
 Footnotes
 ---------
 
-.. [#] I used a cross-compiler here because my Cygwin  partition kicked the bucket.
+.. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
 .. [#] Requires SDCC 4.3+
 .. [#] Triggers a bug in SDCC and crashes the compiler.
 

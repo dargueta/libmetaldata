@@ -101,13 +101,10 @@ else
         # No fatal warnings at all
         BUILD_WARNING_FLAGS = $(BASE_WARNING_FLAGS)
         TEST_WARNING_FLAGS = $(BUILD_WARNING_FLAGS)
-    else ifeq ($(NO_FATAL_TEST_WARNINGS),1)
-        # No fatal warnings only when building tests.
+    else
+        # Warnings are fatal except when building tests.
         BUILD_WARNING_FLAGS = $(BASE_WARNING_FLAGS) $(WERROR_FLAG)
         TEST_WARNING_FLAGS = $(BASE_WARNING_FLAGS)
-    else
-        BUILD_WARNING_FLAGS = $(BASE_WARNING_FLAGS) $(WERROR_FLAG)
-        TEST_WARNING_FLAGS = $(BUILD_WARNING_FLAGS)
     endif
 endif
 

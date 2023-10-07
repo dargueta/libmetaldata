@@ -42,8 +42,6 @@ General-Purpose Flags
     Unhosted mode -- do not use the C standard library. Functions such as strcmp
     will use compiler intrinsics if possible, or otherwise fall back to naive
     implementations. The default memory allocator won't be available at all.
--t | --no-fatal-test-warnings
-    Make warnings not fatal, but *only* when compiling tests.
 -w | --no-fatal-warnings
     Make warnings never fatal, neither when compiling the library nor when
     compiling the tests.
@@ -91,7 +89,6 @@ while [ -n "$1" ]; do
         exit 1
       fi
       ;;
-    -t | --no-fatal-test-warnings ) no_fatal_test_warnings=1 ;;
     -u | --unhosted ) unhosted=1 ;;
     -w | --no-fatal-warnings ) no_fatal_warnings=1 ;;
     * )
@@ -132,7 +129,6 @@ echo "Debug    : $(int_to_yesno $debug)"
 echo "Unhosted : $(int_to_yesno $unhosted)"
 echo "Compiler override  : $cc"
 echo "Non-fatal warnings : $(int_to_yesno $no_fatal_warnings)"
-echo "Non-fatal test warnings : $(int_to_yesno $no_fatal_test_warnings)"
 echo
 echo "Install Targets"
 echo "---------------"
@@ -159,7 +155,6 @@ VERSION_PATCH=$PATCH
 VERSION_FULL=\$(VERSION_MAJOR).\$(VERSION_MINOR).\$(VERSION_PATCH)
 USE_MINIMAL_FLAGS=$minimal_flags
 NO_FATAL_WARNINGS=$no_fatal_warnings
-NO_FATAL_TEST_WARNINGS=$no_fatal_test_warnings
 $compiler_override
 EOF
 

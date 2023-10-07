@@ -17,9 +17,9 @@ jobs:
           - binary: gcc
             configure-flags: ""
           - binary: tcc
-            configure-flags: -t
+            configure-flags: ""
           - binary: pcc
-            configure-flags: -t
+            configure-flags: ""
         unhosted-flag:
           - ""
           - "-u"

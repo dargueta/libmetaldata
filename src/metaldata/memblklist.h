@@ -62,10 +62,35 @@ struct MDLMemBlkListNode_
  */
 struct MDLMemBlkList_
 {
+    /** The MetalData state. */
     MDLState *ds;
+
+    /** The size of a list element's memory block, in bytes. */
     size_t elem_size;
+
+    /**
+     * A pointer to the first node in the list.
+     *
+     * This is always allocated, even if the list is empty. It simplifies the code by
+     * not making us check for a null pointer all the time.
+     */
     MDLMemBlkListNode *head;
+
+    /**
+     * The number of elements in the list.
+     *
+     * Note, this is not necessarily the number of nodes allocated. It's only the length
+     * of the list as far as the user is concerned. As mentioned above, @ref head is
+     * always allocated, even if the list is empty.
+     */
     size_t length;
+
+    /**
+     * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon
+     * destruction. Having this explicitly specified allows users call
+     * @ref mdl_memblklist_destroy on a list, regardless of whether it was statically
+     * allocated or not.
+     */
     bool was_allocated;
 };
 
@@ -74,7 +99,14 @@ struct MDLMemBlkListIterator_
     MDLMemBlkListNode *current;
     MDLMemBlkListNode *end;
     MDLMemBlkList *list;
-    int reverse;
+    bool reverse;
+
+    /**
+     * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon
+     * destruction. Having this explicitly specified allows users call
+     * @ref mdl_memblklistiter_destroy on a list, regardless of whether it was statically
+     * allocated or not.
+     */
     bool was_allocated;
 };
 
@@ -222,6 +254,13 @@ MDL_API
 MDL_ANNOTN__NONNULL
 void *mdl_memblklist_pushfrontcopy(MDLMemBlkList *list, const void *data);
 
+/**
+ * Remove the element at the front of the list.
+ *
+ * @param list The list to operate on.
+ *
+ * @return @ref MDL_OK on success, @ref MDL_ERROR_EMPTY if the list is empty.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklist_popfront(MDLMemBlkList *list);

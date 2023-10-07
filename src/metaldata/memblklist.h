@@ -394,14 +394,14 @@ int mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value,
  * Rotate the list forward or backward without copying any data.
  *
  * A positive number rotates the head of of the list forward, toward higher indexes. That
- * is to say, rotating by +1 replaces `list[0]` with `list[1]`, `list[1]` with `list[2]`,
- * etc.
+ * is to say, rotating by +1 moves `list[x]` to `list[x+1]`. The final element of the list
+ * moves to index 0.
  *
- * A negative number rotates the list backwards. Rotating a list of size @e N by -1
- * replaces `list[0]` with `list[N]`, `list[1]` with `list[0]`, etc.
+ * A negative number rotates the list in the opposite direction. Rotating a list by -1
+ * moves `list[x]` to `list[x-1]`, and `list[0]` moves to the end.
  *
  * @param list The list to operate on.
- * @param places The number of elements to rotate.
+ * @param places The number of places to rotate.
  *
  * @return 0 on success, @ref MDL_ERROR_EMPTY if the list is empty.
  */

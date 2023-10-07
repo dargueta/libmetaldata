@@ -38,7 +38,7 @@ Legend:
 
 * Y: Full support
 * NS: Not supported for technical reasons
-* w: Requires compiling with non-fatal warnings flag (pass ``-w`` to ``configure``)
+* w: Requires compiling tests with non-fatal warnings (pass ``-t`` to ``configure``)
 * m: Requires compiling with minimal flags (pass ``-m`` to ``configure``)
 
 +-----------------+----------+-----------------------+-----------------------+
@@ -76,7 +76,7 @@ Legend:
 +-----------------+----------+----------+------------+----------+------------+
 | TCC_            | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y        | Yw         | Y        | Yw         |
+|                 | Linux    | Y        | Yt         | Y        | Yt         |
 +-----------------+----------+----------+------------+----------+------------+
 | Visual Studio   | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
@@ -96,7 +96,7 @@ GBZ80
 HC08 (Motorola 68HC08) Y
 macOS ARM64            Y        Y
 MCS-51                 Y
-MOS 6502               NS
+MOS 6502               NS [#]_
 PDK13                  Y
 PDK14                  Y
 PDK15                  Y
@@ -156,6 +156,7 @@ Footnotes
 ---------
 
 .. [#] I used a cross-compiler here because my Cygwin  partition kicked the bucket.
+.. [#] Requires SDCC 4.3+
 .. [#] Triggers a bug in SDCC and crashes the compiler.
 
 .. _ACK: https://tack.sourceforge.net/

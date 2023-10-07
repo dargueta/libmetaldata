@@ -10,12 +10,18 @@
 #    define MDL_DEFAULT_INITIAL_BUCKETS 7
 #endif
 
+/**
+ * A pointer to a key-hashing function.
+ */
 typedef unsigned (*mdl_hash_fptr)(const void *what, size_t size);
 
 typedef struct MDLMapNode_
 {
-    const void *key;
-    const void *value;
+    const void *key;   /**< A pointer to the key for this map entry. */
+    const void *value; /**< A pointer to the value of this map entry. */
+    /**
+     * A pointer to the next entry in this bucket, or NULL if it's the last one.
+     */
     struct MDLMapNode_ *next_node;
 } MDLMapNode;
 
@@ -23,8 +29,8 @@ typedef struct MDLMapBucket_
 {
     /** The number of allocated slots in the bucket.
      *
-     * When an item is removed from the map, to avoid reallocation the node is
-     * removed from the list and placed at the end.
+     * When an item is removed from the map, to avoid reallocation the node is removed
+     * from the list and placed at the end. A certain number of nodes are
      */
     size_t n_elements;
     MDLMapNode head;
@@ -36,6 +42,7 @@ typedef struct MDLMap_
     size_t n_buckets;
     MDLMapBucket *buckets;
     mdl_hash_fptr hash_fn;
+    mdl_comparator_fptr key_cmp;
 } MDLMap;
 
 typedef MDLMap MDLStrMap;

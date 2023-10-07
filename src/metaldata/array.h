@@ -27,6 +27,13 @@ typedef struct MDLArray_
     MDLMemBlkList block_list;
     size_t length;
     mdl_destructor_fptr elem_destructor;
+
+    /**
+     * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon
+     * destruction. Having this explicitly specified allows users call
+     * @ref mdl_array_destroy on an array, regardless of whether it was statically
+     * allocated or not.
+     */
     bool was_allocated;
 } MDLArray;
 
@@ -35,6 +42,13 @@ typedef struct MDLArrayIterator_
     MDLArray *array;
     MDLMemBlkListIterator block_iterator;
     size_t block_element_index;
+
+    /**
+     * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon
+     * destruction. Having this explicitly specified allows users call
+     * @ref mdl_arrayiter_destroy on an iterator, regardless of whether it was statically
+     * allocated or not.
+     */
     bool was_allocated;
 } MDLArrayIterator;
 
@@ -47,7 +61,6 @@ typedef struct MDLArrayIterator_
  * @param ds
  * @param elem_size
  * @param elem_destructor
- * @param elem_comparator
  * @return
  *
  * @see mdl_array_init
@@ -68,7 +81,6 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor);
  *
  * @param ds
  * @param array The array to initialize.
- * @param elem_comparator
  * @param elem_destructor
  *
  * @return 0 on success, an error code otherwise.
@@ -82,7 +94,7 @@ int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destr
 /**
  * Destroy a array.
  *
- * @param deq
+ * @param array
  * @return
  */
 MDL_API
@@ -90,11 +102,11 @@ MDL_ANNOTN__NONNULL
 int mdl_array_destroy(MDLArray *array);
 
 /**
- * Return the length of the queue.
+ * Return the length of the array.
  *
- * @param deq The queue to examine.
+ * @param array The array to examine.
  *
- * @return The length of the queue.
+ * @return The number of elements in the array.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -116,7 +128,7 @@ MDL_ANNOTN__NONNULL
 int mdl_array_head(const MDLArray *array, void **item);
 
 /**
- * Get the last data in the array.
+ * Get the last element in the array.
  *
  * @param array The array to operate on.
  * @param item A pointer to where the array data's value will be stored.
@@ -141,9 +153,9 @@ MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_array_push(MDLArray *array, void *item);
 
 /**
- * Remove an item from the end of the queue.
+ * Remove an item from the end of the array.
  *
- * @param deq
+ * @param array
  * @param item
  * @return
  */
@@ -161,11 +173,11 @@ int mdl_array_popfront(MDLArray *array, void **item);
 
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_array_get(const MDLArray *array, int index, void **value);
+int mdl_array_getat(const MDLArray *array, int index, void **value);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-int mdl_array_set(MDLArray *array, int index, void *new_value);
+int mdl_array_setat(MDLArray *array, int index, void *new_value);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
@@ -176,9 +188,9 @@ MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_array_removeat(MDLArray *array, int index, void **value);
 
 /**
- * Remove all items in the queue.
+ * Remove all items in the array.
  *
- * @param deq The queue to operate on.
+ * @param array The array to operate on.
  * @return
  */
 MDL_API
@@ -186,9 +198,9 @@ MDL_ANNOTN__NONNULL
 void mdl_array_clear(MDLArray *array);
 
 /**
- * Search the queue for the first data matching @a value.
+ * Search the array for the first data matching @a value.
  *
- * @param deq
+ * @param array
  * @param value
  *
  * @return The absolute index of the first matching data found, or a negative
@@ -199,9 +211,9 @@ MDL_ANNOTN__NONNULL_ARGS(1, 3)
 int mdl_array_find(const MDLArray *array, const void *value, mdl_comparator_fptr cmp);
 
 /**
- * Like @ref mdl_array_find except this searches the queue back to front.
+ * Like @ref mdl_array_find except this searches the array back to front.
  *
- * @param deq
+ * @param array
  * @param value
  * @return
  */

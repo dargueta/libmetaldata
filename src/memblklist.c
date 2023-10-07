@@ -363,15 +363,14 @@ MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list, boo
     return iter;
 }
 
-int mdl_memblklist_inititerator(const MDLMemBlkList *list,
-                                MDLMemBlkListIterator *iterator, bool reverse)
+void mdl_memblklist_inititerator(const MDLMemBlkList *list,
+                                 MDLMemBlkListIterator *iterator, bool reverse)
 {
 
     iterator->current = list->head;
     iterator->reverse = reverse;
     iterator->end = iterator->current->prev;
     iterator->was_allocated = false;
-    return 0;
 }
 
 void *mdl_memblklistiter_get(MDLMemBlkListIterator *iter)
@@ -382,7 +381,7 @@ void *mdl_memblklistiter_get(MDLMemBlkListIterator *iter)
 int mdl_memblklistiter_next(MDLMemBlkListIterator *iter)
 {
     if (!mdl_memblklistiter_hasnext(iter))
-        return MDL_ERROR_EMPTY;
+        return MDL_EOF;
 
     if (iter->reverse)
         iter->current = iter->current->prev;

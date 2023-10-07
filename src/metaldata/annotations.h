@@ -8,6 +8,8 @@
 #ifndef INCLUDE_METALDATA_ANNOTATIONS_H_
 #define INCLUDE_METALDATA_ANNOTATIONS_H_
 
+/* This assumes that if __GNUC__ is defined, __GNUC_MINOR__ and __GNUC_PATCHLEVEL__ are
+ * also defined. It's not exactly a safe assumption, but it's safe enough... Right? */
 #ifdef __GNUC__
 #    define MINIMUM_GNU_VERSION(major, minor, patch)                                     \
         ((__GNUC__ > (major)) || (__GNUC__ == (major) && (__GNUC_MINOR__ > (minor))) ||  \
@@ -17,9 +19,9 @@
 #    define MINIMUM_GNU_VERSION(major, minor, patch) (0)
 #endif
 
-/* First, try using built-in C2x standard attributes. We need to put this behind
- * a version guard because GCC's preprocessor expands these even when compiling for an
- * earlier standard. The result is a syntax error. */
+/* First, try using built-in C2x standard attributes. We need to put this behind a version
+ * guard because GCC's preprocessor expands these even when compiling for an earlier
+ * standard. The result is a syntax error. */
 #ifdef __STDC_VERSION__
 #    if __STDC_VERSION__ >= 201904L
 #        ifdef __has_c_attribute
@@ -96,10 +98,6 @@
 #        define MDL_ANNOTN__NONNULL GNU_ATTRIBUTE(nonnull)
 #        define MDL_ANNOTN__NONNULL_ARGS(...) GNU_ATTRIBUTE(nonnull(__VA_ARGS__))
 #    endif
-
-#    if __has_attribute(unavailable)
-#        define MDL_ANNOTN__UNAVAILABLE(x) GNU_ATTRIBUTE(unavailable(x))
-#    endif
 #elif defined(__GNUC__)
 /* GCC versions that don't have __has_attribute(), non-Windows ICC, TCC... */
 #    define MDL_API GNU_ATTRIBUTE(visibility("default"))
@@ -134,10 +132,6 @@
 
 #    if !defined(MDL_FALLTHROUGH_MARKER)
 #        define MDL_FALLTHROUGH_MARKER GNU_ATTRIBUTE(fallthrough)
-#    endif
-
-#    if !defined(MDL_ANNOTN__UNAVAILABLE) && !defined(__PCC__)
-#        define MDL_ANNOTN__UNAVAILABLE(x) GNU_ATTRIBUTE(unavailable(x))
 #    endif
 #endif
 
@@ -236,10 +230,6 @@
 #    define MDL_REENTRANT_MARKER __reentrant
 #else
 #    define MDL_REENTRANT_MARKER
-#endif
-
-#ifndef MDL_ANNOTN__UNAVAILABLE
-#    define MDL_ANNOTN__UNAVAILABLE(m)
 #endif
 
 /**

@@ -422,8 +422,8 @@ MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list,
                                                   bool reverse);
 
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_inititerator(const MDLMemBlkList *list,
-                                MDLMemBlkListIterator *iterator, bool reverse);
+void mdl_memblklist_inititerator(const MDLMemBlkList *list,
+                                 MDLMemBlkListIterator *iterator, bool reverse);
 
 MDL_ANNOTN__NONNULL
 void *mdl_memblklistiter_get(MDLMemBlkListIterator *iter);

@@ -18,6 +18,11 @@
         "/" #name, name##_tests, NULL, 1, MUNIT_SUITE_OPTION_NONE                        \
     }
 
+#define SUITE_END_SENTINEL                                                               \
+    {                                                                                    \
+        NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL                             \
+    }
+
 static void *test_setup(const MunitParameter params[], void *user_data)
 {
     (void)params, (void)user_data;
@@ -40,10 +45,10 @@ import_test(reader, buffer_getc_initially_empty);
 import_test(reader, buffer_unget_at_eof);
 import_test(reader, buffer_unget_at_sof);
 import_test(reader, buffer_unget_empty_buffer);
+import_test(writer, buffer_init_static);
 
-static MunitTest memblklist_tests[] = {
-    define_plain_test_case(memblklist, length_zero),
-    {NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}};
+static MunitTest memblklist_tests[] = {define_plain_test_case(memblklist, length_zero),
+                                       SUITE_END_SENTINEL};
 
 static MunitTest reader_tests[] = {
     define_plain_test_case(reader, buffer_init_static),
@@ -53,10 +58,15 @@ static MunitTest reader_tests[] = {
     define_plain_test_case(reader, buffer_unget_at_eof),
     define_plain_test_case(reader, buffer_unget_at_sof),
     define_plain_test_case(reader, buffer_unget_empty_buffer),
-    {NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}};
+    SUITE_END_SENTINEL};
 
-static MunitSuite all_subsuites[] = {
-    define_test_suite(memblklist), define_test_suite(reader), {.prefix = NULL}};
+static MunitTest writer_tests[] = {define_plain_test_case(writer, buffer_init_static),
+                                   SUITE_END_SENTINEL};
+
+static MunitSuite all_subsuites[] = {define_test_suite(memblklist),
+                                     define_test_suite(reader),
+                                     define_test_suite(writer),
+                                     {.prefix = NULL}};
 
 static const MunitSuite suite = {"", NULL, all_subsuites, 1, MUNIT_SUITE_OPTION_NONE};
 

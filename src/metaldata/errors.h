@@ -14,4 +14,10 @@
 #define MDL_ERROR_NOMEM 7
 #define MDL_ERROR_OUT_OF_RANGE 8
 
+/**
+ * A general-purpose error code when a more specific one like @ref MDL_ERROR_OUT_OF_RANGE
+ * isn't available.
+ */
+#define MDL_ERROR_INVALID_ARGUMENT 9
+
 #endif /* INCLUDE_METALDATA_ERRORS_H_ */

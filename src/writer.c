@@ -15,13 +15,13 @@ MDLWriter *mdl_writer_new(MDLState *ds, mdl_writer_putc_fptr putc_ptr,
     return writer;
 }
 
-MDLWriter *mdl_writer_newfrombuffer(MDLState *ds, void *buffer, size_t size)
+MDLWriter *mdl_writer_newwithbuffer(MDLState *ds, void *buffer, size_t size)
 {
     MDLWriter *writer = mdl_writer_new(ds, memory_putc, NULL, NULL);
     if (writer == NULL)
         return NULL;
 
-    mdl_writer_initfrombuffer(ds, writer, buffer, size);
+    mdl_writer_initwithbuffer(ds, writer, buffer, size);
     return writer;
 }
 
@@ -38,7 +38,7 @@ void mdl_writer_init(MDLState *ds, MDLWriter *writer, mdl_writer_putc_fptr putc_
     writer->was_allocated = false;
 }
 
-void mdl_writer_initfrombuffer(MDLState *ds, MDLWriter *writer, void *buffer, size_t size)
+void mdl_writer_initwithbuffer(MDLState *ds, MDLWriter *writer, void *buffer, size_t size)
 {
     mdl_writer_init(ds, writer, memory_putc, NULL, NULL);
     writer->output_buffer = buffer;
@@ -48,6 +48,16 @@ void mdl_writer_initfrombuffer(MDLState *ds, MDLWriter *writer, void *buffer, si
 void *mdl_writer_getudata(const MDLWriter *writer)
 {
     return writer->udata;
+}
+
+void *mdl_writer_getbuffer(const MDLWriter *writer, size_t *p_length)
+{
+    if (writer->output_buffer== NULL)
+        return NULL;
+
+    if (p_length != NULL)
+        *p_length = writer->output_size;
+    return writer->output_buffer;
 }
 
 int mdl_writer_close(MDLWriter *writer)

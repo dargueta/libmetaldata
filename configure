@@ -4,15 +4,12 @@ set -e
 
 . ./VERSION
 
-VERSION_FULL=${MAJOR}.${MINOR}.${PATCH}
-
 unhosted=0
 debug=0
 additional_defines=
 prefix=/usr/local
 minimal_flags=0
 no_fatal_warnings=0
-no_fatal_test_warnings=0
 install_target_lib=
 install_target_include=
 install_target_bin=
@@ -42,6 +39,8 @@ General-Purpose Flags
     Unhosted mode -- do not use the C standard library. Functions such as strcmp
     will use compiler intrinsics if possible, or otherwise fall back to naive
     implementations. The default memory allocator won't be available at all.
+-U name
+    Undefine a preprocessor macro.
 -w | --no-fatal-warnings
     Make warnings never fatal, neither when compiling the library nor when
     compiling the tests.
@@ -90,6 +89,10 @@ while [ -n "$1" ]; do
       fi
       ;;
     -u | --unhosted ) unhosted=1 ;;
+    -U )
+      additional_defines="$additional_defines -U$2"
+      shift
+      ;;
     -w | --no-fatal-warnings ) no_fatal_warnings=1 ;;
     * )
       echo "Unrecognized option: '$flag'"

@@ -8,6 +8,24 @@ I've found that for `MetalC <https://github.com/dargueta/metalc>`_ and a couple
 other things I'm doing, I'm reusing a lot of the same code. I decided to extract
 it into a separate library.
 
+Standard Library Usage
+----------------------
+
+The following, and *only* the following functions of the C standard library are
+used. This library comes with some built-in fallbacks when compiled in unhosted
+("freestanding" or "bare metal") mode. Unsupported functions must be provided by
+client code. More on that in the docs.
+
+======== ========= ================
+What     Header    Unhosted Support
+======== ========= ================
+free     stdlib.h  N
+malloc   stdlib.h  N
+memcpy   string.h  Y
+memset   string.h  Y
+strcmp   string.h  Y
+======== ========= ================
+
 Building
 --------
 
@@ -45,10 +63,6 @@ Legend:
 |                 |          +----------+------------+----------+------------+
 |                 |          | Compiles | Tests Pass | Compiles | Tests Pass |
 +=================+==========+==========+============+==========+============+
-| Amsterdam       | MacOS    |          |            |          |            |
-| Compiler        +----------+----------+------------+----------+------------+
-| Kit (ACK_)      | Linux    |          |            |          |            |
-+-----------------+----------+----------+------------+----------+------------+
 | Clang_          | MacOS    | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Y          | Y        | Y          |
@@ -158,7 +172,6 @@ Footnotes
 .. [#] Requires SDCC 4.3+
 .. [#] Triggers a bug in SDCC and crashes the compiler.
 
-.. _ACK: https://tack.sourceforge.net/
 .. _Clang: https://clang.llvm.org/
 .. _GCC: https://gcc.gnu.org/
 .. _MinGW: https://sourceforge.net/projects/mingw/

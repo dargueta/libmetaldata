@@ -20,4 +20,9 @@
  */
 #define MDL_ERROR_INVALID_ARGUMENT 9
 
+/**
+ * An error code indicating the attempted operation is not supported by the target.
+ */
+#define MDL_ERROR_NOT_SUPPORTED 10
+
 #endif /* INCLUDE_METALDATA_ERRORS_H_ */

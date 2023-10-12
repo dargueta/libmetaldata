@@ -1,6 +1,11 @@
 #include "metaldata/writer.h"
 #include "metaldata/metaldata.h"
 
+/**
+ * A default putc function that writes a single character to memory.
+ *
+ * @return 0 on success, an error code otherwise, most likely @ref MDL_ERROR_FULL.
+ */
 static int memory_putc(MDLWriter *writer, int chr);
 
 MDLWriter *mdl_writer_new(MDLState *ds, mdl_writer_putc_fptr putc_ptr,
@@ -28,6 +33,9 @@ MDLWriter *mdl_writer_newwithbuffer(MDLState *ds, void *buffer, size_t size)
 void mdl_writer_init(MDLState *ds, MDLWriter *writer, mdl_writer_putc_fptr putc_ptr,
                      mdl_writer_close_fptr close_ptr, void *udata)
 {
+    if (close_ptr == NULL)
+        close_ptr = mdl_writer_noopclose;
+
     writer->ds = ds;
     writer->putc_ptr = putc_ptr;
     writer->close_ptr = close_ptr;
@@ -52,7 +60,7 @@ void *mdl_writer_getudata(const MDLWriter *writer)
 
 void *mdl_writer_getbuffer(const MDLWriter *writer, size_t *p_length)
 {
-    if (writer->output_buffer== NULL)
+    if (writer->output_buffer == NULL)
         return NULL;
 
     if (p_length != NULL)
@@ -97,4 +105,9 @@ static int memory_putc(MDLWriter *writer, int chr)
 
     writer->output_buffer[writer->buffer_position++] = (char)chr;
     return 0;
+}
+
+void mdl_writer_noopclose(MDLWriter *writer)
+{
+    (void)writer;
 }

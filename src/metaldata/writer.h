@@ -102,4 +102,11 @@ MDL_ANNOTN__NONNULL
 MDL_ANNOTN__ACCESS_SIZED(read_only, 2, 3)
 size_t mdl_writer_write(MDLWriter *writer, const void *data, size_t size);
 
+/**
+ * A dummy close function that does nothing.
+ */
+MDL_API
+MDL_ANNOTN__NONNULL
+void mdl_writer_noopclose(MDLWriter *writer);
+
 #endif /* INCLUDE_METALDATA_WRITER_H_ */

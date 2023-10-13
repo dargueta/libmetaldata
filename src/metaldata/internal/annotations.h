@@ -5,8 +5,8 @@
  * @file annotations.h
  */
 
-#ifndef INCLUDE_METALDATA_ANNOTATIONS_H_
-#define INCLUDE_METALDATA_ANNOTATIONS_H_
+#ifndef INCLUDE_METALDATA_INTERNAL_ANNOTATIONS_H_
+#define INCLUDE_METALDATA_INTERNAL_ANNOTATIONS_H_
 
 /* This assumes that if __GNUC__ is defined, __GNUC_MINOR__ and __GNUC_PATCHLEVEL__ are
  * also defined. It's not exactly a safe assumption, but it's safe enough... Right? */
@@ -237,4 +237,4 @@
  *
  * A function attribute for marking MetalData's public API functions.
  */
-#endif /* INCLUDE_METALDATA_ANNOTATIONS_H_ */
+#endif /* INCLUDE_METALDATA_INTERNAL_ANNOTATIONS_H_ */

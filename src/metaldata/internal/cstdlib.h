@@ -7,7 +7,7 @@
 #ifndef INCLUDE_METALDATA_INTERNAL_CSTDLIB_H_
 #define INCLUDE_METALDATA_INTERNAL_CSTDLIB_H_
 
-#include "../annotations.h"
+#include "annotations.h"
 #include "../configuration.h"
 #include "../metaldata.h"
 #include <stddef.h>

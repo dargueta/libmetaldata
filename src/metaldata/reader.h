@@ -7,8 +7,8 @@
 #ifndef INCLUDE_METALDATA_READER_H_
 #define INCLUDE_METALDATA_READER_H_
 
-#include "annotations.h"
 #include "metaldata.h"
+#include "internal/annotations.h"
 #include <stdbool.h>
 
 struct MDLReader_;

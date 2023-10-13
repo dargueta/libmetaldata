@@ -1,9 +1,9 @@
 #ifndef INCLUDE_METALDATA_METALDATA_H_
 #define INCLUDE_METALDATA_METALDATA_H_
 
-#include "annotations.h"
 #include "configuration.h"
 #include "errors.h"
+#include "internal/annotations.h"
 #include "internal/cstdlib.h"
 #include <stddef.h>
 

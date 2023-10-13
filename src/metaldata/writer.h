@@ -7,7 +7,7 @@
 #ifndef INCLUDE_METALDATA_WRITER_H_
 #define INCLUDE_METALDATA_WRITER_H_
 
-#include "annotations.h"
+#include "internal/annotations.h"
 #include "metaldata.h"
 #include <stdbool.h>
 

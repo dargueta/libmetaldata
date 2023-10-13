@@ -11,8 +11,8 @@
 #ifndef INCLUDE_METALDATA_ARRAY_H_
 #define INCLUDE_METALDATA_ARRAY_H_
 
-#include "annotations.h"
 #include "configuration.h"
+#include "internal/annotations.h"
 #include "memblklist.h"
 #include "metaldata.h"
 #include <stdbool.h>

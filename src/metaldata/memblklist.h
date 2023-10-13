@@ -14,8 +14,8 @@
 #ifndef INCLUDE_METALDATA_LLIST_H_
 #define INCLUDE_METALDATA_LLIST_H_
 
-#include "annotations.h"
 #include "configuration.h"
+#include "internal/annotations.h"
 #include "metaldata.h"
 #include <stdbool.h>
 #include <stddef.h>

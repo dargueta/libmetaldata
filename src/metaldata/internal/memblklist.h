@@ -1,7 +1,7 @@
 #ifndef INCLUDE_METALDATA_INTERNAL_LLIST_H_
 #define INCLUDE_METALDATA_INTERNAL_LLIST_H_
 
-#include "../annotations.h"
+#include "annotations.h"
 #include "../memblklist.h"
 
 MDL_ANNOTN__NONNULL

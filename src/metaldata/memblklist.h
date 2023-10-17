@@ -65,9 +65,6 @@ struct MDLMemBlkList_
     /** The MetalData state. */
     MDLState *ds;
 
-    /** The size of a list element's memory block, in bytes. */
-    size_t elem_size;
-
     /**
      * A pointer to the first node in the list.
      *
@@ -75,6 +72,9 @@ struct MDLMemBlkList_
      * not making us check for a null pointer all the time.
      */
     MDLMemBlkListNode *head;
+
+    /** The size of a list element's memory block, in bytes. */
+    size_t elem_size;
 
     /**
      * The number of elements in the list.

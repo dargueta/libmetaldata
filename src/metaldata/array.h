@@ -25,8 +25,8 @@ typedef void *MDLArrayBlock[MDL_DEFAULT_ARRAY_BLOCK_SIZE];
 typedef struct MDLArray_
 {
     MDLMemBlkList block_list;
-    size_t length;
     mdl_destructor_fptr elem_destructor;
+    size_t length;
 
     /**
      * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon

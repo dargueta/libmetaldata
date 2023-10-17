@@ -416,24 +416,30 @@ MDL_ANNOTN__NONNULL
 int mdl_memblklist_removevalue(MDLMemBlkList *list, const void *value,
                                mdl_comparator_fptr cmp);
 
+MDL_API
 MDL_ANNOTN__NODISCARD
 MDL_ANNOTN__NONNULL
 MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list,
                                                   bool reverse);
 
+MDL_API
 MDL_ANNOTN__NONNULL
-void mdl_memblklist_inititerator(const MDLMemBlkList *list,
-                                 MDLMemBlkListIterator *iterator, bool reverse);
+void mdl_memblklistiter_init(const MDLMemBlkList *list, MDLMemBlkListIterator *iterator,
+                             bool reverse);
 
+MDL_API
 MDL_ANNOTN__NONNULL
 void *mdl_memblklistiter_get(MDLMemBlkListIterator *iter);
 
+MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklistiter_next(MDLMemBlkListIterator *iter);
 
+MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklistiter_hasnext(const MDLMemBlkListIterator *iter);
 
+MDL_API
 MDL_ANNOTN__NONNULL
 void mdl_memblklistiter_destroy(MDLMemBlkListIterator *iter);
 

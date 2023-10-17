@@ -358,13 +358,13 @@ MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list, boo
     if (iter == NULL)
         return NULL;
 
-    mdl_memblklist_inititerator(list, iter, reverse);
+    mdl_memblklistiter_init(list, iter, reverse);
     iter->was_allocated = true;
     return iter;
 }
 
-void mdl_memblklist_inititerator(const MDLMemBlkList *list,
-                                 MDLMemBlkListIterator *iterator, bool reverse)
+void mdl_memblklistiter_init(const MDLMemBlkList *list, MDLMemBlkListIterator *iterator,
+                             bool reverse)
 {
 
     iterator->current = list->head;

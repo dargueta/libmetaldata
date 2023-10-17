@@ -39,7 +39,6 @@ typedef struct MDLArray_
 
 typedef struct MDLArrayIterator_
 {
-    MDLArray *array;
     MDLMemBlkListIterator block_iterator;
     size_t block_element_index;
 
@@ -228,7 +227,11 @@ int mdl_array_removevalue(MDLArray *array, const void *value, mdl_comparator_fpt
 MDL_API
 MDL_ANNOTN__NODISCARD
 MDL_ANNOTN__NONNULL
-MDLArrayIterator *mdl_array_getiterator(const MDLArray *array, int reverse);
+MDLArrayIterator *mdl_array_getiterator(const MDLArray *array, bool reverse);
+
+MDL_API
+MDL_ANNOTN__NONNULL
+void mdl_arrayiter_init(const MDLArray *array, MDLArrayIterator *iter, bool reverse);
 
 MDL_API
 MDL_ANNOTN__NONNULL

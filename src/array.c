@@ -195,7 +195,23 @@ int mdl_array_rfind(const MDLArray *array, const void *value, mdl_comparator_fpt
 
 int mdl_array_removevalue(MDLArray *array, const void *value, mdl_comparator_fptr cmp);
 
-MDLArrayIterator *mdl_array_getiterator(const MDLArray *array, int reverse);
+MDLArrayIterator *mdl_array_getiterator(const MDLArray *array, bool reverse)
+{
+    MDLArrayIterator *iter = mdl_malloc(array->block_list.ds, sizeof(*iter));
+    if (iter == NULL)
+        return NULL;
+
+    mdl_arrayiter_init(array, iter, reverse);
+    iter->was_allocated = true;
+    return iter;
+}
+
+void mdl_arrayiter_init(const MDLArray *array, MDLArrayIterator *iter, bool reverse)
+{;
+    iter->was_allocated = false;
+    iter->block_element_index = 0;
+    mdl_memblklistiter_init(&array->block_list, &iter->block_iterator, reverse);
+}
 
 void *mdl_arrayiter_get(const MDLArrayIterator *iter);
 

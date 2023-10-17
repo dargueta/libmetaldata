@@ -46,6 +46,7 @@ import_test(reader, buffer_unget_at_eof);
 import_test(reader, buffer_unget_at_sof);
 import_test(reader, buffer_unget_empty_buffer);
 import_test(writer, buffer_init_static);
+import_test(writer, buffer_putc);
 
 static MunitTest memblklist_tests[] = {define_plain_test_case(memblklist, length_zero),
                                        SUITE_END_SENTINEL};
@@ -61,6 +62,7 @@ static MunitTest reader_tests[] = {
     SUITE_END_SENTINEL};
 
 static MunitTest writer_tests[] = {define_plain_test_case(writer, buffer_init_static),
+                                   define_plain_test_case(writer, buffer_putc),
                                    SUITE_END_SENTINEL};
 
 static MunitSuite all_subsuites[] = {define_test_suite(memblklist),

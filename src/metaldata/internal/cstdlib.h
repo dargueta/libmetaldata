@@ -7,9 +7,9 @@
 #ifndef INCLUDE_METALDATA_INTERNAL_CSTDLIB_H_
 #define INCLUDE_METALDATA_INTERNAL_CSTDLIB_H_
 
-#include "annotations.h"
 #include "../configuration.h"
 #include "../metaldata.h"
+#include "annotations.h"
 #include <stddef.h>
 
 #if MDL_COMPILED_AS_UNHOSTED

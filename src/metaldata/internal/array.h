@@ -1,8 +1,8 @@
 #ifndef INCLUDE_METALDATA_INTERNAL_ARRAY_H_
 #define INCLUDE_METALDATA_INTERNAL_ARRAY_H_
 
-#include "annotations.h"
 #include "../array.h"
+#include "annotations.h"
 
 MDL_ANNOTN__NODISCARD
 MDL_ANNOTN__NONNULL

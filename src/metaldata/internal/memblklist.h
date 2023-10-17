@@ -1,8 +1,8 @@
 #ifndef INCLUDE_METALDATA_INTERNAL_LLIST_H_
 #define INCLUDE_METALDATA_INTERNAL_LLIST_H_
 
-#include "annotations.h"
 #include "../memblklist.h"
+#include "annotations.h"
 
 MDL_ANNOTN__NONNULL
 MDLMemBlkListNode *mdl_memblklist_findnode(const MDLMemBlkList *list, const void *value,

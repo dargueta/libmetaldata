@@ -14,7 +14,7 @@ install_target_lib=
 install_target_include=
 install_target_bin=
 install_target_pkgconfig=
-cc=
+cc=${CC:-}
 
 HELP_TEXT="
 General-Purpose Flags

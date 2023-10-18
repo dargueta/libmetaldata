@@ -108,13 +108,9 @@ else
     endif
 endif
 
-# For each feature macro named X, generate a CLI argument "-DX=$(X)" that we can
-# pass to the compiler.
-FEATURE_MACRO_FLAGS_DEFINITIONS=$(foreach n,$(FEATURE_MACRO_FLAG_NAMES),-D$(n)=$($(n)))
-
 # These are the compilation flags that should be exposed to anyone trying to link
 # with the library. Custom macro definitions are one example.
-PUBLIC_COMPILE_FLAGS=$(strip $(MACROS_FROM_CONFIGURE) $(FEATURE_MACRO_FLAGS_DEFINITIONS))
+PUBLIC_COMPILE_FLAGS=$(strip $(MACROS_FROM_CONFIGURE))
 
 # This is the minimal set of flags needed to compile the library. It's
 ADDL_CFLAGS_MINIMAL = -I./src $(PUBLIC_COMPILE_FLAGS) $(MY_CFLAGS)

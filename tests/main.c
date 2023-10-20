@@ -23,12 +23,66 @@
         NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL                             \
     }
 
+typedef struct
+{
+    struct
+    {
+        size_t num_allocations;
+        size_t num_allocations_of_0;
+        size_t num_frees;
+        size_t num_reallocations;
+        size_t num_frees_of_null;
+        long long current_memory_used;
+    } memory_info;
+} StateTracking;
+
+void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud)
+{
+    StateTracking *global_state = (StateTracking *)ud;
+
+    // If the size is non-zero then the caller wants to either allocate new memory (`ptr`
+    // is NULL) or resize existing memory.
+    if (size != 0)
+    {
+        global_state->memory_info.current_memory_used +=
+            (long long)size - (long long)type_or_old_size;
+        if (ptr != NULL)
+            global_state->memory_info.num_reallocations++;
+        else
+            global_state->memory_info.num_allocations++;
+        return realloc(ptr, size);
+    }
+
+    // If the size is 0, the caller wants to free memory. It doesn't make sense to pass a
+    // null pointer and a size of 0, but we'll follow `free()`'s behavior and do nothing.
+    if (ptr == NULL)
+    {
+        if (type_or_old_size == 0)
+        {
+            // Old size is 0, this is actually an attempt to allocate but the size was 0.
+            global_state->memory_info.num_allocations++;
+            global_state->memory_info.num_allocations_of_0++;
+            return NULL;
+        }
+        else
+        {
+            // Old size is non-zero, meaning this is an intended free but `ptr` was null.
+            // This is probably a bug.
+            global_state->memory_info.num_frees_of_null++;
+        }
+    }
+    else
+        global_state->memory_info.num_frees++;
+    free(ptr);
+    return NULL;
+}
+
 static void *test_setup(const MunitParameter params[], void *user_data)
 {
     (void)params, (void)user_data;
     MDLState *state = munit_malloc(sizeof(*state));
 
-    mdl_initstate(state, mdl_default_hosted_alloc, NULL);
+    mdl_initstate(state, malloc_for_tests, (StateTracking *)user_data);
     return state;
 }
 
@@ -74,5 +128,8 @@ static const MunitSuite suite = {"", NULL, all_subsuites, 1, MUNIT_SUITE_OPTION_
 
 int main(int argc, char **argv)
 {
-    return munit_suite_main(&suite, NULL, argc, argv);
+    StateTracking global_tracking_info;
+    memset(&global_tracking_info, 0, sizeof(global_tracking_info));
+    // TODO (dargueta) Make assertions inside tests that memory usage cancels out.
+    return munit_suite_main(&suite, &global_tracking_info, argc, argv);
 }

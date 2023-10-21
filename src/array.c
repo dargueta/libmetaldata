@@ -207,7 +207,8 @@ MDLArrayIterator *mdl_array_getiterator(const MDLArray *array, bool reverse)
 }
 
 void mdl_arrayiter_init(const MDLArray *array, MDLArrayIterator *iter, bool reverse)
-{;
+{
+    ;
     iter->was_allocated = false;
     iter->block_element_index = 0;
     mdl_memblklistiter_init(&array->block_list, &iter->block_iterator, reverse);

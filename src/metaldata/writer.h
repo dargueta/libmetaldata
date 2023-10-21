@@ -1,6 +1,10 @@
 /**
  * An unbuffered output stream abstraction.
  *
+ * The @ref MDLWriter only supports writing individual characters and blocks of memory.
+ * Since it's an output-only stream, there is no notion of offset and thus no seek/tell
+ * capability. This does, however, provide a way to build these abstractions on top of it.
+ *
  * @file writer.h
  */
 

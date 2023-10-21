@@ -55,8 +55,12 @@ Supported Platforms
 Legend:
 
 * Y: Full support
+* (blank): Untested or not implemented yet
 * NS: Not supported for technical reasons
 * m: Requires compiling with minimal flags (pass ``-m`` to ``configure``)
+
+Compilers
+*********
 
 +-----------------+----------+-----------------------+-----------------------+
 | Compiler        | OS       | Hosted                | Unhosted              |
@@ -93,6 +97,9 @@ Legend:
 +-----------------+----------+----------+------------+----------+------------+
 | Visual Studio   | Cygwin   |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
+
+Architectures
+*************
 
 The following architectures are tested. SDCC is the only toolchain that can be
 used for most of these, and actual tests can't run on those because there's no
@@ -149,7 +156,7 @@ directory follows the typical Unix convention, namely:
 * Library goes in ``PREFIX/lib``
 * PKG-CONFIG file goes in ``PREFIX/lib/pkgconfig``
 
-This is also followed on Cygwin  for the sake of simplicity.
+This pattern is also followed on Cygwin for the sake of simplicity.
 
 Developing
 ----------

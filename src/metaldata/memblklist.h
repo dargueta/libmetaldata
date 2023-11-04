@@ -150,10 +150,8 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size);
  * @ref mdl_memblklist_destroy.
  *
  * @param ds
- * @param list The queue to initialize.
- * @param elem_size
- * @param elem_comparator
- *
+ * @param list The list to initialize.
+ * @param elem_size The size of a single element in the list.
  * @return 0 on success, an error code otherwise.
  *
  * @see mdl_memblklist_new
@@ -164,10 +162,10 @@ MDL_ANNOTN__NONNULL
 int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size);
 
 /**
- * Destroy a double-ended queue.
+ * Destroy a list.
  *
  * @param list
- * @return
+ * @return 0 on success, an error code otherwise.
  */
 MDL_API
 MDL_ANNOTN__NONNULL

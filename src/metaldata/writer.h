@@ -58,6 +58,15 @@ MDL_ANNOTN__NODISCARD
 MDLWriter *mdl_writer_new(MDLState *ds, mdl_writer_putc_fptr putc_ptr,
                           mdl_writer_close_fptr close_ptr, void *udata);
 
+/**
+ * Allocate a new @ref MDLWriter that writes into a fixed-size buffer.
+ *
+ * @param ds
+ * @param buffer A pointer to the buffer to write to.
+ * @param size The size of the buffer to write to, in bytes.
+ *
+ * @return A new initialized writer.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD

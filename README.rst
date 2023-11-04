@@ -1,8 +1,8 @@
 Data Structures for Low-Level Software
 ======================================
 
-If you need linked lists, maps, and basic I/O that works on bare metal (*no*
-operating system), then this library is for you.
+If you need linked lists, maps, and basic I/O abstractions that work on bare
+metal (i.e. *no* operating system), then this library is for you.
 
 I've found that for `MetalC <https://github.com/dargueta/metalc>`_ and a couple
 other things I'm doing, I'm reusing a lot of the same code. I decided to extract

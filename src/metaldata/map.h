@@ -16,6 +16,7 @@
 #define INCLUDE_METALDATA_MAP_H_
 
 #include "array.h"
+#include "internal/misc.h"
 #include "metaldata.h"
 #include <stdbool.h>
 #include <stddef.h>
@@ -27,7 +28,7 @@
 /**
  * A pointer to a key-hashing function.
  */
-typedef unsigned (*mdl_hash_fptr)(const void *what, size_t size);
+typedef mdl_hash_type (*mdl_hash_fptr)(const void *what, size_t size);
 
 typedef struct MDLMapNode_
 {

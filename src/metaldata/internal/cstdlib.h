@@ -99,7 +99,7 @@ void *mdl_memcpy(void *restrict dest, const void *restrict src, size_t size);
 MDL_INTERNAL
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__RETURNS_NONNULL
-void *mdl_memset(void *ptr, int value, size_t size);
+void *mdl_memset(void *restrict ptr, int value, size_t size);
 #elif MDL_LIBC_HAVE_BUILTIN_MEMSET
 #    define mdl_memset __builtin_memset
 #endif
@@ -119,7 +119,7 @@ void *mdl_memset(void *ptr, int value, size_t size);
  */
 MDL_INTERNAL
 MDL_ANNOTN__NONNULL
-int mdl_strcmp(const char *left, const char *right);
+int mdl_strcmp(const char *restrict left, const char *restrict right);
 #elif MDL_LIBC_HAVE_BUILTIN_STRCMP
 #    define mdl_strcmp __builtin_strcmp
 #endif

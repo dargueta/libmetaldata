@@ -21,6 +21,7 @@ What     Header    Unhosted Support
 ======== ========= ================
 free     stdlib.h  N
 malloc   stdlib.h  N
+memcmp   string.h  Y
 memcpy   string.h  Y
 memset   string.h  Y
 strcmp   string.h  Y

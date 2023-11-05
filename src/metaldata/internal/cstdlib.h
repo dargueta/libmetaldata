@@ -28,16 +28,19 @@
 
 #if MDL_COMPILED_AS_UNHOSTED
 #    if defined(__has_builtin)
+#        define MDL_LIBC_HAVE_BUILTIN_MEMCMP __has_builtin(__builtin_memcmp)
 #        define MDL_LIBC_HAVE_BUILTIN_MEMCPY __has_builtin(__builtin_memcpy)
 #        define MDL_LIBC_HAVE_BUILTIN_MEMSET __has_builtin(__builtin_memset)
 #        define MDL_LIBC_HAVE_BUILTIN_STRCMP __has_builtin(__builtin_strcmp)
 #        define MDL_LIBC_HAVE_BUILTIN_ABORT __has_builtin(__builtin_trap)
 #    elif defined(__GNUC__)
+#        define MDL_LIBC_HAVE_BUILTIN_MEMCMP MINIMUM_GNU_VERSION(4, 0, 0)
 #        define MDL_LIBC_HAVE_BUILTIN_MEMCPY MINIMUM_GNU_VERSION(4, 0, 0)
 #        define MDL_LIBC_HAVE_BUILTIN_MEMSET MINIMUM_GNU_VERSION(4, 0, 0)
 #        define MDL_LIBC_HAVE_BUILTIN_STRCMP MINIMUM_GNU_VERSION(4, 0, 0)
 #        define MDL_LIBC_HAVE_BUILTIN_ABORT MINIMUM_GNU_VERSION(4, 2, 0)
 #    else
+#        define MDL_LIBC_HAVE_BUILTIN_MEMCPY 0
 #        define MDL_LIBC_HAVE_BUILTIN_MEMCPY 0
 #        define MDL_LIBC_HAVE_BUILTIN_MEMSET 0
 #        define MDL_LIBC_HAVE_BUILTIN_STRCMP 0
@@ -45,6 +48,7 @@
 #    endif
 
 #    define MDL_LIBC_NEED_CUSTOM_ASSERT 1
+#    define MDL_LIBC_NEED_CUSTOM_MEMCMP (!MDL_LIBC_HAVE_BUILTIN_MEMCMP)
 #    define MDL_LIBC_NEED_CUSTOM_MEMCPY (!MDL_LIBC_HAVE_BUILTIN_MEMCPY)
 #    define MDL_LIBC_NEED_CUSTOM_MEMSET (!MDL_LIBC_HAVE_BUILTIN_MEMSET)
 #    define MDL_LIBC_NEED_CUSTOM_STRCMP (!MDL_LIBC_HAVE_BUILTIN_STRCMP)
@@ -53,9 +57,11 @@
 #    include <string.h>
 
 #    define mdl_assert(ds, expr) assert(expr)
+#    define mdl_memcmp memcmp
 #    define mdl_memcpy memcpy
 #    define mdl_memset memset
 #    define mdl_strcmp strcmp
+#    define MDL_LIBC_NEED_CUSTOM_MEMCMP 0
 #    define MDL_LIBC_NEED_CUSTOM_MEMCPY 0
 #    define MDL_LIBC_NEED_CUSTOM_MEMSET 0
 #    define MDL_LIBC_NEED_CUSTOM_STRCMP 0
@@ -64,6 +70,17 @@
 #    define MDL_LIBC_HAVE_BUILTIN_MEMSET 0
 #    define MDL_LIBC_HAVE_BUILTIN_STRCMP 0
 #    define MDL_LIBC_HAVE_BUILTIN_ABORT 0
+#endif
+
+#if MDL_LIBC_NEED_CUSTOM_MEMCMP
+/**
+ * A naive implementation of the C standard library's `memcmp()`.
+ */
+MDL_INTERNAL
+MDL_ANNOTN__NONNULL
+int mdl_memcmp(const void *restrict left, const void *restrict right, size_t size);
+#elif MDL_LIBC_HAVE_BUILTIN_MEMCMP
+#    define mdl_memcmp __builtin_memcmp
 #endif
 
 #if MDL_LIBC_NEED_CUSTOM_MEMCPY

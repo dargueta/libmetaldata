@@ -27,17 +27,7 @@ int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *ri
                                   size_t size)
 {
     (void)ds;
-    const char *p_left, *p_right;
-
-    p_left = (const char *)left;
-    p_right = (const char *)right;
-    for (size_t i = 0; i < size; i++)
-    {
-        int cmp = (int)*p_left - (int)*p_right;
-        if (cmp != 0)
-            return cmp;
-    }
-    return 0;
+    return mdl_memcmp(left, right, size);
 }
 
 int mdl_default_ptr_value_comparator(MDLState *ds, const void *left, const void *right,

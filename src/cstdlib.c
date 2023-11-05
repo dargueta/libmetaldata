@@ -15,6 +15,19 @@
 #include "metaldata/internal/cstdlib.h"
 #include <stddef.h>
 
+#if MDL_LIBC_NEED_CUSTOM_MEMCMP && !MDL_LIBC_HAVE_BUILTIN_MEMCMP
+int mdl_memcmp(const void *restrict left, const void *restrict right, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+    {
+        int cmp = (int)((const char *)left[i]) - (int)((const char *)right[i]);
+        if (cmp != 0)
+            return cmp;
+    }
+    return 0;
+}
+#endif
+
 #if MDL_LIBC_NEED_CUSTOM_MEMCPY && !MDL_LIBC_HAVE_BUILTIN_MEMCPY
 void *mdl_memcpy(void *restrict dest, const void *restrict src, size_t size)
 {

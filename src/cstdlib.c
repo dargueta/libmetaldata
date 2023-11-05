@@ -20,7 +20,7 @@ int mdl_memcmp(const void *restrict left, const void *restrict right, size_t siz
 {
     for (size_t i = 0; i < size; i++)
     {
-        int cmp = (int)((const char *)left[i]) - (int)((const char *)right[i]);
+        int cmp = (int)(((const char *)left)[i]) - (int)(((const char *)right)[i]);
         if (cmp != 0)
             return cmp;
     }
@@ -32,7 +32,7 @@ int mdl_memcmp(const void *restrict left, const void *restrict right, size_t siz
 void *mdl_memcpy(void *restrict dest, const void *restrict src, size_t size)
 {
     for (size_t i = 0; i < size; i++)
-        ((char *)dest)[i] = (const char *)src[i];
+        ((char *)dest)[i] = ((const char *)src)[i];
     return dest;
 }
 #endif
@@ -40,7 +40,7 @@ void *mdl_memcpy(void *restrict dest, const void *restrict src, size_t size)
 #if MDL_LIBC_NEED_CUSTOM_MEMSET && !MDL_LIBC_HAVE_BUILTIN_MEMSET
 void *mdl_memset(void *restrict ptr, int value, size_t size)
 {
-    for (size_t i = 0; i < size; i +)
+    for (size_t i = 0; i < size; i++)
         ((char *)ptr)[i] = (char)value;
     return ptr;
 }

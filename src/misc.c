@@ -14,13 +14,13 @@ mdl_hash_type mdl_hash_string(const char *restrict s)
     return hash;
 }
 
-mdl_hash_type mdl_hash_memory(const void *restrict p, size_t length)
+mdl_hash_type mdl_hash_memory(const void *restrict p, size_t size)
 {
     if (p == NULL)
         return 0;
 
     mdl_hash_type hash = 5381;
-    for (size_t i = 0; i < length; i++)
+    for (size_t i = 0; i < size; i++)
         hash = ((hash << 5) + hash) + ((const char *)p)[i];
     return hash;
 }

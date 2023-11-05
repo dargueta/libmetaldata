@@ -41,6 +41,24 @@ int mdl_default_ptr_value_comparator(MDLState *ds, const void *left, const void 
     return 0;
 }
 
+int mdl_default_string_comparator(MDLState *ds, const void *left, const void *right,
+                                  size_t size)
+{
+    (void)ds, (void)size;
+
+    if ((left == NULL) || (right == NULL))
+    {
+        ptrdiff_t diff = left - right;
+        if (diff < 0)
+            return -1;
+        if (diff > 0)
+            return 1;
+        return 0;
+    }
+
+    return mdl_strcmp((const char *)left, (const char *)right);
+}
+
 #if !MDL_COMPILED_AS_UNHOSTED
 #    include "metaldata/extras/hosted_allocator.c"
 #endif

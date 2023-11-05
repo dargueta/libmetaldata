@@ -24,6 +24,6 @@ mdl_hash_type mdl_hash_string(const char *restrict s);
 
 MDL_API
 MDL_ANNOTN__ACCESS_SIZED(read_only, 1, 2)
-mdl_hash_type mdl_hash_memory(const void *restrict p, size_t length);
+mdl_hash_type mdl_hash_memory(const void *restrict p, size_t size);
 
 #endif // INCLUDE_METALDATA_INTERNAL_MISC_H_

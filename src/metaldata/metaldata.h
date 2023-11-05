@@ -75,6 +75,11 @@ MDL_ANNOTN__ACCESS_SIZED(read_only, 3, 4)
 int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *right,
                                   size_t size);
 
+MDL_API
+MDL_ANNOTN__NONNULL_ARGS(1)
+int mdl_default_string_comparator(MDLState *ds, const void *left, const void *right,
+                                  size_t size);
+
 #if !MDL_COMPILED_AS_UNHOSTED
 MDL_API
 void *mdl_default_hosted_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);

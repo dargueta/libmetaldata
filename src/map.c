@@ -13,3 +13,10 @@
 // limitations under the License.
 
 #include "metaldata/map.h"
+#include "metaldata/internal/misc.h"
+
+mdl_hash_type mdl_strmap_hashstring(const void *p, size_t size)
+{
+    (void)size;
+    return mdl_hash_string((const char *)p);
+}

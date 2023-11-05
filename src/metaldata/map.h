@@ -27,8 +27,14 @@
 
 /**
  * A pointer to a key-hashing function.
+ *
+ * The function takes two arguments, a pointer to the memory to hash, and a `size_t`
+ * giving the size of the block of memory, in bytes.
  */
 typedef mdl_hash_type (*mdl_hash_fptr)(const void *what, size_t size);
+
+MDL_API
+mdl_hash_type mdl_strmap_hashstring(const void *p, size_t size);
 
 typedef struct MDLMapNode_
 {

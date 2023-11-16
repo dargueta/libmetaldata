@@ -41,7 +41,7 @@ Building
     # Install the library (may require sudo)
     make install
 
-For a list of options, run `./configure -h`.
+For a list of options, run ``./configure -h``.
 
 System Requirements
 ~~~~~~~~~~~~~~~~~~~

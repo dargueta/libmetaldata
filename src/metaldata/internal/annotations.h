@@ -16,7 +16,86 @@
  * Cross-compiler function and type annotations for better type checking and
  * (hopefully) better performance.
  *
+ * More information on most of the function annotations described here is available in
+ * GCC's documentation for
+ * [function
+ * attributes](https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html).
+ *
  * @file annotations.h
+ *
+ *
+ * @def MDL_API
+ * A function attribute for marking MetalData's public API functions.
+ *
+ *
+ * @def MDL_INTERNAL
+ * A function attribute for marking MetalData's internal-only functions.
+ *
+ *
+ * @def MDL_ANNOTN__ACCESS
+ * A function attribute declaring how a pointer argument is accessed.
+ *
+ * This is only available for compilers compatible with GCC 10.5+.
+ *
+ * @param mode The access mode for the pointer.
+ * @param argn The 1-based index of the pointer argument this annotation applies to.
+ *
+ *
+ * @def MDL_ANNOTN__ACCESS_SIZED
+ * Like @ref MDL_ANNOTN__ACCESS but used specifically for pointers to memory whose size is
+ * given by another argument to the function.
+ *
+ *
+ * @def MDL_ANNOTN__DEPRECATED
+ * Marks a function as deprecated and should not be used in new code.
+ *
+ *
+ * @def MDL_ANNOTN__NODISCARD
+ * Signals to the compiler that the return value of the function should not be ignored.
+ *
+ * This is commonly used on functions that allocate resources (like ``malloc()`` and
+ * ``fopen()``), where failing to catch the return value will lead to a resource leak.
+ *
+ *
+ * @def MDL_ANNOTN__NONNULL
+ * A function attribute indicating all pointer arguments must not be null.
+ *
+ * This is equivalent to using @ref MDL_ANNOTN__NONNULL_ARGS and specifying each pointer
+ * argument manually.
+ *
+ *
+ * @def MDL_ANNOTN__NONNULL_ARGS
+ * A function attribute indicating that only specific pointer arguments must not be null.
+ *
+ * This is like @ref MDL_ANNOTN__NONNULL, except that it allows being specific about which
+ * arguments must not be null. This is useful when some pointers are allowed to be null.
+ *
+ * The macro takes any number of arguments. Each argument is an index of a pointer
+ * argument that cannot be null. Indexes start from 1, going left to right.
+ *
+ *
+ * @def MDL_ANNOTN__NORETURN
+ * Indicates the function never returns, like ``abort()`` or ``exit()``.
+ *
+ *
+ * @def MDL_ANNOTN__REPRODUCIBLE
+ * Indicates that calling the function with the same arguments will return the same value.
+ *
+ *
+ * @def MDL_ANNOTN__RETURNS_NONNULL
+ * A function attribute that indicates the function never returns a null pointer.
+ *
+ *
+ * @def GNU_ATTRIBUTE
+ * A convenience macro that expands GCC attributes only if the compiler is compatible with
+ * the version of GCC that implements that attribute.
+ *
+ *
+ * @def MINIMUM_GNU_VERSION
+ * Determine if the compiler is compatible with a version of GCC.
+ *
+ * Use this to determine if 1) the compiler is GCC-like, 2) the version of GCC it emulates
+ * is at least the version given by the arguments.
  */
 
 #ifndef INCLUDE_METALDATA_INTERNAL_ANNOTATIONS_H_
@@ -32,35 +111,6 @@
 #else
 #    define MINIMUM_GNU_VERSION(major, minor, patch) (0)
 #endif
-
-/* First, try using built-in C2x standard attributes. We need to put this behind a version
- * guard because GCC's preprocessor expands these even when compiling for an earlier
- * standard. The result is a syntax error. */
-#ifdef __STDC_VERSION__
-#    if __STDC_VERSION__ >= 201904L
-#        ifdef __has_c_attribute
-#            if __has_c_attribute(nodiscard)
-#                define MDL_ANNOTN__NODISCARD [[nodiscard]]
-#            endif
-
-#            if __has_c_attribute(noreturn)
-#                define MDL_ANNOTN__NORETURN [[noreturn]]
-#            endif
-
-#            if __has_c_attribute(reproducible)
-#                define MDL_ANNOTN__REPRODUCIBLE [[reproducible]]
-#            endif
-
-#            if __has_c_attribute(fallthrough)
-#                define MDL_FALLTHROUGH_MARKER [[fallthrough]]
-#            endif
-
-#            if __has_c_attribute(deprecated)
-#                define MDL_ANNOTN__DEPRECATED [[deprecated]]
-#            endif
-#        endif /* __has_c_attribute */
-#    endif     /* C20 */
-#endif         /* __STDC_VERSION__ */
 
 #if defined(__GNUC__) || defined(__SUNPRO_C)
 #    define GNU_ATTRIBUTE(x) __attribute__((x))
@@ -195,11 +245,11 @@
 #endif
 
 #ifndef MDL_ANNOTN__ACCESS
-#    define MDL_ANNOTN__ACCESS(mode, value)
+#    define MDL_ANNOTN__ACCESS(mode, argn)
 #endif
 
 #ifndef MDL_ANNOTN__ACCESS_SIZED
-#    define MDL_ANNOTN__ACCESS_SIZED(mode, value, size)
+#    define MDL_ANNOTN__ACCESS_SIZED(mode, argn, size)
 #endif
 
 #ifndef MDL_ANNOTN__DEPRECATED
@@ -245,10 +295,4 @@
 #else
 #    define MDL_REENTRANT_MARKER
 #endif
-
-/**
- * @def MDL_API
- *
- * A function attribute for marking MetalData's public API functions.
- */
 #endif /* INCLUDE_METALDATA_INTERNAL_ANNOTATIONS_H_ */

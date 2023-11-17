@@ -80,11 +80,6 @@ MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_default_string_comparator(MDLState *ds, const void *left, const void *right,
                                   size_t size);
 
-#if !MDL_COMPILED_AS_UNHOSTED
-MDL_API
-void *mdl_default_hosted_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);
-#endif /* MDL_COMPILED_AS_UNHOSTED */
-
 typedef void (*mdl_destructor_fptr)(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
 
 MDL_ANNOTN__NONNULL_ARGS(1)

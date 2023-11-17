@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * An array.
+ * A resizable array.
  *
  * - Pushes and pops from both ends are O(1).
  * - Accessing the first and last elements are also O(1).
@@ -39,14 +39,23 @@ typedef void *MDLArrayBlock[MDL_DEFAULT_ARRAY_BLOCK_SIZE];
 typedef struct MDLArray_
 {
     MDLMemBlkList block_list;
+
+    /**
+     * A function to call when deleting an element.
+     */
     mdl_destructor_fptr elem_destructor;
+
+    /**
+     * The current length of the array.
+     */
     size_t length;
 
     /**
      * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon
-     * destruction. Having this explicitly specified allows users call
-     * @ref mdl_array_destroy on an array, regardless of whether it was statically
-     * allocated or not.
+     * destruction.
+     *
+     * Having this explicitly specified allows users call @ref mdl_array_destroy on an
+     * array, regardless of whether it was statically allocated or not.
      */
     bool was_allocated;
 } MDLArray;
@@ -58,9 +67,10 @@ typedef struct MDLArrayIterator_
 
     /**
      * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon
-     * destruction. Having this explicitly specified allows users call
-     * @ref mdl_arrayiter_destroy on an iterator, regardless of whether it was statically
-     * allocated or not.
+     * destruction.
+     *
+     * Having this explicitly specified allows users call @ref mdl_arrayiter_destroy on an
+     * iterator, regardless of whether it was statically allocated or not.
      */
     bool was_allocated;
 } MDLArrayIterator;
@@ -83,6 +93,9 @@ MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__NODISCARD
 MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor);
 
+/**
+ * Like @ref mdl_array_new but the destructor is a no-op.
+ */
 #define mdl_array_basicnew(ds) mdl_array_new((ds), mdl_default_destructor)
 
 /**

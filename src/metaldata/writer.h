@@ -47,7 +47,19 @@ struct MDLWriter_
     mdl_writer_close_fptr close_ptr;
     void *udata;
     char *output_buffer;
-    size_t output_size;
+
+    /**
+     * The size of the output buffer.
+     *
+     * If @ref output_buffer is null, this field has no meaning and should not be used.
+     */
+    size_t buffer_size;
+
+    /**
+     * The offset into the output buffer where the next character is to be written.
+     *
+     * If @ref output_buffer is null, this field has no meaning and should not be used.
+     */
     size_t buffer_position;
     bool was_allocated;
 };

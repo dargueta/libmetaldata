@@ -38,19 +38,19 @@ MunitResult test_writer__buffer_putc(const MunitParameter params[], void *userda
     char buffer[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
     mdl_writer_initwithbuffer(ds, &writer, buffer, 8);
-    munit_assert_size(writer.output_size, ==, 8);
+    munit_assert_size(writer.buffer_size, ==, 8);
     munit_assert_size(writer.buffer_position, ==, 0);
     munit_assert_string_equal(buffer, "");
 
     int result = mdl_writer_putc(&writer, 'A');
     munit_assert_int(result, ==, MDL_OK);
-    munit_assert_size(writer.output_size, ==, 8);
+    munit_assert_size(writer.buffer_size, ==, 8);
     munit_assert_size(writer.buffer_position, ==, 1);
     munit_assert_string_equal(buffer, "A");
 
     result = mdl_writer_putc(&writer, 'B');
     munit_assert_int(result, ==, MDL_OK);
-    munit_assert_size(writer.output_size, ==, 8);
+    munit_assert_size(writer.buffer_size, ==, 8);
     munit_assert_size(writer.buffer_position, ==, 2);
     munit_assert_string_equal(buffer, "AB");
 

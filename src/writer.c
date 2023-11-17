@@ -55,7 +55,7 @@ void mdl_writer_init(MDLState *ds, MDLWriter *writer, mdl_writer_putc_fptr putc_
     writer->close_ptr = close_ptr;
     writer->udata = udata;
     writer->output_buffer = NULL;
-    writer->output_size = 0;
+    writer->buffer_size = 0;
     writer->buffer_position = 0;
     writer->was_allocated = false;
 }
@@ -64,7 +64,7 @@ void mdl_writer_initwithbuffer(MDLState *ds, MDLWriter *writer, void *buffer, si
 {
     mdl_writer_init(ds, writer, memory_putc, NULL, NULL);
     writer->output_buffer = buffer;
-    writer->output_size = size;
+    writer->buffer_size = size;
 }
 
 void *mdl_writer_getudata(const MDLWriter *writer)
@@ -78,7 +78,7 @@ void *mdl_writer_getbuffer(const MDLWriter *writer, size_t *p_length)
         return NULL;
 
     if (p_length != NULL)
-        *p_length = writer->output_size;
+        *p_length = writer->buffer_size;
     return writer->output_buffer;
 }
 
@@ -114,7 +114,7 @@ size_t mdl_writer_write(MDLWriter *writer, const void *data, size_t size)
 
 static int memory_putc(MDLWriter *writer, int chr)
 {
-    if (writer->buffer_position == writer->output_size)
+    if (writer->buffer_position == writer->buffer_size)
         return MDL_ERROR_FULL;
 
     writer->output_buffer[writer->buffer_position++] = (char)chr;

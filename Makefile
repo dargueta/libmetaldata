@@ -49,9 +49,10 @@ INSTALL_TARGET_INCLUDE=$(PREFIX)/include/metaldata
 INSTALL_TARGET_BIN=$(PREFIX)/bin
 INSTALL_TARGET_PKGCONFIG=$(INSTALL_TARGET_LIB)/pkgconfig
 
+C_STANDARD = c2x
 
 ifeq ($(notdir $(CC)),sdcc)
-	C_STANDARD_FLAG = --std-c99
+	C_STANDARD_FLAG = --std-$(C_STANDARD)
 	FREESTANDING_FLAG =
 	NOSTDLIB_FLAG = --nostdlib
 	BASE_WARNING_FLAGS =
@@ -68,7 +69,7 @@ else ifeq ($(USE_MINIMAL_FLAGS),1)
 	GENERIC_OPTIMIZATION_FLAG =
 	FREESTANDING_FLAG =
 else
-	C_STANDARD_FLAG = -std=c99
+	C_STANDARD_FLAG = -std=$(C_STANDARD)
 	NOSTDLIB_FLAG = -nostdlib
 	BASE_WARNING_FLAGS = -Wall -Wextra
 	WERROR_FLAG = -Werror
@@ -77,7 +78,8 @@ else
 	    GENERIC_OPTIMIZATION_FLAG = -O2
 	else
 	    # No optimization
-	    GENERIC_OPTIMIZATION_FLAG = -O0
+	    GENERIC_OPTIMIZATION_FLAG = -O2
+	    # GENERIC_OPTIMIZATION_FLAG = -O0
 	endif
 endif
 
@@ -163,6 +165,13 @@ clean:
 format: $(LIBRARY_C_SOURCE_FILES) $(LIBRARY_C_ALL_HEADER_FILES) \
         $(TEST_C_SOURCE_FILES) $(TEST_C_HEADERS) $(LIBRARY_EXTRAS)
 	clang-format --verbose --style=file -i --Werror $^
+
+.PHONY: docs
+docs: documentation/api
+
+documentation/api: Doxyfile $(LIBRARY_C_SOURCE_FILES) $(LIBRARY_C_ALL_HEADER_FILES)
+	mkdir -p $@
+	doxygen
 
 $(STATIC_LIBRARY): $(LIBRARY_OBJECT_FILES) | $(BUILD_DIR)
 	$(AR) rcs $@ $^

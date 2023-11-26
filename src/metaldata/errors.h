@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Cross-platform error codes used by MetalData.
+ *
+ * @file errors.h
+ */
+
 #ifndef INCLUDE_METALDATA_ERRORS_H_
 #define INCLUDE_METALDATA_ERRORS_H_
 

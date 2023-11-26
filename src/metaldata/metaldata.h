@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * The primary include file with core definitions for users of MetalData.
+ *
+ * @file metaldata.h
+ */
+
 #ifndef INCLUDE_METALDATA_METALDATA_H_
 #define INCLUDE_METALDATA_METALDATA_H_
 
@@ -89,12 +95,19 @@ typedef int (*mdl_comparator_fptr)(MDLState *ds, const void *left, const void *r
 /**
  * Free raw memory allocated by @ref mdl_malloc and its related functions.
  *
- * @param ds       The
+ * @param ds        The MDL state.
  * @param pointer   The pointer to the block of memory to free.
  * @param old_size  The size of the memory block.
  */
 MDL_API void mdl_free(MDLState *ds, void *pointer, size_t old_size);
 
+/**
+ * Allocate memory using the allocation function provided to @a ds.
+ *
+ * @param ds    The MDL state.
+ * @param size  The size of the memory block to allocate, in bytes.
+ * @return A pointer to the allocated memory, or NULL if allocation failed.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD

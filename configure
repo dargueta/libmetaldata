@@ -15,6 +15,7 @@ install_target_include=
 install_target_bin=
 install_target_pkgconfig=
 cc=${CC:-}
+machine=
 
 HELP_TEXT="
 General-Purpose Flags
@@ -25,11 +26,14 @@ General-Purpose Flags
     Compile with debugging information.
 -D name[=value]
     Define a macro to be passed to the preprocessor.
--h | --help
-    Show this help message.
--m | --minimal-flags
+-F | --minimal-flags
     Only pass minimal flags to the compiler. Use this as the lowest common
     denominator when a compiler doesn't support GCC's most common flags.
+-h | --help
+    Show this help message.
+-m ARCH | --machine=ARCH
+    Define the processor architecture of the compilation target. Valid values
+    depend on the selected compiler.
 -p PATH | --prefix=PATH
     Change the top-level installation path for the library and headers. The
     library is placed in 'PATH/lib', headers in 'PATH/include', etc. Directories
@@ -59,14 +63,14 @@ while [ -n "$1" ]; do
         cc=$2
         shift
       else
-        echo "A path is required for --cc."
+        echo "A path is required for $flag."
         exit 1
       fi
       ;;
     -d | --debug ) debug=1 ;;
     -D )
       if [ -z "$2" ]; then
-        echo "A macro definition is required for -D."
+        echo "A macro definition is required for $flag."
         exit 1
       fi
       additional_defines="$additional_defines -D$2"
@@ -76,7 +80,18 @@ while [ -n "$1" ]; do
       echo "$HELP_TEXT"
       exit 0
       ;;
-    -m | --minimal-flags) minimal_flags=1 ;;
+    -F | --minimal-flags) minimal_flags=1 ;;
+    -m | --machine )
+      if [ -n "$eq_flag_argument" ]; then
+        machine=$eq_flag_argument
+      elif [ -n "$2" ]; then
+        machine=$2
+        shift
+      else
+        echo "A processor architecture is required for $flag."
+        exit 1
+      fi
+      ;;
     -p | --pre | --prefix )
       if [ -n "$eq_flag_argument" ]; then
         prefix=$eq_flag_argument
@@ -84,7 +99,7 @@ while [ -n "$1" ]; do
         prefix=$2
         shift
       else
-        echo "A path is required for --prefix."
+        echo "A path is required for $flag."
         exit 1
       fi
       ;;
@@ -141,6 +156,7 @@ echo "  Library   : ${install_target_lib:-PREFIX/lib}"
 echo "  pkgconfig : ${install_target_pkgconfig:-LIBDIR/pkgconfig}"
 echo
 echo "User-defined macros: $additional_defines"
+echo "Target architecture: ${machine:-(native)}"
 echo
 echo "Generating Makefile.in..."
 cat <<EOF > Makefile.in
@@ -159,6 +175,7 @@ VERSION_FULL=\$(VERSION_MAJOR).\$(VERSION_MINOR).\$(VERSION_PATCH)
 USE_MINIMAL_FLAGS=$minimal_flags
 NO_FATAL_WARNINGS=$no_fatal_warnings
 $compiler_override
+TARGET_ARCHITECTURE=$machine
 EOF
 
 echo "Done."

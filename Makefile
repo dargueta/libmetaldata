@@ -129,30 +129,29 @@ INSTALL_BINARY_WILDCARD = $(call INSTALL_BINARY,$(wildcard $1),$2)
 INSTALL_FILE = $(if $1,mkdir -p $2 && $(CMD_INSTALL) $1 $2)
 INSTALL_FILE_WILDCARD = $(call INSTALL_FILE,$(wildcard $1),$2)
 INSTALL_RECURSIVE = mkdir -p $2 && cp -r $1/. $2
+DOC_INDEX_FILE = documentation/api/html/index.html
 
 # This must be included only after all variables are defined.
 include make/pkginfo-template.mk
 include make/configuration-header.mk
 
-.PHONY: all
+.PHONY: __in_debug_mode all clean docs format header install library show_docs test
+
 all: library $(PKGCONFIG_FILE)
 
-.PHONY: install
 install: all $(LIBRARY_C_ALL_HEADER_FILES) $(LIBRARY_EXTRAS)
 	$(call INSTALL_FILE,$(STATIC_LIBRARY),$(INSTALL_TARGET_LIB))
 	$(call INSTALL_RECURSIVE,$(HEADER_ROOT),$(INSTALL_TARGET_INCLUDE))
 	$(call INSTALL_FILE,$(PKGCONFIG_FILE),$(INSTALL_TARGET_PKGCONFIG))
 
-.PHONY: library
 library: $(STATIC_LIBRARY)
 
-.PHONY: test
 test: $(TEST_BINARY)
 	$(TEST_BINARY)
 
-.PHONY: clean
 clean:
 	$(RM) -r $(BUILD_DIR)
+	$(RM) -r $(dir $(DOC_INDEX_FILE))
 	$(RM) $(ALL_OBJECT_FILES)
 	$(RM) $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.adb)
 	$(RM) $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.asm)
@@ -161,16 +160,17 @@ clean:
 	$(RM) $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.sym)
 	$(RM) $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.d)
 
-.PHONY: format
 format: $(LIBRARY_C_SOURCE_FILES) $(LIBRARY_C_ALL_HEADER_FILES) \
         $(TEST_C_SOURCE_FILES) $(TEST_C_HEADERS) $(LIBRARY_EXTRAS)
 	clang-format --verbose --style=file -i --Werror $^
 
-.PHONY: docs
-docs: documentation/api
+docs: $(DOC_INDEX_FILE)
 
-documentation/api: Doxyfile $(LIBRARY_C_SOURCE_FILES) $(LIBRARY_C_ALL_HEADER_FILES)
-	mkdir -p $@
+show_docs: $(DOC_INDEX_FILE)
+	open $<
+
+$(DOC_INDEX_FILE): Doxyfile $(LIBRARY_C_SOURCE_FILES) $(LIBRARY_C_ALL_HEADER_FILES)
+	mkdir -p $(@D)
 	doxygen
 
 $(STATIC_LIBRARY): $(LIBRARY_OBJECT_FILES) | $(BUILD_DIR)
@@ -186,7 +186,6 @@ export PKGINFO_TEXT
 $(PKGCONFIG_FILE): Makefile.in make/pkginfo-template.mk | $(BUILD_DIR)
 	echo "$${PKGINFO_TEXT}" > $@
 
-.PHONY: header
 header: $(CONFIG_HEADER_FILE)
 
 export CONFIGURATION_HEADER_TEXT
@@ -206,7 +205,6 @@ $(BUILD_DIR):
 Makefile.in:
 	@echo 'You must run the `configure` script before running Make.' ; exit 1
 
-.PHONY: __in_debug_mode
 __in_debug_mode:
 	@if [ "$(DEBUG_MODE)" -eq 0 ]; then \
         echo 'Recompile project in debug mode. See `configure -h` for details.'; \

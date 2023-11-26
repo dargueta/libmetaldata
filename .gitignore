@@ -18,6 +18,7 @@
 src/metaldata/configuration.h
 Makefile.in
 dependencies.in
+documentation/api/html
 
 build/
 cmake-build-debug/

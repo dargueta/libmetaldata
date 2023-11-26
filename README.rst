@@ -60,7 +60,7 @@ Legend:
 * Y: Full support
 * (blank): Untested or not implemented yet
 * NS: Not supported for technical reasons
-* m: Requires compiling with minimal flags (pass ``-m`` to ``configure``)
+* m: Requires compiling with minimal flags (pass ``-F`` to ``configure``)
 
 Compilers
 *********

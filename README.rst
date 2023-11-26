@@ -11,21 +11,23 @@ it into a separate library.
 Standard Library Usage
 ----------------------
 
-The following, and *only* the following functions of the C standard library are
-used. This library comes with some built-in fallbacks when compiled in unhosted
-("freestanding" or "bare metal") mode. Unsupported functions must be provided by
-client code. More on that in the docs.
+The following, and *only* the following parts of the C standard library are used.
+MetalData comes with some built-in fallbacks when compiled in unhosted
+("freestanding" or "bare metal") mode. Unsupported functionality must be provided
+by client code. More on that in the docs.
 
-======== ========= ================
-What     Header    Unhosted Support
-======== ========= ================
-free     stdlib.h  N
-malloc   stdlib.h  N
-memcmp   string.h  Y
-memcpy   string.h  Y
-memset   string.h  Y
-strcmp   string.h  Y
-======== ========= ================
+========= ========= ==================
+What      Header    Unhosted Fallbacks
+========= ========= ==================
+free      stdlib.h  N
+malloc    stdlib.h  N
+memcmp    string.h  Y
+memcpy    string.h  Y
+memset    string.h  Y
+ptrdiff_t stddef.h  N
+size_t    stddef.h  N
+strcmp    string.h  Y
+========= ========= ==================
 
 Building
 --------

@@ -86,6 +86,16 @@
  * A function attribute that indicates the function never returns a null pointer.
  *
  *
+ * @def MDL_FALLTHROUGH_MARKER
+ * A marker used to indicate to the compiler that control from one `case` in a `switch`
+ * statement is deliberately falling through to the next case.
+ *
+ *
+ * @def MDL_REENTRANT_MARKER
+ * A function attribute required by the SDCC compiler in certain instances for some
+ * compilation targets.
+ *
+ *
  * @def GNU_ATTRIBUTE
  * A convenience macro that expands GCC attributes only if the compiler is compatible with
  * the version of GCC that implements that attribute.

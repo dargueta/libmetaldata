@@ -27,7 +27,6 @@
 
 #include "configuration.h"
 #include "internal/annotations.h"
-#include "memblklist.h"
 #include "metaldata.h"
 #include <stdbool.h>
 #include <stddef.h>
@@ -38,7 +37,7 @@ typedef void *MDLArrayBlock[MDL_DEFAULT_ARRAY_BLOCK_SIZE];
 
 typedef struct MDLArray_
 {
-    MDLMemBlkList block_list;
+    MDLState *ds;
 
     /**
      * A function to call when deleting an element.
@@ -49,6 +48,8 @@ typedef struct MDLArray_
      * The current length of the array.
      */
     size_t length;
+
+    MDLArrayBlock *blocks;
 
     /**
      * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon
@@ -62,7 +63,7 @@ typedef struct MDLArray_
 
 typedef struct MDLArrayIterator_
 {
-    MDLMemBlkListIterator block_iterator;
+    size_t block_index;
     size_t block_element_index;
 
     /**

@@ -26,11 +26,9 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor)
 
 int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destructor)
 {
-    int result;
-
-    result = mdl_memblklist_init(ds, &array->block_list, sizeof(MDLArrayBlock));
-    if (result != MDL_OK)
-        return result;
+    array->blocks = mdl_malloc(ds, sizeof(MDLArrayBlock *));
+    if (array->blocks == NULL)
+        return MDL_ERROR_NOMEM;
 
     array->length = 0;
     array->was_allocated = false;
@@ -40,30 +38,31 @@ int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destr
 
 int mdl_array_destroy(MDLArray *array)
 {
-    MDLArrayBlock block;
-    int error;
+    size_t num_blocks = array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
+    if (array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE > 0)
+        ++num_blocks;
 
-    while (array->length > 0)
+    if (array->elem_destructor != NULL)
     {
-        size_t elements_in_block, i;
+        size_t elements_remaining = array->length;
 
-        if (array->length > MDL_DEFAULT_ARRAY_BLOCK_SIZE)
-            elements_in_block = MDL_DEFAULT_ARRAY_BLOCK_SIZE;
-        else
-            elements_in_block = array->length;
+        for (size_t block_i = 0; block_i < num_blocks; block_i++)
+        {
+            size_t loop_limit = (MDL_DEFAULT_ARRAY_BLOCK_SIZE < elements_remaining)
+                                    ? MDL_DEFAULT_ARRAY_BLOCK_SIZE
+                                    : elements_remaining;
 
-        mdl_memblklist_popfrontcopy(&array->block_list, block);
-
-        for (i = 0; i < elements_in_block; i++)
-            array->elem_destructor(array->block_list.ds, block[i]);
-        array->length -= elements_in_block;
+            for (size_t elem_i = 0; elem_i < loop_limit; elem_i++)
+                array->elem_destructor(array->ds, array->blocks[block_i][elem_i]);
+        }
     }
 
-    error = mdl_memblklist_destroy(&array->block_list);
+    mdl_free(array->ds, array->blocks, sizeof(*array->blocks) * num_blocks);
 
     if (array->was_allocated)
-        mdl_free(array->block_list.ds, array, sizeof(*array));
-    return error;
+        mdl_free(array->ds, array, sizeof(*array));
+
+    return 0;
 }
 
 size_t mdl_array_length(const MDLArray *array)
@@ -110,7 +109,7 @@ int mdl_array_push(MDLArray *array, void *item)
     /* If the number of elements in the list is an exact multiple of the block size, then
      * the final block is full, and we need to add a new one. In either case, after this
      * `block` will contain a pointer to the block we need to append the data to. */
-    if (element_offset == 0)
+    if ((element_offset == 0) && (array->length > 0))
     {
         block = mdl_memblklist_push(&array->block_list);
         if (block == NULL)

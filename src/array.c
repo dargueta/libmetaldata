@@ -77,9 +77,7 @@ int mdl_array_head(const MDLArray *array, void **item)
     if (array->length == 0)
         return MDL_ERROR_EMPTY;
 
-    block = mdl_memblklist_head(&array->block_list);
-    if (block != NULL)
-        *item = (*block)[0];
+    *item = array->blocks[0][0];
     return MDL_OK;
 }
 
@@ -196,7 +194,7 @@ int mdl_array_removevalue(MDLArray *array, const void *value, mdl_comparator_fpt
 
 MDLArrayIterator *mdl_array_getiterator(const MDLArray *array, bool reverse)
 {
-    MDLArrayIterator *iter = mdl_malloc(array->block_list.ds, sizeof(*iter));
+    MDLArrayIterator *iter = mdl_malloc(array->ds, sizeof(*iter));
     if (iter == NULL)
         return NULL;
 
@@ -207,7 +205,6 @@ MDLArrayIterator *mdl_array_getiterator(const MDLArray *array, bool reverse)
 
 void mdl_arrayiter_init(const MDLArray *array, MDLArrayIterator *iter, bool reverse)
 {
-    ;
     iter->was_allocated = false;
     iter->block_element_index = 0;
     mdl_memblklistiter_init(&array->block_list, &iter->block_iterator, reverse);
@@ -226,7 +223,7 @@ void mdl_arrayiter_destroy(MDLArrayIterator *iter);
 static int get_node_location_by_index(const MDLArray *array, int index, void **block,
                                       size_t *offset)
 {
-    size_t absolute_index, block_number, block_offset;
+    size_t absolute_index, block_number;
 
     if (index >= 0)
         absolute_index = (size_t)index;
@@ -237,9 +234,8 @@ static int get_node_location_by_index(const MDLArray *array, int index, void **b
         return MDL_ERROR_OUT_OF_RANGE;
 
     block_number = absolute_index / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
-    block_offset = absolute_index % MDL_DEFAULT_ARRAY_BLOCK_SIZE;
 
-    *block = mdl_memblklist_getblockat(&array->block_list, (int)block_number);
-    *offset = block_offset;
+    *block = &array->blocks[block_number];
+    *offset = absolute_index % MDL_DEFAULT_ARRAY_BLOCK_SIZE;;
     return 0;
 }

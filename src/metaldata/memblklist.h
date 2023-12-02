@@ -443,6 +443,12 @@ MDL_API
 MDL_ANNOTN__NONNULL
 void *mdl_memblklistiter_get(MDLMemBlkListIterator *iter);
 
+/**
+ * Advance the iterator to the next element in the input.
+ *
+ * @param iter The iterator to operate on.
+ * @return 0 on success, @ref MDL_EOF if the input has been exhausted.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_memblklistiter_next(MDLMemBlkListIterator *iter);

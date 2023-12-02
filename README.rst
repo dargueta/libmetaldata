@@ -120,12 +120,12 @@ HC08 (Motorola 68HC08) Y
 macOS ARM64            Y        Y
 MCS-51                 Y
 MOS 6502               NS [#]_
-PDK13                  Y
-PDK14                  Y
-PDK15                  Y
-R2K                    Y
-R2KA                   NS
-R3KA                   Y
+Padauk PDK 13          Y
+Padauk PDK 14          Y
+Padauk PDK 15          Y
+Rabbit 2000            Y
+Rabbit 2000A           NS
+Rabbit 3000A           Y
 S08                    Y
 SM83                   NS
 STM8                   Y

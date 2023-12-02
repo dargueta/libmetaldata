@@ -83,17 +83,14 @@ int mdl_array_head(const MDLArray *array, void **item)
 
 int mdl_array_tail(const MDLArray *array, void **item)
 {
-    MDLArrayBlock *block;
-    size_t num_elements_in_last_block;
+    MDLArrayBlock block;
+    size_t index;
 
     if (array->length == 0)
         return MDL_ERROR_EMPTY;
 
-    block = mdl_memblklist_tail(&array->block_list);
-
-    num_elements_in_last_block = array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE;
-    if (block != NULL)
-        *item = (*block)[num_elements_in_last_block - 1];
+    get_node_location_by_index(array, (int)(array->length - 1), (void *)&block, &index);
+    *item = block[index];
     return MDL_OK;
 }
 
@@ -205,16 +202,23 @@ MDLArrayIterator *mdl_array_getiterator(const MDLArray *array, bool reverse)
 
 void mdl_arrayiter_init(const MDLArray *array, MDLArrayIterator *iter, bool reverse)
 {
-    iter->was_allocated = false;
+    iter->array = array;
+    iter->absolute_index = 0;
     iter->block_element_index = 0;
-    mdl_memblklistiter_init(&array->block_list, &iter->block_iterator, reverse);
+    iter->block_index = 0;
+    iter->was_allocated = false;
 }
 
 void *mdl_arrayiter_get(const MDLArrayIterator *iter);
 
 int mdl_arrayiter_next(MDLArrayIterator *iter);
 
-int mdl_arrayiter_hasnext(const MDLArrayIterator *iter);
+int mdl_arrayiter_hasnext(const MDLArrayIterator *iter)
+{
+    if (iter->array->length > 0)
+        return iter->absolute_index < (iter->array->length - 1);
+    return 0;
+}
 
 void mdl_arrayiter_destroy(MDLArrayIterator *iter);
 
@@ -236,6 +240,7 @@ static int get_node_location_by_index(const MDLArray *array, int index, void **b
     block_number = absolute_index / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
 
     *block = &array->blocks[block_number];
-    *offset = absolute_index % MDL_DEFAULT_ARRAY_BLOCK_SIZE;;
+    *offset = absolute_index % MDL_DEFAULT_ARRAY_BLOCK_SIZE;
+    ;
     return 0;
 }

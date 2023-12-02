@@ -63,8 +63,10 @@ typedef struct MDLArray_
 
 typedef struct MDLArrayIterator_
 {
+    const MDLArray *array;
     size_t block_index;
     size_t block_element_index;
+    size_t absolute_index;
 
     /**
      * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon
@@ -265,6 +267,12 @@ MDL_API
 MDL_ANNOTN__NONNULL
 void *mdl_arrayiter_get(const MDLArrayIterator *iter);
 
+/**
+ * Advance the iterator to the next element in the input.
+ *
+ * @param iter The iterator to operate on.
+ * @return 0 on success, @ref MDL_EOF if the input has been exhausted.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 int mdl_arrayiter_next(MDLArrayIterator *iter);

@@ -128,10 +128,11 @@ int mdl_array_pop(MDLArray *array, void **item)
 
     MDLArrayBlock *block;
     size_t element_index;
-
     get_node_location_by_index(array, -1, &block, &element_index);
 
-    *item = (*block)[element_index];
+    if (item != NULL)
+        *item = (*block)[element_index];
+
     array->length--;
 
     // If the index of the element we just popped is 0, that means the last block in the

@@ -1,6 +1,14 @@
 #include "metaldata/array.h"
+#include "metaldata/internal/annotations.h"
 #include "metaldata/metaldata.h"
 
+MDL_ANNOTN__NONNULL
+static size_t get_num_blocks(const MDLArray *array);
+
+MDL_ANNOTN__NONNULL
+static int add_blocks(MDLArray *array, size_t n_to_add);
+
+MDL_ANNOTN__NONNULL
 static int get_node_location_by_index(const MDLArray *array, int index, void **block,
                                       size_t *offset);
 
@@ -98,27 +106,22 @@ int mdl_array_push(MDLArray *array, void *item)
 {
     size_t element_offset;
     MDLArrayBlock *block;
+    int error;
 
     element_offset = array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE;
 
-    /* If the number of elements in the list is an exact multiple of the block size, then
-     * the final block is full, and we need to add a new one. In either case, after this
-     * `block` will contain a pointer to the block we need to append the data to. */
+    // If the number of elements in the list is an exact multiple of the block size, then
+    // the final block is full, and we need to add a new one.
     if ((element_offset == 0) && (array->length > 0))
     {
-        block = mdl_memblklist_push(&array->block_list);
-        if (block == NULL)
-            return MDL_ERROR_NOMEM;
+        error = add_blocks(array, 1);
+        if (error != MDL_OK)
+            return error;
     }
-    else
-    {
-        /* If our math is correct, this will never fail if the list is empty, and we
-         * should never hit the error condition. */
-        block = mdl_memblklist_tail(&array->block_list);
-        if (block == NULL)
-            return MDL_ERROR_ASSERT_FAILED;
-    }
+    // Else: the final block isn't full, or the list is empty, thus we don't need to
+    // allocate an additional block.
 
+    block = &array->blocks[array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE];
     (*block)[element_offset] = item;
     array->length++;
     return MDL_OK;
@@ -223,6 +226,31 @@ int mdl_arrayiter_hasnext(const MDLArrayIterator *iter)
 void mdl_arrayiter_destroy(MDLArrayIterator *iter);
 
 /******** Helper functions ********/
+
+static size_t get_num_blocks(const MDLArray *array)
+{
+    size_t n = array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
+
+    // One block is always allocated, so we add 1 unconditionally. We need to round up if
+    // the last block is only partially full.
+    if (array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE != 0)
+        return n + 2;
+    return n + 1;
+}
+
+static int add_blocks(MDLArray *array, size_t n_to_add)
+{
+    size_t n_current_blocks = get_num_blocks(array);
+    MDLArrayBlock *new_block_list = mdl_realloc(
+        array->ds, array->blocks, (n_current_blocks + n_to_add) * sizeof(*array->blocks),
+        n_current_blocks * sizeof(*array->blocks));
+
+    if (new_block_list == NULL)
+        return MDL_ERROR_NOMEM;
+
+    array->blocks = new_block_list;
+    return MDL_OK;
+}
 
 static int get_node_location_by_index(const MDLArray *array, int index, void **block,
                                       size_t *offset)

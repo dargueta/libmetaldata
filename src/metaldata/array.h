@@ -263,6 +263,16 @@ MDL_API
 MDL_ANNOTN__NONNULL
 void mdl_arrayiter_init(const MDLArray *array, MDLArrayIterator *iter, bool reverse);
 
+/**
+ * Get the value of the element the iterator is pointing to.
+ *
+ * @warning If the array is empty, the return value is @e undefined.
+ *
+ * @param iter
+ * @return The value of the element the iterator is pointing to.
+ *
+ * @see mdl_arrayiter_hasnext
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 void *mdl_arrayiter_get(const MDLArrayIterator *iter);
@@ -279,7 +289,7 @@ int mdl_arrayiter_next(MDLArrayIterator *iter);
 
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_arrayiter_hasnext(const MDLArrayIterator *iter);
+bool mdl_arrayiter_hasnext(const MDLArrayIterator *iter);
 
 MDL_API
 MDL_ANNOTN__NONNULL

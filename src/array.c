@@ -2,15 +2,18 @@
 #include "metaldata/internal/annotations.h"
 #include "metaldata/metaldata.h"
 
+#include <stdbool.h>
+#include <stddef.h>
+
 MDL_ANNOTN__NONNULL
 static size_t get_num_blocks(const MDLArray *array);
 
 MDL_ANNOTN__NONNULL
-static int add_blocks(MDLArray *array, size_t n_to_add);
+static int resize_block_list(MDLArray *array, size_t new_total);
 
 MDL_ANNOTN__NONNULL
-static int get_node_location_by_index(const MDLArray *array, int index, void **block,
-                                      size_t *offset);
+static int get_node_location_by_index(const MDLArray *array, int index,
+                                      MDLArrayBlock *block, size_t *offset);
 
 MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor)
 {
@@ -46,9 +49,7 @@ int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destr
 
 int mdl_array_destroy(MDLArray *array)
 {
-    size_t num_blocks = array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
-    if (array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE > 0)
-        ++num_blocks;
+    size_t num_blocks = get_num_blocks(array);
 
     if (array->elem_destructor != NULL)
     {
@@ -80,8 +81,6 @@ size_t mdl_array_length(const MDLArray *array)
 
 int mdl_array_head(const MDLArray *array, void **item)
 {
-    MDLArrayBlock *block;
-
     if (array->length == 0)
         return MDL_ERROR_EMPTY;
 
@@ -91,21 +90,17 @@ int mdl_array_head(const MDLArray *array, void **item)
 
 int mdl_array_tail(const MDLArray *array, void **item)
 {
-    MDLArrayBlock block;
-    size_t index;
-
     if (array->length == 0)
         return MDL_ERROR_EMPTY;
 
-    get_node_location_by_index(array, (int)(array->length - 1), (void *)&block, &index);
-    *item = block[index];
+    *item = array->blocks[array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE]
+                         [array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE];
     return MDL_OK;
 }
 
 int mdl_array_push(MDLArray *array, void *item)
 {
     size_t element_offset;
-    MDLArrayBlock *block;
     int error;
 
     element_offset = array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE;
@@ -114,38 +109,29 @@ int mdl_array_push(MDLArray *array, void *item)
     // the final block is full, and we need to add a new one.
     if ((element_offset == 0) && (array->length > 0))
     {
-        error = add_blocks(array, 1);
+        error = resize_block_list(array, get_num_blocks(array) + 1);
         if (error != MDL_OK)
             return error;
     }
     // Else: the final block isn't full, or the list is empty, thus we don't need to
     // allocate an additional block.
 
-    block = &array->blocks[array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE];
-    (*block)[element_offset] = item;
+    array->blocks[array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE][element_offset] = item;
     array->length++;
     return MDL_OK;
 }
 
 int mdl_array_pop(MDLArray *array, void **item)
 {
-    size_t element_index;
-    MDLArrayBlock *last_block;
+    int index;
 
-    last_block = mdl_memblklist_tail(&array->block_list);
-    if (last_block == NULL)
+    if (array->length == 0)
         return MDL_ERROR_EMPTY;
 
-    element_index = (array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE) - 1;
-    *item = (*last_block)[element_index];
-    array->length--;
+    MDLArrayBlock block;
+    size_t element_index;
 
-    /* If element_index is 0 then that means we just popped the last data from the block.
-     * Free the empty block *if* it's not the head. We need the head. */
-    if ((array->length == 0) || (element_index > 0))
-        return MDL_OK;
-
-    return mdl_memblklist_pop(&array->block_list);
+    get_node_location_by_index(array, -1, &block, &element_index);
 }
 
 int mdl_array_pushfront(MDLArray *array, void *item);
@@ -154,7 +140,7 @@ int mdl_array_popfront(MDLArray *array, void **item);
 
 int mdl_array_getat(const MDLArray *array, int index, void **value)
 {
-    void *block;
+    MDLArrayBlock block;
     size_t block_offset;
     int result;
 
@@ -162,13 +148,13 @@ int mdl_array_getat(const MDLArray *array, int index, void **value)
     if (result != MDL_OK)
         return result;
 
-    *value = ((void **)block)[block_offset];
+    *value = block[block_offset];
     return MDL_OK;
 }
 
 int mdl_array_setat(MDLArray *array, int index, void *new_value)
 {
-    void *block;
+    MDLArrayBlock block;
     size_t block_offset;
     int result;
 
@@ -176,7 +162,7 @@ int mdl_array_setat(MDLArray *array, int index, void *new_value)
     if (result != MDL_OK)
         return result;
 
-    ((void **)block)[block_offset] = new_value;
+    block[block_offset] = new_value;
     return MDL_OK;
 }
 
@@ -212,18 +198,39 @@ void mdl_arrayiter_init(const MDLArray *array, MDLArrayIterator *iter, bool reve
     iter->was_allocated = false;
 }
 
-void *mdl_arrayiter_get(const MDLArrayIterator *iter);
+void *mdl_arrayiter_get(const MDLArrayIterator *iter)
+{
+    // Because there is always at least one block allocated, and we don't advance the
+    // iterator past the end of the array, we don't need to do bounds checking here. Doing
+    // so would only protect us against the case where this is called on an empty list, so
+    // it isn't useful for most cases. The documentation explicitly states that calling
+    // this on an empty list returns an undefined value, so we can get away with it.
+    return iter->array->blocks[iter->block_index][iter->block_element_index];
+}
 
-int mdl_arrayiter_next(MDLArrayIterator *iter);
+int mdl_arrayiter_next(MDLArrayIterator *iter)
+{
+    if (iter->absolute_index + 1 >= iter->array->length)
+        return MDL_EOF;
 
-int mdl_arrayiter_hasnext(const MDLArrayIterator *iter)
+    iter->absolute_index++;
+    iter->block_index = iter->absolute_index / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
+    iter->block_element_index = iter->absolute_index % MDL_DEFAULT_ARRAY_BLOCK_SIZE;
+    return MDL_OK;
+}
+
+bool mdl_arrayiter_hasnext(const MDLArrayIterator *iter)
 {
     if (iter->array->length > 0)
         return iter->absolute_index < (iter->array->length - 1);
-    return 0;
+    return false;
 }
 
-void mdl_arrayiter_destroy(MDLArrayIterator *iter);
+void mdl_arrayiter_destroy(MDLArrayIterator *iter)
+{
+    if (iter->was_allocated)
+        mdl_free(iter->array->ds, iter, sizeof(*iter));
+}
 
 /******** Helper functions ********/
 
@@ -238,12 +245,16 @@ static size_t get_num_blocks(const MDLArray *array)
     return n + 1;
 }
 
-static int add_blocks(MDLArray *array, size_t n_to_add)
+static int resize_block_list(MDLArray *array, size_t new_total)
 {
     size_t n_current_blocks = get_num_blocks(array);
-    MDLArrayBlock *new_block_list = mdl_realloc(
-        array->ds, array->blocks, (n_current_blocks + n_to_add) * sizeof(*array->blocks),
-        n_current_blocks * sizeof(*array->blocks));
+
+    if (n_current_blocks == new_total)
+        return MDL_OK;
+
+    MDLArrayBlock *new_block_list =
+        mdl_realloc(array->ds, array->blocks, new_total * sizeof(*array->blocks),
+                    n_current_blocks * sizeof(*array->blocks));
 
     if (new_block_list == NULL)
         return MDL_ERROR_NOMEM;
@@ -252,8 +263,8 @@ static int add_blocks(MDLArray *array, size_t n_to_add)
     return MDL_OK;
 }
 
-static int get_node_location_by_index(const MDLArray *array, int index, void **block,
-                                      size_t *offset)
+static int get_node_location_by_index(const MDLArray *array, int index,
+                                      MDLArrayBlock *block, size_t *offset)
 {
     size_t absolute_index, block_number;
 
@@ -269,6 +280,5 @@ static int get_node_location_by_index(const MDLArray *array, int index, void **b
 
     *block = &array->blocks[block_number];
     *offset = absolute_index % MDL_DEFAULT_ARRAY_BLOCK_SIZE;
-    ;
     return 0;
 }

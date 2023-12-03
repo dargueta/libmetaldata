@@ -67,6 +67,7 @@ typedef struct MDLArrayIterator_
     size_t block_index;
     size_t block_element_index;
     size_t absolute_index;
+    bool reverse;
 
     /**
      * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon

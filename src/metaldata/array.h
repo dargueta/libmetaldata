@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * A resizable array.
+ * A resizable array of pointers.
  *
- * - Pushes and pops from both ends are O(1).
- * - Accessing the first and last elements are also O(1).
- * - All other accesses are O(n).
+ * - Reads and writes are O(1).
+ * - Pushes and pops from the end are O(1).
+ * - Pushes and pops from the front are O(n).
  * - Forward and backward iteration is supported.
  *
  * @file array.h

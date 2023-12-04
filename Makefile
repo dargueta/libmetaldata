@@ -75,13 +75,13 @@ else ifeq ($(USE_MINIMAL_FLAGS),1)
 else
 	C_STANDARD_FLAG = -std=$(C_STANDARD)
 	NOSTDLIB_FLAG = -nostdlib
-	BASE_WARNING_FLAGS = -Wall -Wextra
-	WERROR_FLAG = -Werror
+	BASE_WARNING_FLAGS = -Wall -Wextra -Wpedantic
+	WERROR_FLAG = -Werror -pedantic-errors
 	DEBUG_SYMBOLS_FLAG = -g
 	ifeq ($(DEBUG_MODE),0)
 	    GENERIC_OPTIMIZATION_FLAG = -O2
 	else
-	    GENERIC_OPTIMIZATION_FLAG = -Og
+	    GENERIC_OPTIMIZATION_FLAG = -O2 -g
 	endif
 	ifneq ($(TARGET_ARCHITECTURE),)
 		ARCH_FLAG = -march=$(TARGET_ARCHITECTURE)

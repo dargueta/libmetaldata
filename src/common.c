@@ -34,9 +34,13 @@ int mdl_default_ptr_value_comparator(MDLState *ds, const void *left, const void 
                                      size_t size)
 {
     (void)ds, (void)size;
+
+    // Because ptrdiff_t may be larger than an int, and demotion of signed types is
+    // implementation-defined, we do this instead of casting the result of a pointer
+    // subtraction.
     if (left < right)
         return -1;
-    else if (left > right)
+    if (left > right)
         return 1;
     return 0;
 }
@@ -46,17 +50,14 @@ int mdl_default_string_comparator(MDLState *ds, const void *left, const void *ri
 {
     (void)ds, (void)size;
 
-    if ((left == NULL) || (right == NULL))
-    {
-        ptrdiff_t diff = left - right;
-        if (diff < 0)
-            return -1;
-        if (diff > 0)
-            return 1;
-        return 0;
-    }
+    if ((left != NULL) && (right != NULL))
+        return mdl_strcmp((const char *)left, (const char *)right);
 
-    return mdl_strcmp((const char *)left, (const char *)right);
+    // Don't use pointer subtraction for this. See comments in
+    // mdl_default_ptr_value_comparator for details.
+    if (left == NULL)
+        return right == NULL ? 0 : -1;
+    return left == NULL ? 0 : 1;
 }
 
 #if !MDL_COMPILED_AS_UNHOSTED

@@ -56,7 +56,7 @@ typedef struct MDLState_
 /**
  * Initialize a new MetalData state.
  *
- * @param[in] ds
+ * @param ds       The MetalData state.
  * @param alloc    The function to use for memory allocation. Hosted implementations can
  *                 use @ref mdl_default_hosted_alloc by including @file hosted_allocator.c
  *                 in their sources.
@@ -81,6 +81,24 @@ MDL_ANNOTN__ACCESS_SIZED(read_only, 3, 4)
 int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *right,
                                   size_t size);
 
+/**
+ * Compare two null-terminated C strings, where one or both pointers may be null.
+ *
+ * Null pointers compare equal. If one or both pointers is null, this becomes integer
+ * arithmetic, i.e.
+ *
+ * - left is NULL, right is not: -1
+ * - left is NULL, right is too: 0
+ * - left is not NULL, right is NULL: 1
+ *
+ * @param ds The MetalData state.
+ * @param left A pointer to a null-terminated C string to compare. May be null.
+ * @param right AA pointer to a null-terminated C string to compare. May be null.
+ * @param size Ignored. It's only here to make this function usable as an
+ *             @ref mdl_comparator_fptr.
+ * @return The return value follows the same rules as `strcmp()`. Additional rules for
+ *         null pointers is given in the description.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_default_string_comparator(MDLState *ds, const void *left, const void *right,
@@ -95,7 +113,7 @@ typedef int (*mdl_comparator_fptr)(MDLState *ds, const void *left, const void *r
 /**
  * Free raw memory allocated by @ref mdl_malloc and its related functions.
  *
- * @param ds        The MDL state.
+ * @param ds        The MetalData state.
  * @param pointer   The pointer to the block of memory to free.
  * @param old_size  The size of the memory block.
  */
@@ -104,7 +122,7 @@ MDL_API void mdl_free(MDLState *ds, void *pointer, size_t old_size);
 /**
  * Allocate memory using the allocation function provided to @a ds.
  *
- * @param ds    The MDL state.
+ * @param ds    The MetalData state.
  * @param size  The size of the memory block to allocate, in bytes.
  * @return A pointer to the allocated memory, or NULL if allocation failed.
  */

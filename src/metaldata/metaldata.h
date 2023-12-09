@@ -131,6 +131,17 @@ MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD
 void *mdl_malloc(MDLState *ds, size_t size);
 
+/**
+ * Change the size of a block of memory allocated by @ref mdl_malloc.
+ *
+ * This behaves the same as the C standard library realloc.
+ *
+ * @param ds The MetalData state.
+ * @param pointer A pointer to the memory block to reallocate.
+ * @param new_size The desired size of the memory block.
+ * @param old_size The current size of the memory block.
+ * @return A pointer to the reallocated memory, or NULL if reallocation failed.
+ */
 MDL_API
 void *mdl_realloc(MDLState *ds, void *pointer, size_t new_size, size_t old_size);
 

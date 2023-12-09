@@ -53,39 +53,11 @@ C_STANDARD = c99
 ARCH_FLAG =
 
 ifeq ($(notdir $(CC)),sdcc)
-	C_STANDARD_FLAG = --std-$(C_STANDARD)
-	FREESTANDING_FLAG =
-	NOSTDLIB_FLAG = --nostdlib
-	BASE_WARNING_FLAGS =
-	WERROR_FLAG = --Werror
-	DEBUG_SYMBOLS_FLAG = --debug
-	GENERIC_OPTIMIZATION_FLAG =
-	OBJECT_FILE_EXT = rel
-	ifneq ($(TARGET_ARCHITECTURE),)
-		ARCH_FLAG = -m$(TARGET_ARCHITECTURE)
-	endif
+	include make/compiler-support/sdcc.mk
 else ifeq ($(USE_MINIMAL_FLAGS),1)
-	C_STANDARD_FLAG =
-	NOSTDLIB_FLAG =
-	BASE_WARNING_FLAGS =
-	WERROR_FLAG =
-	DEBUG_SYMBOLS_FLAG =
-	GENERIC_OPTIMIZATION_FLAG =
-	FREESTANDING_FLAG =
+	include make/compiler-support/minimal.mk
 else
-	C_STANDARD_FLAG = -std=$(C_STANDARD)
-	NOSTDLIB_FLAG = -nostdlib
-	BASE_WARNING_FLAGS = -Wall -Wextra -Wpedantic
-	WERROR_FLAG = -Werror -pedantic-errors
-	DEBUG_SYMBOLS_FLAG = -g
-	ifeq ($(DEBUG_MODE),0)
-	    GENERIC_OPTIMIZATION_FLAG = -O2
-	else
-	    GENERIC_OPTIMIZATION_FLAG = -O2 -g
-	endif
-	ifneq ($(TARGET_ARCHITECTURE),)
-		ARCH_FLAG = -march=$(TARGET_ARCHITECTURE)
-	endif
+	include make/compiler-support/default.mk
 endif
 
 ifeq ($(DEBUG_MODE),0)

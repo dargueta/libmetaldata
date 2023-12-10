@@ -57,7 +57,8 @@ int mdl_default_string_comparator(MDLState *ds, const void *left, const void *ri
     // mdl_default_ptr_value_comparator for details.
     if (left == NULL)
         return right == NULL ? 0 : -1;
-    return left == NULL ? 0 : 1;
+    // Else: right is NULL, left is not null
+    return 1;
 }
 
 #if !MDL_COMPILED_AS_UNHOSTED

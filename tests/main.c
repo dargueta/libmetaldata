@@ -67,7 +67,7 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
         if (ptr != NULL)
         {
             munit_logf(
-                MUNIT_LOG_INFO,
+                MUNIT_LOG_DEBUG,
                 "Reallocating pointer=%p from %zu to %zu (delta %lld; now using %lld)",
                 ptr, type_or_old_size, size, delta,
                 global_tracking_info.memory_info.current_memory_used);
@@ -75,7 +75,7 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
         }
         else
         {
-            munit_logf(MUNIT_LOG_INFO,
+            munit_logf(MUNIT_LOG_DEBUG,
                        "Allocating new pointer of type %zu and size %zu (delta %lld; now "
                        "using %lld)",
                        type_or_old_size, size, delta,
@@ -110,7 +110,7 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
     {
         global_tracking_info.memory_info.current_memory_used -=
             (long long)type_or_old_size;
-        munit_logf(MUNIT_LOG_INFO, "Freeing pointer=%p of size %zu (now using %lld)", ptr,
+        munit_logf(MUNIT_LOG_DEBUG, "Freeing pointer=%p of size %zu (now using %lld)", ptr,
                    type_or_old_size,
                    global_tracking_info.memory_info.current_memory_used);
         global_tracking_info.memory_info.num_frees++;

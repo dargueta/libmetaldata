@@ -55,7 +55,7 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
     StateTracking *state = (StateTracking *)ud;
     munit_assert_not_null(state);
 
-    munit_logf(MUNIT_LOG_INFO, "Calling allocator: ptr=%p size=%zu old_size=%zu ud=%p",
+    munit_logf(MUNIT_LOG_DEBUG, "Calling allocator: ptr=%p size=%zu old_size=%zu ud=%p",
                ptr, size, type_or_old_size, (void *)state);
 
     // If the size is non-zero then the caller wants to either allocate new memory (`ptr`
@@ -68,7 +68,7 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
         if (ptr != NULL)
         {
             munit_logf(
-                MUNIT_LOG_INFO,
+                MUNIT_LOG_DEBUG,
                 "Reallocating pointer=%p from %zu to %zu (delta %lld; now using %lld)",
                 ptr, type_or_old_size, size, delta,
                 state->memory_info.current_memory_used);
@@ -76,7 +76,7 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
         }
         else
         {
-            munit_logf(MUNIT_LOG_INFO,
+            munit_logf(MUNIT_LOG_DEBUG,
                        "Allocating new pointer of type %zu and size %zu (delta %lld; now "
                        "using %lld)",
                        type_or_old_size, size, delta,
@@ -110,8 +110,8 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
     else
     {
         state->memory_info.current_memory_used -= (long long)type_or_old_size;
-        munit_logf(MUNIT_LOG_INFO, "Freeing pointer=%p of size %zu (now using %lld)", ptr,
-                   type_or_old_size, state->memory_info.current_memory_used);
+        munit_logf(MUNIT_LOG_DEBUG, "Freeing pointer=%p of size %zu (now using %lld)",
+                   ptr, type_or_old_size, state->memory_info.current_memory_used);
         state->memory_info.num_frees++;
     }
 

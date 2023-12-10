@@ -65,7 +65,7 @@ struct MDLMemBlkListNode_
     MDLMemBlkListNode *next;
 
     /** The user data to store. */
-    char data[] GNU_ATTRIBUTE(nonstring);
+    char data[] MDL_ANNOTN__NONSTRING;
 };
 
 /**

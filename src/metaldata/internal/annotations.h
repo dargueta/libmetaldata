@@ -95,6 +95,8 @@
  * A function attribute required by the SDCC compiler in certain instances for some
  * compilation targets.
  *
+ * @def MDL_ANNOTN__NONSTRING
+ * Tell the compiler that a `char *` variable might not point to a null-terminated string.
  *
  * @def GNU_ATTRIBUTE
  * A convenience macro that expands GCC attributes only if the compiler is compatible with
@@ -172,6 +174,10 @@
 #        define MDL_ANNOTN__NONNULL GNU_ATTRIBUTE(nonnull)
 #        define MDL_ANNOTN__NONNULL_ARGS(...) GNU_ATTRIBUTE(nonnull(__VA_ARGS__))
 #    endif
+
+#    if __has_attribute(nonstring)
+#        define MDL_ANNOTN__NONSTRING GNU_ATTRIBUTE(nonstring)
+#    endif
 #elif defined(__GNUC__)
 /* GCC versions that don't have __has_attribute(), non-Windows ICC, TCC... */
 #    define MDL_API GNU_ATTRIBUTE(visibility("default"))
@@ -206,6 +212,10 @@
 
 #    if !defined(MDL_FALLTHROUGH_MARKER)
 #        define MDL_FALLTHROUGH_MARKER GNU_ATTRIBUTE(fallthrough)
+#    endif
+
+#    if !defined(__clang__) && MINIMUM_GNU_VERSION(8, 0, 0)
+#        define MDL_ANNOTN__NONSTRING GNU_ATTRIBUTE(nonstring)
 #    endif
 #endif
 
@@ -296,6 +306,10 @@
 
 #ifndef MDL_ANNOTN__RETURNS_NONNULL
 #    define MDL_ANNOTN__RETURNS_NONNULL
+#endif
+
+#ifndef MDL_ANNOTN__NONSTRING
+#    define MDL_ANNOTN__NONSTRING
 #endif
 
 #if defined(__SDCC_ds390) || defined(__SDCC_ds400) || defined(__SDCC_hc08) ||            \

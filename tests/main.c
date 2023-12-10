@@ -50,20 +50,38 @@ typedef struct
     } memory_info;
 } StateTracking;
 
+StateTracking global_tracking_info;
+
 void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud)
 {
-    StateTracking *global_state = (StateTracking *)ud;
+    munit_logf(MUNIT_LOG_DEBUG, "Calling allocator: ptr=%p size=%zu old_size=%zu ud=%p",
+               ptr, size, type_or_old_size, ud);
 
     // If the size is non-zero then the caller wants to either allocate new memory (`ptr`
     // is NULL) or resize existing memory.
     if (size != 0)
     {
-        global_state->memory_info.current_memory_used +=
-            (long long)size - (long long)type_or_old_size;
+        long long delta = (long long)size - (long long)type_or_old_size;
+        global_tracking_info.memory_info.current_memory_used += delta;
+
         if (ptr != NULL)
-            global_state->memory_info.num_reallocations++;
+        {
+            munit_logf(
+                MUNIT_LOG_INFO,
+                "Reallocating pointer=%p from %zu to %zu (delta %lld; now using %lld)",
+                ptr, type_or_old_size, size, delta,
+                global_tracking_info.memory_info.current_memory_used);
+            global_tracking_info.memory_info.num_reallocations++;
+        }
         else
-            global_state->memory_info.num_allocations++;
+        {
+            munit_logf(MUNIT_LOG_INFO,
+                       "Allocating new pointer of type %zu and size %zu (delta %lld; now "
+                       "using %lld)",
+                       type_or_old_size, size, delta,
+                       global_tracking_info.memory_info.current_memory_used);
+            global_tracking_info.memory_info.num_allocations++;
+        }
         return realloc(ptr, size);
     }
 
@@ -74,19 +92,30 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
         if (type_or_old_size == 0)
         {
             // Old size is 0, this is actually an attempt to allocate but the size was 0.
-            global_state->memory_info.num_allocations++;
-            global_state->memory_info.num_allocations_of_0++;
-            return NULL;
+            munit_log(MUNIT_LOG_WARNING,
+                      "Attempting to allocate 0 bytes, returning NULL.");
+            global_tracking_info.memory_info.num_allocations++;
+            global_tracking_info.memory_info.num_allocations_of_0++;
         }
         else
         {
             // Old size is non-zero, meaning this is an intended free but `ptr` was null.
             // This is probably a bug.
-            global_state->memory_info.num_frees_of_null++;
+            munit_log(MUNIT_LOG_WARNING, "Attempting to free a null pointer.");
+            global_tracking_info.memory_info.num_frees_of_null++;
         }
+        return NULL;
     }
     else
-        global_state->memory_info.num_frees++;
+    {
+        global_tracking_info.memory_info.current_memory_used -=
+            (long long)type_or_old_size;
+        munit_logf(MUNIT_LOG_INFO, "Freeing pointer=%p of size %zu (now using %lld)", ptr,
+                   type_or_old_size,
+                   global_tracking_info.memory_info.current_memory_used);
+        global_tracking_info.memory_info.num_frees++;
+    }
+
     free(ptr);
     return NULL;
 }
@@ -95,16 +124,29 @@ static void *test_setup(const MunitParameter params[], void *user_data)
 {
     (void)params, (void)user_data;
     MDLState *state = munit_malloc(sizeof(*state));
-
-    mdl_initstate(state, malloc_for_tests, (StateTracking *)user_data);
+    mdl_initstate(state, malloc_for_tests, user_data);
+    memset(&global_tracking_info, 0, sizeof(global_tracking_info));
     return state;
 }
 
 static void test_tear_down(void *fixture)
 {
     free(fixture);
+
+    munit_logf(MUNIT_LOG_DEBUG, "num_allocations=%zu",
+               global_tracking_info.memory_info.num_allocations);
+    munit_logf(MUNIT_LOG_DEBUG, "num_allocations_of_0=%zu",
+               global_tracking_info.memory_info.num_allocations_of_0);
+    munit_logf(MUNIT_LOG_DEBUG, "num_frees=%zu",
+               global_tracking_info.memory_info.num_frees);
+    munit_logf(MUNIT_LOG_DEBUG, "num_reallocations=%zu",
+               global_tracking_info.memory_info.num_reallocations);
+    munit_logf(MUNIT_LOG_DEBUG, "num_frees_of_null=%zu",
+               global_tracking_info.memory_info.num_frees_of_null);
+    munit_assert_llong(global_tracking_info.memory_info.current_memory_used, ==, 0);
 }
 
+import_test(array, length_zero);
 import_test(memblklist, length_zero);
 import_test(reader, buffer_init_static);
 import_test(reader, buffer_init_malloc);
@@ -115,6 +157,9 @@ import_test(reader, buffer_unget_at_sof);
 import_test(reader, buffer_unget_empty_buffer);
 import_test(writer, buffer_init_static);
 import_test(writer, buffer_putc);
+
+static MunitTest array_tests[] = {define_plain_test_case(array, length_zero),
+                                  SUITE_END_SENTINEL};
 
 static MunitTest memblklist_tests[] = {define_plain_test_case(memblklist, length_zero),
                                        SUITE_END_SENTINEL};
@@ -133,7 +178,8 @@ static MunitTest writer_tests[] = {define_plain_test_case(writer, buffer_init_st
                                    define_plain_test_case(writer, buffer_putc),
                                    SUITE_END_SENTINEL};
 
-static MunitSuite all_subsuites[] = {define_test_suite(memblklist),
+static MunitSuite all_subsuites[] = {define_test_suite(array),
+                                     define_test_suite(memblklist),
                                      define_test_suite(reader),
                                      define_test_suite(writer),
                                      {.prefix = NULL}};
@@ -142,7 +188,7 @@ static const MunitSuite suite = {"", NULL, all_subsuites, 1, MUNIT_SUITE_OPTION_
 
 int main(int argc, char **argv)
 {
-    StateTracking global_tracking_info;
+
     memset(&global_tracking_info, 0, sizeof(global_tracking_info));
     // TODO (dargueta) Make assertions inside tests that memory usage cancels out.
     return munit_suite_main(&suite, &global_tracking_info, argc, argv);

@@ -37,10 +37,11 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor)
 
 int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destructor)
 {
-    array->blocks = mdl_malloc(ds, sizeof(MDLArrayBlock *));
+    array->blocks = mdl_malloc(ds, sizeof(*array->blocks));
     if (array->blocks == NULL)
         return MDL_ERROR_NOMEM;
 
+    array->ds = ds;
     array->length = 0;
     array->was_allocated = false;
     array->elem_destructor = elem_destructor;

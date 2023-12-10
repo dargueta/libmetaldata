@@ -50,37 +50,38 @@ typedef struct
     } memory_info;
 } StateTracking;
 
-StateTracking global_tracking_info;
-
 void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud)
 {
-    munit_logf(MUNIT_LOG_DEBUG, "Calling allocator: ptr=%p size=%zu old_size=%zu ud=%p",
-               ptr, size, type_or_old_size, ud);
+    StateTracking *state = (StateTracking *)ud;
+    munit_assert_not_null(state);
+
+    munit_logf(MUNIT_LOG_INFO, "Calling allocator: ptr=%p size=%zu old_size=%zu ud=%p",
+               ptr, size, type_or_old_size, (void *)state);
 
     // If the size is non-zero then the caller wants to either allocate new memory (`ptr`
     // is NULL) or resize existing memory.
     if (size != 0)
     {
         long long delta = (long long)size - (long long)type_or_old_size;
-        global_tracking_info.memory_info.current_memory_used += delta;
+        state->memory_info.current_memory_used += delta;
 
         if (ptr != NULL)
         {
             munit_logf(
-                MUNIT_LOG_DEBUG,
+                MUNIT_LOG_INFO,
                 "Reallocating pointer=%p from %zu to %zu (delta %lld; now using %lld)",
                 ptr, type_or_old_size, size, delta,
-                global_tracking_info.memory_info.current_memory_used);
-            global_tracking_info.memory_info.num_reallocations++;
+                state->memory_info.current_memory_used);
+            state->memory_info.num_reallocations++;
         }
         else
         {
-            munit_logf(MUNIT_LOG_DEBUG,
+            munit_logf(MUNIT_LOG_INFO,
                        "Allocating new pointer of type %zu and size %zu (delta %lld; now "
                        "using %lld)",
                        type_or_old_size, size, delta,
-                       global_tracking_info.memory_info.current_memory_used);
-            global_tracking_info.memory_info.num_allocations++;
+                       state->memory_info.current_memory_used);
+            state->memory_info.num_allocations++;
         }
         return realloc(ptr, size);
     }
@@ -94,56 +95,59 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
             // Old size is 0, this is actually an attempt to allocate but the size was 0.
             munit_log(MUNIT_LOG_WARNING,
                       "Attempting to allocate 0 bytes, returning NULL.");
-            global_tracking_info.memory_info.num_allocations++;
-            global_tracking_info.memory_info.num_allocations_of_0++;
+            state->memory_info.num_allocations++;
+            state->memory_info.num_allocations_of_0++;
         }
         else
         {
             // Old size is non-zero, meaning this is an intended free but `ptr` was null.
             // This is probably a bug.
             munit_log(MUNIT_LOG_WARNING, "Attempting to free a null pointer.");
-            global_tracking_info.memory_info.num_frees_of_null++;
+            state->memory_info.num_frees_of_null++;
         }
         return NULL;
     }
     else
     {
-        global_tracking_info.memory_info.current_memory_used -=
-            (long long)type_or_old_size;
-        munit_logf(MUNIT_LOG_DEBUG, "Freeing pointer=%p of size %zu (now using %lld)", ptr,
-                   type_or_old_size,
-                   global_tracking_info.memory_info.current_memory_used);
-        global_tracking_info.memory_info.num_frees++;
+        state->memory_info.current_memory_used -= (long long)type_or_old_size;
+        munit_logf(MUNIT_LOG_INFO, "Freeing pointer=%p of size %zu (now using %lld)", ptr,
+                   type_or_old_size, state->memory_info.current_memory_used);
+        state->memory_info.num_frees++;
     }
 
     free(ptr);
     return NULL;
 }
 
-static void *test_setup(const MunitParameter params[], void *user_data)
+static void *test_setup(const MunitParameter params[], void *test_state)
 {
-    (void)params, (void)user_data;
-    MDLState *state = munit_malloc(sizeof(*state));
-    mdl_initstate(state, malloc_for_tests, user_data);
-    memset(&global_tracking_info, 0, sizeof(global_tracking_info));
-    return state;
+    (void)params;
+
+    memset(test_state, 0, sizeof(StateTracking));
+
+    MDLState *mdl = munit_malloc(sizeof(*mdl));
+    mdl_initstate(mdl, malloc_for_tests, test_state);
+    munit_assert_not_null(mdl->userdata);
+    return mdl;
 }
 
 static void test_tear_down(void *fixture)
 {
+    MDLState *mdl = (MDLState *)fixture;
+    StateTracking *test_state = (StateTracking *)mdl->userdata;
+
     free(fixture);
 
-    munit_logf(MUNIT_LOG_DEBUG, "num_allocations=%zu",
-               global_tracking_info.memory_info.num_allocations);
-    munit_logf(MUNIT_LOG_DEBUG, "num_allocations_of_0=%zu",
-               global_tracking_info.memory_info.num_allocations_of_0);
-    munit_logf(MUNIT_LOG_DEBUG, "num_frees=%zu",
-               global_tracking_info.memory_info.num_frees);
-    munit_logf(MUNIT_LOG_DEBUG, "num_reallocations=%zu",
-               global_tracking_info.memory_info.num_reallocations);
-    munit_logf(MUNIT_LOG_DEBUG, "num_frees_of_null=%zu",
-               global_tracking_info.memory_info.num_frees_of_null);
-    munit_assert_llong(global_tracking_info.memory_info.current_memory_used, ==, 0);
+    munit_logf(MUNIT_LOG_INFO, "num_allocations=%zu",
+               test_state->memory_info.num_allocations);
+    munit_logf(MUNIT_LOG_INFO, "num_allocations_of_0=%zu",
+               test_state->memory_info.num_allocations_of_0);
+    munit_logf(MUNIT_LOG_INFO, "num_frees=%zu", test_state->memory_info.num_frees);
+    munit_logf(MUNIT_LOG_INFO, "num_reallocations=%zu",
+               test_state->memory_info.num_reallocations);
+    munit_logf(MUNIT_LOG_INFO, "num_frees_of_null=%zu",
+               test_state->memory_info.num_frees_of_null);
+    munit_assert_llong(test_state->memory_info.current_memory_used, ==, 0);
 }
 
 import_test(array, length_zero);
@@ -188,8 +192,6 @@ static const MunitSuite suite = {"", NULL, all_subsuites, 1, MUNIT_SUITE_OPTION_
 
 int main(int argc, char **argv)
 {
-
-    memset(&global_tracking_info, 0, sizeof(global_tracking_info));
-    // TODO (dargueta) Make assertions inside tests that memory usage cancels out.
-    return munit_suite_main(&suite, &global_tracking_info, argc, argv);
+    StateTracking state_tracking;
+    return munit_suite_main(&suite, &state_tracking, argc, argv);
 }

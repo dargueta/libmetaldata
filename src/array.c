@@ -83,7 +83,7 @@ size_t mdl_array_length(const MDLArray *array)
 int mdl_array_head(const MDLArray *array, void **item)
 {
     if (array->length == 0)
-        return MDL_ERROR_EMPTY;
+        return MDL_ERROR_OUT_OF_RANGE;
 
     *item = array->blocks[0][0];
     return MDL_OK;
@@ -92,7 +92,7 @@ int mdl_array_head(const MDLArray *array, void **item)
 int mdl_array_tail(const MDLArray *array, void **item)
 {
     if (array->length == 0)
-        return MDL_ERROR_EMPTY;
+        return MDL_ERROR_OUT_OF_RANGE;
 
     *item = array->blocks[array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE]
                          [array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE];

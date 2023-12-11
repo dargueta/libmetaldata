@@ -33,3 +33,49 @@ MunitResult test_array__length_zero(const MunitParameter params[], void *userdat
 
     return MUNIT_OK;
 }
+
+// head() on an empty list should return an error code and leave the pointer argument
+// unchanged.
+MunitResult test_array__head_empty_fails(const MunitParameter params[], void *userdata)
+{
+    (void)params;
+
+    MDLState *ds = (MDLState *)userdata;
+    MDLArray array;
+    int error;
+
+    error = mdl_array_init(ds, &array, NULL);
+    munit_assert_int(error, ==, MDL_OK);
+
+    void *value = (void *)12345;
+
+    error = mdl_array_head(&array, &value);
+    munit_assert_int(error, ==, MDL_ERROR_OUT_OF_RANGE);
+    munit_assert_ptr_equal(value, (void *)12345);
+
+    mdl_array_destroy(&array);
+    return MUNIT_OK;
+}
+
+// head() on an empty list should return an error code and leave the pointer argument
+// unchanged.
+MunitResult test_array__tail_empty_fails(const MunitParameter params[], void *userdata)
+{
+    (void)params;
+
+    MDLState *ds = (MDLState *)userdata;
+    MDLArray array;
+    int error;
+
+    error = mdl_array_init(ds, &array, NULL);
+    munit_assert_int(error, ==, MDL_OK);
+
+    void *value = (void *)12345;
+
+    error = mdl_array_tail(&array, &value);
+    munit_assert_int(error, ==, MDL_ERROR_OUT_OF_RANGE);
+    munit_assert_ptr_equal(value, (void *)12345);
+
+    mdl_array_destroy(&array);
+    return MUNIT_OK;
+}

@@ -61,6 +61,11 @@ int mdl_default_string_comparator(MDLState *ds, const void *left, const void *ri
     return 1;
 }
 
+void mdl_default_destructor(MDLState *ds, void *item)
+{
+    (void)ds, (void)item;
+}
+
 #if !MDL_COMPILED_AS_UNHOSTED
 #    include "metaldata/extras/hosted_allocator.c"
 #endif

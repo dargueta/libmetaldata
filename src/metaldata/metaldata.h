@@ -106,6 +106,10 @@ int mdl_default_string_comparator(MDLState *ds, const void *left, const void *ri
 
 typedef void (*mdl_destructor_fptr)(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
 
+MDL_API
+MDL_ANNOTN__NONNULL_ARGS(1)
+void mdl_default_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
+
 MDL_ANNOTN__NONNULL_ARGS(1)
 typedef int (*mdl_comparator_fptr)(MDLState *ds, const void *left, const void *right,
                                    size_t size) MDL_REENTRANT_MARKER;

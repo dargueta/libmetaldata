@@ -57,7 +57,7 @@ MunitResult test_array__head_empty_fails(const MunitParameter params[], void *us
     return MUNIT_OK;
 }
 
-// head() on an empty list should return an error code and leave the pointer argument
+// tail() on an empty list should return an error code and leave the pointer argument
 // unchanged.
 MunitResult test_array__tail_empty_fails(const MunitParameter params[], void *userdata)
 {
@@ -77,5 +77,19 @@ MunitResult test_array__tail_empty_fails(const MunitParameter params[], void *us
     munit_assert_ptr_equal(value, (void *)12345);
 
     mdl_array_destroy(&array);
+    return MUNIT_OK;
+}
+
+MunitResult test_array__allocate_empty_ok(const MunitParameter params[], void *userdata)
+{
+    (void)params;
+
+    MDLState *ds = (MDLState *)userdata;
+    MDLArray *array = mdl_array_basicnew(ds);
+    munit_assert_not_null(array);
+
+    // The memory usage checking done at the end of every test will ensure that all memory
+    // used by the allocated array gets freed.
+    mdl_array_destroy(array);
     return MUNIT_OK;
 }

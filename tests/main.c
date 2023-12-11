@@ -153,6 +153,7 @@ static void test_tear_down(void *fixture)
 import_test(array, length_zero);
 import_test(array, head_empty_fails);
 import_test(array, tail_empty_fails);
+import_test(array, allocate_empty_ok);
 import_test(memblklist, length_zero);
 import_test(reader, buffer_init_static);
 import_test(reader, buffer_init_malloc);
@@ -167,6 +168,7 @@ import_test(writer, buffer_putc);
 static MunitTest array_tests[] = {define_plain_test_case(array, length_zero),
                                   define_plain_test_case(array, head_empty_fails),
                                   define_plain_test_case(array, tail_empty_fails),
+                                  define_plain_test_case(array, allocate_empty_ok),
                                   SUITE_END_SENTINEL};
 
 static MunitTest memblklist_tests[] = {define_plain_test_case(memblklist, length_zero),

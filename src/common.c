@@ -61,7 +61,7 @@ int mdl_default_string_comparator(MDLState *ds, const void *left, const void *ri
     return 1;
 }
 
-void mdl_default_destructor(MDLState *ds, void *item)
+void mdl_default_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER
 {
     (void)ds, (void)item;
 }

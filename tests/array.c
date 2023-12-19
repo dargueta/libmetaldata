@@ -80,6 +80,7 @@ MunitResult test_array__tail_empty_fails(const MunitParameter params[], void *us
     return MUNIT_OK;
 }
 
+// Allocating an array on the heap should be fine.
 MunitResult test_array__allocate_empty_ok(const MunitParameter params[], void *userdata)
 {
     (void)params;
@@ -87,6 +88,9 @@ MunitResult test_array__allocate_empty_ok(const MunitParameter params[], void *u
     MDLState *ds = (MDLState *)userdata;
     MDLArray *array = mdl_array_basicnew(ds);
     munit_assert_not_null(array);
+
+    munit_assert_size(mdl_array_length(array), ==, 0);
+    munit_assert_true(array->was_allocated);
 
     // The memory usage checking done at the end of every test will ensure that all memory
     // used by the allocated array gets freed.

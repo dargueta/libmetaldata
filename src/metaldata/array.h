@@ -105,14 +105,13 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor);
 /**
  * Initialize an allocated array.
  *
- * Users that wish to statically allocate a queue (e.g. to avoid an additional allocation)
- * will use this to initialize the queue. They will still need to destroy the queue using
- * @ref mdl_array_destroy.
+ * Users that want to statically allocate an array (e.g. to avoid an additional
+ * allocation) will use this to initialize the array. They will still need to destroy the
+ * array using @ref mdl_array_destroy.
  *
- * @param ds
+ * @param ds The MetalData state.
  * @param array The array to initialize.
  * @param elem_destructor
- *
  * @return 0 on success, an error code otherwise.
  *
  * @see mdl_array_new
@@ -122,10 +121,10 @@ MDL_ANNOTN__NONNULL_ARGS(1, 2)
 int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destructor);
 
 /**
- * Destroy a array.
+ * Destroy an array.
  *
- * @param array
- * @return
+ * @param array The array to operate on.
+ * @return 0 on success, an error code otherwise. (This is highly unlikely.)
  */
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -135,7 +134,6 @@ int mdl_array_destroy(MDLArray *array);
  * Return the length of the array.
  *
  * @param array The array to examine.
- *
  * @return The number of elements in the array.
  */
 MDL_API
@@ -143,15 +141,12 @@ MDL_ANNOTN__NONNULL
 size_t mdl_array_length(const MDLArray *array);
 
 /**
- * Get the first data in the array.
- *
- * This is marginally more efficient than @ref mdl_array_get.
+ * Get the first element in the array.
  *
  * @param array The array to operate on.
  * @param item  A pointer to where the array data's value will be stored.
- *
- * @return 0 on success, @ref MDL_ERROR_EMPTY if the array is empty. @a item will not be
- * modified in this case.
+ * @return 0 on success, @ref MDL_ERROR_OUT_OF_RANGE if the array is empty. @a item will
+ * not be modified in this case.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -162,9 +157,8 @@ int mdl_array_head(const MDLArray *array, void **item);
  *
  * @param array The array to operate on.
  * @param item A pointer to where the array data's value will be stored.
- *
- * @return 0 on success, @ref MDL_ERROR_EMPTY if the array is empty. @a item will not be
- * modified in this case.
+ * @return 0 on success, @ref MDL_ERROR_OUT_OF_RANGE if the array is empty. @a item will
+ * not be modified in this case.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -173,9 +167,8 @@ int mdl_array_tail(const MDLArray *array, void **item);
 /**
  * Append the given item to the end of the array.
  *
- * @param array
- * @param item
- *
+ * @param array The array to operate on.
+ * @param item The value to append to the array.
  * @return 0 on success, an error code otherwise.
  */
 MDL_API
@@ -185,18 +178,38 @@ int mdl_array_push(MDLArray *array, void *item);
 /**
  * Remove an item from the end of the array.
  *
- * @param array
- * @param item
- * @return
+ * @param array The array to operate on.
+ * @param[out] item
+ *      A pointer to a pointer receiving the value just popped. Callers may pass NULL if
+ *      the value doesn't need to be saved.
+ * @return 0 on success, an error code otherwise. If the array is empty, this will be
+ * @ref MDL_ERROR_EMPTY.
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_array_pop(MDLArray *array, void **item);
 
+/**
+ * Insert a value at the beginning of the array.
+ *
+ * @param array The array to operate on.
+ * @param item The value to insert.
+ * @return 0 on success, an error code otherwise.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_array_pushfront(MDLArray *array, void *item);
 
+/**
+ * Remove a value from the beginning of the array.
+ *
+ * @param array The array to operate on.
+ * @param[out] item
+ *      A pointer to a pointer receiving the value just popped. Callers may pass NULL if
+ *      the value doesn't need to be saved.
+ * @return 0 on success, an error code otherwise. If the array is empty, this will be
+ * @ref MDL_ERROR_EMPTY.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_array_popfront(MDLArray *array, void **item);
@@ -221,20 +234,21 @@ int mdl_array_removeat(MDLArray *array, int index, void **value);
  * Remove all items in the array.
  *
  * @param array The array to operate on.
- * @return
+ * @return 0 on success, an error code otherwise.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
 void mdl_array_clear(MDLArray *array);
 
 /**
- * Search the array for the first data matching @a value.
+ * Search the array for the first element matching @a value.
  *
- * @param array
- * @param value
- *
- * @return The absolute index of the first matching data found, or a negative
- * number if no match was found.
+ * @param array The array to operate on.
+ * @param[in] value The value to search for.
+ * @param cmp The comparator function to use to compare two values.
+ * @return The absolute index of the first matching element found, or a negative number if
+ * no match was found. Negative values have no significance aside from indicating that no
+ * match was found.
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 3)
@@ -243,9 +257,12 @@ int mdl_array_find(const MDLArray *array, const void *value, mdl_comparator_fptr
 /**
  * Like @ref mdl_array_find except this searches the array back to front.
  *
- * @param array
- * @param value
- * @return
+ * @param array The array to operate on.
+ * @param[in] value The value to search for.
+ * @param cmp The comparator function to use to compare two values.
+ * @return The absolute index of the first matching element found, or a negative number if
+ * no match was found. Negative values have no significance aside from indicating that no
+ * match was found.
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)

@@ -238,7 +238,7 @@ int mdl_array_removeat(MDLArray *array, int index, void **value);
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-void mdl_array_clear(MDLArray *array);
+int mdl_array_clear(MDLArray *array);
 
 /**
  * Search the array for the first element matching @a value.

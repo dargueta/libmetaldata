@@ -50,24 +50,12 @@ int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destr
 
 int mdl_array_destroy(MDLArray *array)
 {
-    size_t num_blocks = get_num_blocks(array);
+    int result = mdl_array_clear(array);
+    if (result != MDL_OK)
+        return result;
 
-    if (array->elem_destructor != NULL)
-    {
-        size_t elements_remaining = array->length;
-
-        for (size_t block_i = 0; block_i < num_blocks; block_i++)
-        {
-            size_t loop_limit = (MDL_DEFAULT_ARRAY_BLOCK_SIZE < elements_remaining)
-                                    ? MDL_DEFAULT_ARRAY_BLOCK_SIZE
-                                    : elements_remaining;
-
-            for (size_t elem_i = 0; elem_i < loop_limit; elem_i++)
-                array->elem_destructor(array->ds, array->blocks[block_i][elem_i]);
-        }
-    }
-
-    mdl_free(array->ds, array->blocks, sizeof(*array->blocks) * num_blocks);
+    // After the array has been cleared there will be exactly one allocated block left.
+    mdl_free(array->ds, array->blocks[0], sizeof(*array->blocks));
 
     if (array->was_allocated)
         mdl_free(array->ds, array, sizeof(*array));
@@ -181,7 +169,31 @@ int mdl_array_insertafter(MDLArray *array, int index, void *new_value);
 
 int mdl_array_removeat(MDLArray *array, int index, void **value);
 
-void mdl_array_clear(MDLArray *array);
+int mdl_array_clear(MDLArray *array)
+{
+    size_t num_blocks = get_num_blocks(array);
+
+    if (array->elem_destructor != NULL)
+    {
+        size_t elements_remaining = array->length;
+
+        for (size_t block_i = 0; block_i < num_blocks; block_i++)
+        {
+            size_t loop_limit = (MDL_DEFAULT_ARRAY_BLOCK_SIZE < elements_remaining)
+                                    ? MDL_DEFAULT_ARRAY_BLOCK_SIZE
+                                    : elements_remaining;
+
+            for (size_t elem_i = 0; elem_i < loop_limit; elem_i++)
+                array->elem_destructor(array->ds, array->blocks[block_i][elem_i]);
+        }
+    }
+
+    array->length = 0;
+
+    // Always keep at least one block allocated so we don't have to do null checks
+    // everywhere.
+    return resize_block_list(array, 1);
+}
 
 int mdl_array_find(const MDLArray *array, const void *value, mdl_comparator_fptr cmp);
 
@@ -277,6 +289,10 @@ static int resize_block_list(MDLArray *array, size_t new_total)
 
     if (n_current_blocks == new_total)
         return MDL_OK;
+
+    // Always keep at least one block allocated.
+    if (new_total == 0)
+        return MDL_ERROR_INVALID_ARGUMENT;
 
     MDLArrayBlock *new_block_list =
         mdl_realloc(array->ds, array->blocks, new_total * sizeof(*array->blocks),

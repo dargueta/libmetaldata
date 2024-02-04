@@ -154,6 +154,7 @@ import_test(array, length_zero);
 import_test(array, head_empty_fails);
 import_test(array, tail_empty_fails);
 import_test(array, allocate_empty_ok);
+import_test(array, add_less_than_one_block);
 import_test(memblklist, length_zero);
 import_test(reader, buffer_init_static);
 import_test(reader, buffer_init_malloc);
@@ -169,6 +170,7 @@ static MunitTest array_tests[] = {define_plain_test_case(array, length_zero),
                                   define_plain_test_case(array, head_empty_fails),
                                   define_plain_test_case(array, tail_empty_fails),
                                   define_plain_test_case(array, allocate_empty_ok),
+                                  define_plain_test_case(array, add_less_than_one_block),
                                   SUITE_END_SENTINEL};
 
 static MunitTest memblklist_tests[] = {define_plain_test_case(memblklist, length_zero),

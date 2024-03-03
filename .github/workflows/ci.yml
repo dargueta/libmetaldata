@@ -44,11 +44,11 @@ jobs:
       # of an "upstream incompatibility".
       - name: Install TCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'tcc'
-        run: make -C make -f compilers.mk install-tcc
+        run: make -C make -f /compiler-support/install.mk install-tcc
 
       - name: Install PCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'
-        run: make -C make -f compilers.mk install-pcc
+        run: make -C make -f /compiler-support/install.mk install-pcc
 
       - name: Configure
         run: |
@@ -82,68 +82,31 @@ jobs:
           - ds390
           - ds400
           - ez80_z80
-          - gbz80
           - hc08
           - mcs51
-          # - mos6502 (sdcc 4.3+)
+          - mos6502
+          - mos65c02
           - pdk13
           - pdk14
           - pdk15
-          # - pic14 (sdcc 4.3+)
-          # - pic16 (sdcc 4.3+)
+          - pic14
+          - pic16
           - r2k
-          # - r2ka (sdcc 4.3+?)
+          - r2ka
           - r3ka
+          - r800
           - s08
-          # - sm83 (sdcc 4.3+?)
+          - sm83
           - stm8
-          # - TININative (Buggy, crashes compiler)
+          - TININative
           - tlcs90
           - z180
           - z80
-          # - z80n (sdcc 4.3+?)
+          - z80n
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        uses: ConorMacBride/install-package@v1
-        with:
-          apt: libboost-all-dev sdcc
-#      # Building SDCC and gputils takes 35-45sm, so we need to cache it.
-#      - name: Restore SDCC from Cache
-#        id: cache-sdcc-restore
-#        uses: actions/cache/restore@v3
-#        with:
-#          path: |
-#            /usr/local/bin/as2gbmap
-#            /usr/local/bin/gpasm
-#            /usr/local/bin/gpdasm
-#            /usr/local/bin/gplink
-#            /usr/local/bin/sdas*
-#            /usr/local/bin/sdcc
-#            /usr/local/bin/sdld*
-#            /usr/local/share/gputils
-#          key: ${{ runner.os }}-sdcc
-#      # The version of SDCC in the APT repository is old, so we have to install
-#      # it ourselves.
-#      - name: Install SDCC
-#        if: steps.cache-sdcc-restore.outputs.cache-hit != 'true'
-#        run: sudo make -C make -f compilers.mk install-sdcc
-#
-#      - name: Cache SDCC
-#        id: cache-sdcc-save
-#        uses: actions/cache/save@v3
-#        with:
-#          # This must be the same as the restore
-#          path: |
-#            /usr/local/bin/as2gbmap
-#            /usr/local/bin/gpasm
-#            /usr/local/bin/gpdasm
-#            /usr/local/bin/gplink
-#            /usr/local/bin/sdas*
-#            /usr/local/bin/sdcc
-#            /usr/local/bin/sdld*
-#            /usr/local/share/gputils
-#          key: ${{ steps.cache-sdcc-restore.outputs.cache-primary-key }}
+        run: make -C make -f compiler-support/install.mk install-sdcc
       - name: Configure
         run: ./configure --cc=sdcc
       - name: Compile

@@ -313,8 +313,9 @@
 #endif
 
 #if defined(__SDCC_ds390) || defined(__SDCC_ds400) || defined(__SDCC_hc08) ||            \
-    defined(__SDCC_mcs51) || defined(__SDCC_s08) || defined(__SDCC_pdk13) ||             \
-    defined(__SDCC_pdk14) || defined(__SDCC_pdk15)
+    defined(__SDCC_mcs51) || defined(__SDCC_mos6502) || defined(__SDCC_mos65c02) ||      \
+    defined(__SDCC_pdk13) || defined(__SDCC_pdk14) || defined(__SDCC_pdk15) ||           \
+    defined(__SDCC_s08)
 #    define MDL_REENTRANT_MARKER __reentrant
 #else
 #    define MDL_REENTRANT_MARKER

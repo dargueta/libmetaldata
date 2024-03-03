@@ -106,7 +106,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        run: make -C make -f compiler-support/install.mk install-sdcc
+        # 4.3.0+ are broken: https://sourceforge.net/p/sdcc/bugs/3715/
+        run: make -C make -f compiler-support/install.mk install-sdcc SDCC_VERSION=4.2.0
       - name: Configure
         run: ./configure --cc=sdcc
       - name: Compile

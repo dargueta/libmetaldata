@@ -92,7 +92,7 @@ Compilers
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    | Y        | Y          | Y        | Y          |
 +-----------------+----------+----------+------------+----------+------------+
-| SDCC_           | See below for the list of architectures this compiles for|
+| SDCC_ 4.2 [#]_  | See below for the list of architectures this compiles for|
 +-----------------+----------+----------+------------+----------+------------+
 | TCC_            | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
@@ -105,8 +105,8 @@ Architectures
 *************
 
 The following architectures are tested. SDCC is the only toolchain that can be
-used for most of these, and actual tests can't run on those because there's no
-way to test the hardware.
+used for most of these. The microcontrollers require me to write a testbench
+using uCSim_
 
 ====================== ======== ============
 Achitecture            Compiles Passes Tests
@@ -179,6 +179,7 @@ Footnotes
 ---------
 
 .. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
+.. [#] SDCC 4.2 and 4.3 appear to be broken: https://sourceforge.net/p/sdcc/bugs/3715/
 .. [#] Requires SDCC 4.3+
 .. [#] Triggers a bug in SDCC and crashes the compiler.
 
@@ -188,3 +189,4 @@ Footnotes
 .. _PCC: http://pcc.ludd.ltu.se/
 .. _SDCC: https://sdcc.sourceforge.net/
 .. _TCC: https://bellard.org/tcc/
+.. _uCSim:

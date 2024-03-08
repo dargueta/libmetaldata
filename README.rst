@@ -179,7 +179,7 @@ Footnotes
 ---------
 
 .. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
-.. [#] SDCC 4.2 and 4.3 appear to be broken: https://sourceforge.net/p/sdcc/bugs/3715/
+.. [#] SDCC 4.3 and 4.4 appear to be broken: https://sourceforge.net/p/sdcc/bugs/3715/
 .. [#] Requires SDCC 4.3+
 .. [#] Triggers a bug in SDCC and crashes the compiler.
 

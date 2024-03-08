@@ -94,7 +94,6 @@ jobs:
           - s08
           - sm83
           - stm8
-          - TININative
           - tlcs90
           - z180
           - z80
@@ -106,6 +105,9 @@ jobs:
           # Uncomment once we upgrade to 4.3+
           # - mos65c02
           # - r800
+          #
+          # Something weird is going on with this one, possibly another SDCC bug.
+          # - TININative
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies

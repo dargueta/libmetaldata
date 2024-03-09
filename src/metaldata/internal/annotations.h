@@ -214,6 +214,7 @@
 #        define MDL_FALLTHROUGH_MARKER GNU_ATTRIBUTE(fallthrough)
 #    endif
 
+/* GCC 8+ supports the `nonstring` attribute but Clang doesn't. */
 #    if !defined(__clang__) && MINIMUM_GNU_VERSION(8, 0, 0)
 #        define MDL_ANNOTN__NONSTRING GNU_ATTRIBUTE(nonstring)
 #    endif

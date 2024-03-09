@@ -98,9 +98,9 @@ MunitResult test_array__allocate_empty_ok(const MunitParameter params[], void *u
     return MUNIT_OK;
 }
 
-
 // Add a few elements to the list, but shorter than one block.
-MunitResult test_array__add_less_than_one_block(const MunitParameter params[], void *userdata)
+MunitResult test_array__add_less_than_one_block(const MunitParameter params[],
+                                                void *userdata)
 {
     (void)params;
 
@@ -111,7 +111,8 @@ MunitResult test_array__add_less_than_one_block(const MunitParameter params[], v
     for (ptrdiff_t i = 0; i < MDL_DEFAULT_ARRAY_BLOCK_SIZE - 2; i++)
         mdl_array_push(array, (void *)i);
 
-    for (ptrdiff_t i = 0; i < MDL_DEFAULT_ARRAY_BLOCK_SIZE - 2; i++) {
+    for (ptrdiff_t i = 0; i < MDL_DEFAULT_ARRAY_BLOCK_SIZE - 2; i++)
+    {
         void *value;
         int result = mdl_array_getat(array, (int)i, &value);
 

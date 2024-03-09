@@ -25,9 +25,9 @@ jobs:
           - "-u"
         exclude:
           # TODO (dargueta): Figure out what to do about incompatible headers
-          - operating-system: macos-latest
-            compiler:
-              binary: tcc
+#          - operating-system: macos-latest
+#            compiler:
+#              binary: tcc
           - operating-system: macos-latest
             compiler:
               binary: pcc
@@ -44,11 +44,11 @@ jobs:
       # of an "upstream incompatibility".
       - name: Install TCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'tcc'
-        run: make -C make -f /compiler-support/install.mk install-tcc
+        run: make -C make -f compiler-support/install.mk install-tcc
 
       - name: Install PCC on MacOS
         if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'
-        run: make -C make -f /compiler-support/install.mk install-pcc
+        run: make -C make -f compiler-support/install.mk install-pcc
 
       - name: Configure
         run: |
@@ -58,20 +58,24 @@ jobs:
                       ${{ matrix.compiler.configure-flags }}
 
       - name: Compile
-       # env:
+        # env:
        #   # Only needed on OSX for TCC/PCC. This is very hacky and will break if
        #   # they upgrade XCode on the Mac runners.
        #   CFLAGS: >-
        #     -I/Applications/Xcode_14.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
        #     -I/Applications/Xcode_14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
        #     -I/Applications/Xcode_14.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include
-        run: make library
+        run: |
+          export C_INCLUDE_PATH="/usr/include:$C_INCLUDE_PATH" ;
+          make library ;
 
       - name: Test Installation
         run: sudo make install
 
       - name: Run Tests
-        run: make test
+        run: |
+          export C_INCLUDE_PATH="/usr/include:$C_INCLUDE_PATH" ;
+          make test ;
 
   testing-sdcc:
     runs-on: ubuntu-latest

@@ -19,15 +19,19 @@ by client code. More on that in the docs.
 ========= ========= ==================
 What      Header    Unhosted Fallbacks
 ========= ========= ==================
+bool      stdbool.h \*
 free      stdlib.h  N
 malloc    stdlib.h  N
 memcmp    string.h  Y
 memcpy    string.h  Y
 memset    string.h  Y
-ptrdiff_t stddef.h  N
-size_t    stddef.h  N
+ptrdiff_t stddef.h  \*
+size_t    stddef.h  \*
 strcmp    string.h  Y
 ========= ========= ==================
+
+*\*The C standard requires these to be available in unhosted mode. If you're
+using a standards-compliant compiler, this won't be an issue.*
 
 Building
 --------
@@ -106,7 +110,7 @@ Architectures
 
 The following architectures are tested. SDCC is the only toolchain that can be
 used for most of these. The microcontrollers require me to write a testbench
-using uCSim_
+using uCSim_ which is going to be time-consuming but (possibly) doable.
 
 ====================== ======== ============
 Achitecture            Compiles Passes Tests
@@ -189,4 +193,4 @@ Footnotes
 .. _PCC: http://pcc.ludd.ltu.se/
 .. _SDCC: https://sdcc.sourceforge.net/
 .. _TCC: https://bellard.org/tcc/
-.. _uCSim:
+.. _uCSim: https://sdcc.sourceforge.net/

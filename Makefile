@@ -9,7 +9,9 @@ MY_LDFLAGS=
 CMD_INSTALL=install -m644
 CMD_INSTALL_BIN=install -m755
 
-# End users shouldn't need to modify anything below this line. =================
+# ============================================================================ #
+#        End users shouldn't need to modify anything below this line.          #
+# ============================================================================ #
 SOURCE_ROOT=src
 HEADER_ROOT=$(SOURCE_ROOT)/metaldata
 

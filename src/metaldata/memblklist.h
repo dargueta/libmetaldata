@@ -149,7 +149,7 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size);
  * will use this to initialize it. They will still need to destroy the list using
  * @ref mdl_memblklist_destroy.
  *
- * @param ds
+ * @param ds The MetalData state.
  * @param list The list to initialize.
  * @param elem_size The size of a single element in the list.
  * @return 0 on success, an error code otherwise.
@@ -175,8 +175,6 @@ int mdl_memblklist_destroy(MDLMemBlkList *list);
  * Return the length of the queue.
  *
  * @param list The queue to examine.
- *
- * @return The length of the queue.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -231,10 +229,6 @@ MDL_API
 MDL_ANNOTN__NONNULL
 void *mdl_memblklist_push(MDLMemBlkList *list);
 
-MDL_API
-MDL_ANNOTN__NONNULL
-void *mdl_memblklist_pushcopy(MDLMemBlkList *list, const void *data);
-
 /**
  * Remove a memory block from the end of the list.
  *
@@ -261,10 +255,6 @@ int mdl_memblklist_popcopy(MDLMemBlkList *list, void *buf);
 MDL_API
 MDL_ANNOTN__NONNULL
 void *mdl_memblklist_pushfront(MDLMemBlkList *list);
-
-MDL_API
-MDL_ANNOTN__NONNULL
-void *mdl_memblklist_pushfrontcopy(MDLMemBlkList *list, const void *data);
 
 /**
  * Remove the element at the front of the list.

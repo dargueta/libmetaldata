@@ -110,17 +110,6 @@ void *mdl_memblklist_push(MDLMemBlkList *list)
     return new_tail->data;
 }
 
-void *mdl_memblklist_pushcopy(MDLMemBlkList *list, const void *data)
-{
-    void *target;
-    target = mdl_memblklist_push(list);
-    if (target == NULL)
-        return NULL;
-
-    mdl_memcpy(target, data, list->elem_size);
-    return target;
-}
-
 int mdl_memblklist_pop(MDLMemBlkList *list)
 {
     MDLMemBlkListNode *tail;
@@ -168,14 +157,6 @@ void *mdl_memblklist_pushfront(MDLMemBlkList *list)
     void *new_buffer = mdl_memblklist_push(list);
     if (new_buffer != NULL)
         list->head = list->head->prev;
-    return new_buffer;
-}
-
-void *mdl_memblklist_pushfrontcopy(MDLMemBlkList *list, const void *data)
-{
-    void *new_buffer = mdl_memblklist_pushfront(list);
-    if (new_buffer != NULL)
-        mdl_memcpy(new_buffer, data, list->elem_size);
     return new_buffer;
 }
 

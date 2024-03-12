@@ -31,8 +31,9 @@ MunitResult test_array__length_zero(const MunitParameter params[], void *userdat
 
     length = mdl_array_length(&array);
     munit_assert_size(length, ==, 0);
-    mdl_array_destroy(&array);
 
+    int destroy_result = mdl_array_destroy(&array);
+    munit_assert_int(destroy_result, ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -55,7 +56,8 @@ MunitResult test_array__head_empty_fails(const MunitParameter params[], void *us
     munit_assert_int(error, ==, MDL_ERROR_OUT_OF_RANGE);
     munit_assert_ptr_equal(value, (void *)12345);
 
-    mdl_array_destroy(&array);
+    int destroy_result = mdl_array_destroy(&array);
+    munit_assert_int(destroy_result, ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -78,7 +80,8 @@ MunitResult test_array__tail_empty_fails(const MunitParameter params[], void *us
     munit_assert_int(error, ==, MDL_ERROR_OUT_OF_RANGE);
     munit_assert_ptr_equal(value, (void *)12345);
 
-    mdl_array_destroy(&array);
+    int destroy_result = mdl_array_destroy(&array);
+    munit_assert_int(destroy_result, ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -96,7 +99,8 @@ MunitResult test_array__allocate_empty_ok(const MunitParameter params[], void *u
 
     // The memory usage checking done at the end of every test will ensure that all memory
     // used by the allocated array gets freed.
-    mdl_array_destroy(array);
+    int destroy_result = mdl_array_destroy(array);
+    munit_assert_int(destroy_result, ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -114,7 +118,8 @@ MunitResult test_array__add_less_than_one_block(const MunitParameter params[],
 
     // The memory usage checking done at the end of every test will ensure that all memory
     // used by the allocated array gets freed.
-    mdl_array_destroy(array);
+    int destroy_result = mdl_array_destroy(array);
+    munit_assert_int(destroy_result, ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -130,7 +135,8 @@ MunitResult test_array__add_exactly_one_block(const MunitParameter params[],
 
     helper_test_adding_blocks(array, MDL_DEFAULT_ARRAY_BLOCK_SIZE);
 
-    mdl_array_destroy(array);
+    int destroy_result = mdl_array_destroy(array);
+    munit_assert_int(destroy_result, ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -145,7 +151,8 @@ MunitResult test_array__add_one_more_than_one_block(const MunitParameter params[
 
     helper_test_adding_blocks(array, MDL_DEFAULT_ARRAY_BLOCK_SIZE + 1);
 
-    mdl_array_destroy(array);
+    int destroy_result = mdl_array_destroy(array);
+    munit_assert_int(destroy_result, ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -160,7 +167,8 @@ MunitResult test_array__add_more_than_one_block(const MunitParameter params[],
 
     helper_test_adding_blocks(array, (MDL_DEFAULT_ARRAY_BLOCK_SIZE * 2) + 1);
 
-    mdl_array_destroy(array);
+    int destroy_result = mdl_array_destroy(array);
+    munit_assert_int(destroy_result, ==, MDL_OK);
     return MUNIT_OK;
 }
 

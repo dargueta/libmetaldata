@@ -65,6 +65,15 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
         long long delta = (long long)size - (long long)type_or_old_size;
         state->memory_info.current_memory_used += delta;
 
+        if (state->memory_info.current_memory_used < 0)
+        {
+            munit_logf(MUNIT_LOG_ERROR,
+                       "Allocation with current size %zu and new size %zu (delta=%lld) "
+                       "gives memory usage of %lld",
+                       type_or_old_size, size, delta,
+                       state->memory_info.current_memory_used);
+        }
+
         if (ptr != NULL)
         {
             munit_logf(

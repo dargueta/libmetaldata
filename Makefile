@@ -124,7 +124,7 @@ install: all $(LIBRARY_C_ALL_HEADER_FILES) $(LIBRARY_EXTRAS)
 library: $(STATIC_LIBRARY)
 
 test: $(TEST_BINARY)
-	$(TEST_BINARY)
+	$(TEST_BINARY) $(ARGS)
 
 clean:
 	$(RM) -r $(BUILD_DIR)

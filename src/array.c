@@ -190,7 +190,7 @@ int mdl_array_clear(MDLArray *array)
 
     array->length = 0;
 
-    // Always keep at least one block allocated so we don't have to do null checks
+    // Always keep at least one block allocated so that we don't have to do null checks
     // everywhere.
     return resize_block_list(array, 1);
 }
@@ -300,6 +300,24 @@ static int resize_block_list(MDLArray *array, size_t new_total)
 
     if (new_block_list == NULL)
         return MDL_ERROR_NOMEM;
+
+    // A
+    for (size_t i = n_current_blocks; i < new_total; i++)
+    {
+        void *new_block = mdl_malloc(array->ds, sizeof(*array->blocks));
+
+        if (new_block == NULL)
+        {
+            for (; i <= n_current_blocks; i--)
+                mdl_free(array->ds, new_block_list[i], sizeof(**array->blocks));
+
+            mdl_realloc(array->ds, new_block_list,
+                        n_current_blocks * sizeof(*array->blocks),
+                        new_total * sizeof(*array->blocks));
+        }
+
+        new_block_list[i] = new_block;
+    }
 
     array->blocks = new_block_list;
     return MDL_OK;

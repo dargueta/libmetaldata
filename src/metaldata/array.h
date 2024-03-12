@@ -31,7 +31,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#define MDL_DEFAULT_ARRAY_BLOCK_SIZE 8
+#define MDL_DEFAULT_ARRAY_BLOCK_SIZE 16
 
 typedef void *MDLArrayBlock[MDL_DEFAULT_ARRAY_BLOCK_SIZE];
 
@@ -176,6 +176,19 @@ MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_array_push(MDLArray *array, void *item);
 
 /**
+ * Append the given item to the end of the array.
+ *
+ * @param array The array to operate on.
+ * @param items An array of values to append to the array.
+ * @param count The number of values to append. @a items must have at least this
+ *              many elements.
+ * @return 0 on success, an error code otherwise.
+ */
+MDL_API
+MDL_ANNOTN__NONNULL_ARGS(1)
+int mdl_array_bulkpush(MDLArray *array, void **items, size_t count);
+
+/**
  * Remove an item from the end of the array.
  *
  * @param array The array to operate on.
@@ -188,6 +201,24 @@ int mdl_array_push(MDLArray *array, void *item);
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_array_pop(MDLArray *array, void **item);
+
+/**
+ * Remove @a count items from the end of the array.
+ *
+ * If @a count is greater than the number of elements left in the list,
+ *
+ * @param array The array to operate on.
+ * @param items[out]
+ *      A pointer to an array of pointers receiving the values just popped. Callers may
+ *      pass NULL if the removed values don't need to be saved. If it's non-NULL, @a items
+ *      must have space for at least @a count elements.
+ * @param count
+ *      The number of values to pop off the end.
+ * @return 0 on success, an error code otherwise.
+ */
+MDL_API
+MDL_ANNOTN__NONNULL_ARGS(1)
+int mdl_array_bulkpop(MDLArray *array, void **items, size_t count);
 
 /**
  * Insert a value at the beginning of the array.

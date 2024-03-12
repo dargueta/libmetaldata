@@ -15,6 +15,8 @@
 #include "metaldata/array.h"
 #include "munit/munit.h"
 
+static void helper_test_adding_blocks(MDLArray *array, ptrdiff_t n_to_add);
+
 MunitResult test_array__length_zero(const MunitParameter params[], void *userdata)
 {
     (void)params;
@@ -108,10 +110,68 @@ MunitResult test_array__add_less_than_one_block(const MunitParameter params[],
     MDLArray *array = mdl_array_basicnew(ds);
     munit_assert_not_null(array);
 
-    for (ptrdiff_t i = 0; i < MDL_DEFAULT_ARRAY_BLOCK_SIZE - 2; i++)
+    helper_test_adding_blocks(array, MDL_DEFAULT_ARRAY_BLOCK_SIZE - 1);
+
+    // The memory usage checking done at the end of every test will ensure that all memory
+    // used by the allocated array gets freed.
+    mdl_array_destroy(array);
+    return MUNIT_OK;
+}
+
+// Add a few elements to the list, but shorter than one block.
+MunitResult test_array__add_exactly_one_block(const MunitParameter params[],
+                                              void *userdata)
+{
+    (void)params;
+
+    MDLState *ds = (MDLState *)userdata;
+    MDLArray *array = mdl_array_basicnew(ds);
+    munit_assert_not_null(array);
+
+    helper_test_adding_blocks(array, MDL_DEFAULT_ARRAY_BLOCK_SIZE);
+
+    mdl_array_destroy(array);
+    return MUNIT_OK;
+}
+
+MunitResult test_array__add_one_more_than_one_block(const MunitParameter params[],
+                                                    void *userdata)
+{
+    (void)params;
+
+    MDLState *ds = (MDLState *)userdata;
+    MDLArray *array = mdl_array_basicnew(ds);
+    munit_assert_not_null(array);
+
+    helper_test_adding_blocks(array, MDL_DEFAULT_ARRAY_BLOCK_SIZE + 1);
+
+    mdl_array_destroy(array);
+    return MUNIT_OK;
+}
+
+MunitResult test_array__add_more_than_one_block(const MunitParameter params[],
+                                                void *userdata)
+{
+    (void)params;
+
+    MDLState *ds = (MDLState *)userdata;
+    MDLArray *array = mdl_array_basicnew(ds);
+    munit_assert_not_null(array);
+
+    helper_test_adding_blocks(array, (MDL_DEFAULT_ARRAY_BLOCK_SIZE * 2) + 1);
+
+    mdl_array_destroy(array);
+    return MUNIT_OK;
+}
+
+void helper_test_adding_blocks(MDLArray *array, ptrdiff_t n_to_add)
+{
+    munit_assert_not_null(array);
+
+    for (ptrdiff_t i = 0; i < n_to_add; i++)
         mdl_array_push(array, (void *)i);
 
-    for (ptrdiff_t i = 0; i < MDL_DEFAULT_ARRAY_BLOCK_SIZE - 2; i++)
+    for (ptrdiff_t i = 0; i < n_to_add; i++)
     {
         void *value;
         int result = mdl_array_getat(array, (int)i, &value);
@@ -119,9 +179,4 @@ MunitResult test_array__add_less_than_one_block(const MunitParameter params[],
         munit_assert_int(result, ==, MDL_OK);
         munit_assert_ptr_equal((void *)(ptrdiff_t)i, value);
     }
-
-    // The memory usage checking done at the end of every test will ensure that all memory
-    // used by the allocated array gets freed.
-    mdl_array_destroy(array);
-    return MUNIT_OK;
 }

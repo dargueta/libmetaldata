@@ -6,9 +6,6 @@
 #include <stddef.h>
 
 MDL_ANNOTN__NONNULL
-static size_t get_num_blocks(const MDLArray *array);
-
-MDL_ANNOTN__NONNULL
 static int resize_block_list(MDLArray *array, size_t new_total);
 
 MDL_ANNOTN__NONNULL
@@ -37,14 +34,22 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor)
 
 int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destructor)
 {
-    array->blocks = mdl_malloc(ds, sizeof(*array->blocks));
+    array->blocks = mdl_malloc(ds, sizeof(MDLArrayBlock *));
     if (array->blocks == NULL)
         return MDL_ERROR_NOMEM;
+
+    array->blocks[0] = mdl_malloc(ds, sizeof(MDLArrayBlock));
+    if (array->blocks[0] == NULL)
+    {
+        mdl_free(ds, array->blocks, sizeof(MDLArrayBlock *));
+        return MDL_ERROR_NOMEM;
+    }
 
     array->ds = ds;
     array->length = 0;
     array->was_allocated = false;
     array->elem_destructor = elem_destructor;
+    array->n_allocated_blocks = 1;
     return MDL_OK;
 }
 
@@ -55,7 +60,8 @@ int mdl_array_destroy(MDLArray *array)
         return result;
 
     // After the array has been cleared there will be exactly one allocated block left.
-    mdl_free(array->ds, array->blocks[0], sizeof(*array->blocks));
+    mdl_free(array->ds, array->blocks[0], sizeof(MDLArrayBlock));
+    mdl_free(array->ds, array->blocks, sizeof(MDLArrayBlock *));
 
     if (array->was_allocated)
         mdl_free(array->ds, array, sizeof(*array));
@@ -73,7 +79,7 @@ int mdl_array_head(const MDLArray *array, void **item)
     if (array->length == 0)
         return MDL_ERROR_OUT_OF_RANGE;
 
-    *item = array->blocks[0][0];
+    *item = array->blocks[0]->values[0];
     return MDL_OK;
 }
 
@@ -83,29 +89,18 @@ int mdl_array_tail(const MDLArray *array, void **item)
         return MDL_ERROR_OUT_OF_RANGE;
 
     *item = array->blocks[array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE]
-                         [array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE];
+                ->values[array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE];
     return MDL_OK;
 }
 
 int mdl_array_push(MDLArray *array, void *item)
 {
-    size_t element_offset;
-    int error;
+    int error = mdl_array_ensurecapacity(array, array->length + 1);
+    if (error != MDL_OK)
+        return error;
 
-    element_offset = array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE;
-
-    // If the number of elements in the list is an exact multiple of the block size, then
-    // the final block is full, and we need to add a new one.
-    if ((element_offset == 0) && (array->length > 0))
-    {
-        error = resize_block_list(array, get_num_blocks(array) + 1);
-        if (error != MDL_OK)
-            return error;
-    }
-    // Else: the final block isn't full, or the list is empty, thus we don't need to
-    // allocate an additional block.
-
-    array->blocks[array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE][element_offset] = item;
+    array->blocks[array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE]
+        ->values[array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE] = item;
     array->length++;
     return MDL_OK;
 }
@@ -117,10 +112,13 @@ int mdl_array_pop(MDLArray *array, void **item)
 
     MDLArrayBlock *block;
     size_t element_index;
-    get_node_location_by_index(array, -1, &block, &element_index);
+
+    int error = get_node_location_by_index(array, -1, &block, &element_index);
+    if (error != MDL_OK)
+        return error;
 
     if (item != NULL)
-        *item = (*block)[element_index];
+        *item = (*block).values[element_index];
 
     array->length--;
 
@@ -130,7 +128,7 @@ int mdl_array_pop(MDLArray *array, void **item)
     if ((element_index != 0) || (array->length == 0))
         return MDL_OK;
 
-    return resize_block_list(array, get_num_blocks(array) - 1);
+    return resize_block_list(array, array->n_allocated_blocks - 1);
 }
 
 int mdl_array_pushfront(MDLArray *array, void *item);
@@ -147,7 +145,7 @@ int mdl_array_getat(const MDLArray *array, int index, void **value)
     if (result != MDL_OK)
         return result;
 
-    *value = (*block)[block_offset];
+    *value = (*block).values[block_offset];
     return MDL_OK;
 }
 
@@ -161,7 +159,7 @@ int mdl_array_setat(MDLArray *array, int index, void *new_value)
     if (result != MDL_OK)
         return result;
 
-    (*block)[block_offset] = new_value;
+    (*block).values[block_offset] = new_value;
     return MDL_OK;
 }
 
@@ -171,7 +169,7 @@ int mdl_array_removeat(MDLArray *array, int index, void **value);
 
 int mdl_array_clear(MDLArray *array)
 {
-    size_t num_blocks = get_num_blocks(array);
+    size_t num_blocks = array->n_allocated_blocks;
 
     if (array->elem_destructor != NULL)
     {
@@ -184,7 +182,10 @@ int mdl_array_clear(MDLArray *array)
                                     : elements_remaining;
 
             for (size_t elem_i = 0; elem_i < loop_limit; elem_i++)
-                array->elem_destructor(array->ds, array->blocks[block_i][elem_i]);
+            {
+                array->elem_destructor(array->ds, array->blocks[block_i]->values[elem_i]);
+                elements_remaining--;
+            }
         }
     }
 
@@ -200,6 +201,20 @@ int mdl_array_find(const MDLArray *array, const void *value, mdl_comparator_fptr
 int mdl_array_rfind(const MDLArray *array, const void *value, mdl_comparator_fptr cmp);
 
 int mdl_array_removevalue(MDLArray *array, const void *value, mdl_comparator_fptr cmp);
+
+int mdl_array_ensurecapacity(MDLArray *array, size_t capacity)
+{
+    size_t min_required_blocks = capacity / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
+
+    if (min_required_blocks % MDL_DEFAULT_ARRAY_BLOCK_SIZE > 0)
+        min_required_blocks++;
+
+    size_t n_current_blocks = array->n_allocated_blocks;
+    if (n_current_blocks >= min_required_blocks)
+        return MDL_OK;
+
+    return resize_block_list(array, min_required_blocks);
+}
 
 MDLArrayIterator *mdl_array_getiterator(const MDLArray *array, bool reverse)
 {
@@ -239,7 +254,7 @@ void *mdl_arrayiter_get(const MDLArrayIterator *iter)
     // so would only protect us against the case where this is called on an empty list, so
     // it isn't useful for most cases. The documentation explicitly states that calling
     // this on an empty list returns an undefined value, so we can get away with it.
-    return iter->array->blocks[iter->block_index][iter->block_element_index];
+    return iter->array->blocks[iter->block_index]->values[iter->block_element_index];
 }
 
 int mdl_arrayiter_next(MDLArrayIterator *iter)
@@ -272,54 +287,62 @@ void mdl_arrayiter_destroy(MDLArrayIterator *iter)
 
 /******** Helper functions ********/
 
-static size_t get_num_blocks(const MDLArray *array)
-{
-    size_t n = array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
-
-    // One block is always allocated, so we add 1 unconditionally. We need to round up if
-    // the last block is only partially full.
-    if (array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE != 0)
-        return n + 2;
-    return n + 1;
-}
-
 static int resize_block_list(MDLArray *array, size_t new_total)
 {
-    size_t n_current_blocks = get_num_blocks(array);
-
-    if (n_current_blocks == new_total)
-        return MDL_OK;
+    size_t n_current_blocks = array->n_allocated_blocks;
 
     // Always keep at least one block allocated.
     if (new_total == 0)
         return MDL_ERROR_INVALID_ARGUMENT;
 
-    MDLArrayBlock *new_block_list =
-        mdl_realloc(array->ds, array->blocks, new_total * sizeof(*array->blocks),
-                    n_current_blocks * sizeof(*array->blocks));
+    if (new_total == n_current_blocks)
+        return MDL_OK;
 
-    if (new_block_list == NULL)
-        return MDL_ERROR_NOMEM;
-
-    // A
-    for (size_t i = n_current_blocks; i < new_total; i++)
+    MDLArrayBlock **new_block_list;
+    if (new_total > n_current_blocks)
     {
-        void *new_block = mdl_malloc(array->ds, sizeof(*array->blocks));
+        // Growing the array.
+        new_block_list =
+            mdl_realloc(array->ds, array->blocks, new_total * sizeof(MDLArrayBlock *),
+                        n_current_blocks * sizeof(MDLArrayBlock *));
 
-        if (new_block == NULL)
+        if (new_block_list == NULL)
+            return MDL_ERROR_NOMEM;
+
+        for (size_t i = n_current_blocks; i < new_total; i++)
         {
-            for (; i <= n_current_blocks; i--)
-                mdl_free(array->ds, new_block_list[i], sizeof(**array->blocks));
+            MDLArrayBlock *new_block = mdl_malloc(array->ds, sizeof(MDLArrayBlock));
+            if (new_block == NULL)
+            {
+                // Failed to allocate a new block. Free any new blocks we'd previously
+                // allocated inside this loop, as well as the resized block list.
+                for (--i; i >= n_current_blocks; i--)
+                    mdl_free(array->ds, new_block_list[i], sizeof(MDLArrayBlock));
 
-            mdl_realloc(array->ds, new_block_list,
-                        n_current_blocks * sizeof(*array->blocks),
-                        new_total * sizeof(*array->blocks));
+                mdl_free(array->ds, new_block_list, new_total * sizeof(MDLArrayBlock *));
+                return MDL_ERROR_NOMEM;
+            }
+
+            new_block_list[i] = new_block;
         }
+    }
+    else
+    {
+        // Shrinking the array. Free blocks from the end.
+        for (size_t i = n_current_blocks - 1; i >= new_total; i--)
+            mdl_free(array->ds, array->blocks[i], sizeof(MDLArrayBlock));
 
-        new_block_list[i] = new_block;
+        // Shrink the top-level block array. This shouldn't fail.
+        new_block_list =
+            mdl_realloc(array->ds, array->blocks, new_total * sizeof(MDLArrayBlock *),
+                        n_current_blocks * sizeof(MDLArrayBlock *));
+
+        if (new_block_list == NULL)
+            return MDL_ERROR_NOMEM;
     }
 
     array->blocks = new_block_list;
+    array->n_allocated_blocks = new_total;
     return MDL_OK;
 }
 
@@ -338,7 +361,7 @@ static int get_node_location_by_index(const MDLArray *array, int index,
 
     block_number = absolute_index / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
 
-    *block = &array->blocks[block_number];
+    *block = array->blocks[block_number];
     *offset = absolute_index % MDL_DEFAULT_ARRAY_BLOCK_SIZE;
     return 0;
 }

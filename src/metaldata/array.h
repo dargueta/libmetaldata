@@ -33,7 +33,10 @@
 
 #define MDL_DEFAULT_ARRAY_BLOCK_SIZE 16
 
-typedef void *MDLArrayBlock[MDL_DEFAULT_ARRAY_BLOCK_SIZE];
+typedef struct MDLArrayBlock_
+{
+    void *values[MDL_DEFAULT_ARRAY_BLOCK_SIZE];
+} MDLArrayBlock;
 
 typedef struct MDLArray_
 {
@@ -48,8 +51,9 @@ typedef struct MDLArray_
      * The current length of the array.
      */
     size_t length;
+    size_t n_allocated_blocks;
 
-    MDLArrayBlock *blocks;
+    MDLArrayBlock **blocks;
 
     /**
      * True if this struct was allocated with @ref mdl_malloc and needs to be freed upon
@@ -302,6 +306,10 @@ int mdl_array_rfind(const MDLArray *array, const void *value, mdl_comparator_fpt
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_array_removevalue(MDLArray *array, const void *value, mdl_comparator_fptr cmp);
+
+MDL_API
+MDL_ANNOTN__NONNULL
+int mdl_array_ensurecapacity(MDLArray *array, size_t capacity);
 
 MDL_API
 MDL_ANNOTN__NODISCARD

@@ -100,14 +100,15 @@ MDL_ANNOTN__NONNULL
 void *mdl_writer_getudata(const MDLWriter *writer);
 
 /**
- * Get a pointer to the output buffer, @e if this was initialized with one.
+ * Get a pointer to the output buffer @e if this was initialized with one.
  *
  * If the writer was initialized to write to memory (e.g. @ref mdl_writer_newwithbuffer
  * or @ref mdl_writer_initwithbuffer), return this buffer and its size, in bytes.
  *
  * @param writer The writer to operate on.
- * @param p_length An optional pointer to a size_t where the size will be stored. If this
- *                 writer doesn't write to a memory buffer, this is not modified.
+ * @param[out] p_length
+ *      An optional pointer to a size_t where the size will be stored. If this writer
+ *      doesn't write to a memory buffer, @a p_length is not modified.
  * @return NULL if the writer doesn't write to memory, or a pointer to memory otherwise.
  */
 MDL_API

@@ -21,15 +21,16 @@ MunitResult test_memblklist__length_zero(const MunitParameter params[], void *us
 
     MDLState *ds = (MDLState *)userdata;
     MDLMemBlkList list;
-    size_t length;
-    int error;
 
-    error = mdl_memblklist_init(ds, &list, 32);
+    int error = mdl_memblklist_init(ds, &list, 32);
     munit_assert_int(error, ==, MDL_OK);
+    munit_assert_size(list.elem_size, ==, 32);
 
-    length = mdl_memblklist_length(&list);
+    size_t length = mdl_memblklist_length(&list);
     munit_assert_size(length, ==, 0);
-    mdl_memblklist_destroy(&list);
+
+    error = mdl_memblklist_destroy(&list);
+    munit_assert_int(error, ==, MDL_OK);
 
     return MUNIT_OK;
 }

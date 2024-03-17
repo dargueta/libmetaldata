@@ -86,13 +86,13 @@ Compilers
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| MinGW_          | Linux    | Y [#]_   | NS         | Y        | NS         |
+| MinGW_          | Linux    | Y [*]_   | NS         | Y        | NS         |
 +-----------------+----------+----------+------------+----------+------------+
 | OpenWatcom      | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| SDCC_ 4.2 [#]_  | See below for the list of architectures this compiles for|
+| SDCC_ 4.2 [*]_  | See below for the list of architectures this compiles for|
 +-----------------+----------+----------+------------+----------+------------+
 | TCC_            | Linux    | Y        | Y          | Y        | Y          |
 +-----------------+----------+----------+------------+----------+------------+
@@ -117,7 +117,7 @@ GBZ80
 HC08 (Motorola 68HC08) Y
 macOS ARM64            Y        Y
 MCS-51                 Y
-MOS 6502               NS [#]_
+MOS 6502               NS [*]_
 Padauk PDK 13          Y
 Padauk PDK 14          Y
 Padauk PDK 15          Y
@@ -127,7 +127,7 @@ Rabbit 3000A           Y
 S08                    Y
 SM83                   NS
 STM8                   Y
-TININative             NS [#]_
+TININative             NS [*]_
 TLCS 90                Y
 x86-32
 z180                   Y
@@ -143,7 +143,7 @@ Here is a quick reference for needs you may encounter:
 Installing to a specific directory
 **********************************
 
-By default, everything is installed relative to ``/usr/share`` on *NIX systems,
+By default, everything is installed relative to ``/usr/share`` on \*NIX systems,
 including Cygwin. You can change where the files are installed during configuration:
 
 .. code-block:: sh
@@ -176,10 +176,10 @@ This uses `µunit <https://nemequ.github.io/munit>`_ for running tests.
 Footnotes
 ---------
 
-.. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
-.. [#] SDCC 4.3 and 4.4 appear to be broken: https://sourceforge.net/p/sdcc/bugs/3715/
-.. [#] Requires SDCC 4.3+
-.. [#] Triggers a bug in SDCC and crashes the compiler.
+.. [*] I used a cross-compiler here because my Windows partition kicked the bucket.
+.. [*] SDCC 4.3 and 4.4 appear to be broken: https://sourceforge.net/p/sdcc/bugs/3715/
+.. [*] Requires SDCC 4.3+
+.. [*] Triggers a bug in SDCC and crashes the compiler.
 
 .. _Clang: https://clang.llvm.org/
 .. _GCC: https://gcc.gnu.org/

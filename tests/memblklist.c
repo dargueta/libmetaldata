@@ -14,6 +14,8 @@
 
 #include "metaldata/memblklist.h"
 #include "munit/munit.h"
+#include <limits.h>
+#include <stdlib.h>
 
 MunitResult test_memblklist__length_zero(const MunitParameter params[], void *userdata)
 {
@@ -31,6 +33,48 @@ MunitResult test_memblklist__length_zero(const MunitParameter params[], void *us
 
     error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
+    return MUNIT_OK;
+}
 
+MunitResult test_memblklist__add_one(const MunitParameter params[], void *userdata)
+{
+    (void)params;
+
+    MDLState *ds = (MDLState *)userdata;
+    MDLMemBlkList list;
+    char test_data[31];
+
+    for (int i = 0; i < 31; i++)
+        test_data[i] = (char)(rand() % CHAR_MAX);
+
+    int error = mdl_memblklist_init(ds, &list, 31);
+    munit_assert_int(error, ==, MDL_OK);
+    munit_assert_size(list.elem_size, ==, 31);
+
+    size_t length = mdl_memblklist_length(&list);
+    munit_assert_size(length, ==, 0);
+
+    void *block_pointer = mdl_memblklist_push(&list);
+    munit_assert_not_null(block_pointer);
+
+    length = mdl_memblklist_length(&list);
+    munit_assert_size(length, ==, 1);
+
+    memcpy(block_pointer, test_data, 31);
+
+    void *retrieved_pointer = mdl_memblklist_getblockat(&list, 0);
+    munit_logf(MUNIT_LOG_INFO, "expect=%p got=%p (delta=%#tx)", block_pointer,
+               retrieved_pointer,
+               (ptrdiff_t)block_pointer - (ptrdiff_t)retrieved_pointer);
+    munit_assert_ptr_equal(block_pointer, retrieved_pointer);
+
+    retrieved_pointer = mdl_memblklist_head(&list);
+    munit_assert_ptr_equal(block_pointer, retrieved_pointer);
+
+    retrieved_pointer = mdl_memblklist_tail(&list);
+    munit_assert_ptr_equal(block_pointer, retrieved_pointer);
+
+    error = mdl_memblklist_destroy(&list);
+    munit_assert_int(error, ==, MDL_OK);
     return MUNIT_OK;
 }

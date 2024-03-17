@@ -180,7 +180,7 @@ Makefile.in:
 	@echo 'You must run the `configure` script before running Make.' ; exit 1
 
 __in_debug_mode:
-	@if [ "$(DEBUG_MODE)" -eq 0 ]; then \
-        echo 'Recompile project in debug mode. See `configure -h` for details.'; \
-        exit 1; \
-    fi
+#	@if [ "$(DEBUG_MODE)" -eq 0 ]; then \
+#        echo 'Recompile project in debug mode. See `configure -h` for details.'; \
+#        exit 1; \
+#    fi

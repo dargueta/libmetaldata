@@ -92,10 +92,6 @@ Compilers
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| PCC_            | MacOS    |          |            |          |            |
-|                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y        | Y          | Y        | Y          |
-+-----------------+----------+----------+------------+----------+------------+
 | SDCC_ 4.2 [#]_  | See below for the list of architectures this compiles for|
 +-----------------+----------+----------+------------+----------+------------+
 | TCC_            | Linux    | Y        | Y          | Y        | Y          |
@@ -188,7 +184,6 @@ Footnotes
 .. _Clang: https://clang.llvm.org/
 .. _GCC: https://gcc.gnu.org/
 .. _MinGW: https://sourceforge.net/projects/mingw/
-.. _PCC: http://pcc.ludd.ltu.se/
 .. _SDCC: https://sdcc.sourceforge.net/
 .. _TCC: https://bellard.org/tcc/
 .. _uCSim: https://sdcc.sourceforge.net/

@@ -18,8 +18,6 @@ jobs:
             configure-flags: ""
           - binary: tcc
             configure-flags: ""
-          - binary: pcc
-            configure-flags: ""
         unhosted-flag:
           - ""
           - "-u"
@@ -28,21 +26,14 @@ jobs:
           - operating-system: macos-latest
             compiler:
               binary: tcc
-          - operating-system: macos-latest
-            compiler:
-              binary: pcc
     steps:
       - uses: actions/checkout@v3
 
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
         with:
-          apt: clang gcc-mingw-w64 pcc tcc
+          apt: clang gcc-mingw-w64 tcc
           brew: gcc mingw-w64
-
-      - name: Install PCC on MacOS
-        if: matrix.operating-system == 'macos-latest' && matrix.compiler.binary == 'pcc'
-        run: make -C make -f compiler-support/install.mk install-pcc
 
       - name: Configure
         run: |

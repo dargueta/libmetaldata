@@ -27,7 +27,7 @@ jobs:
             compiler:
               binary: tcc
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install Compilers
         uses: ConorMacBride/install-package@v1
@@ -87,7 +87,7 @@ jobs:
           # Something weird is going on with this one, possibly another SDCC bug.
           # - TININative
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Dependencies
         # 4.3.0+ are broken: https://sourceforge.net/p/sdcc/bugs/3715/
         run: make -C make -f compiler-support/install.mk install-sdcc SDCC_VERSION=4.2.0
@@ -95,3 +95,35 @@ jobs:
         run: ./configure --cc=sdcc -m ${{ matrix.architecture }}
       - name: Compile
         run: make library
+
+  testing-watcom:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - i86
+          - i186
+          - i286
+          - i386
+    steps:
+      - run: git config --global core.autocrlf input
+      - uses: actions/checkout@v4
+      - uses: cygwin/cygwin-install-action@v4
+        with:
+          packages: >-
+            coreutils
+            make
+      - name: Install Watcom
+        uses: open-watcom/setup-watcom@v0
+        with:
+          version: "2.0"
+      - name: Configure
+        run: ./configure --cc=owcc -m ${{ matrix.architecture }}
+        shell: C:\cygwin\bin\bash.exe '{0}'
+      - name: Compile
+        run: make library
+      - name: Test Installation
+        run: sudo make install
+      - name: Run Tests
+        run: make test

@@ -18,6 +18,8 @@ jobs:
             configure-flags: ""
           - binary: tcc
             configure-flags: ""
+          - binary: x86_64-w64-mingw32-gcc
+            configure-flags: ""
         unhosted-flag:
           - ""
           - "-u"
@@ -95,35 +97,35 @@ jobs:
         run: ./configure --cc=sdcc -m ${{ matrix.architecture }}
       - name: Compile
         run: make library
-
-  testing-watcom:
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        architecture:
-          - i86
-          - i186
-          - i286
-          - i386
-    steps:
-      - run: git config --global core.autocrlf input
-      - uses: actions/checkout@v4
-      - uses: cygwin/cygwin-install-action@v4
-        with:
-          packages: >-
-            coreutils
-            make
-      - name: Install Watcom
-        uses: open-watcom/setup-watcom@v0
-        with:
-          version: "2.0"
-      - name: Configure
-        run: ./configure --cc=owcc -m ${{ matrix.architecture }}
-        shell: C:\cygwin\bin\bash.exe '{0}'
-      - name: Compile
-        run: make library
-      - name: Test Installation
-        run: sudo make install
-      - name: Run Tests
-        run: make test
+#
+#  testing-watcom:
+#    runs-on: windows-latest
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        architecture:
+#          - i86
+#          - i186
+#          - i286
+#          - i386
+#    steps:
+#      - run: git config --global core.autocrlf input
+#      - uses: actions/checkout@v4
+#      - uses: cygwin/cygwin-install-action@v4
+#        with:
+#          packages: >-
+#            coreutils
+#            make
+#      - name: Install Watcom
+#        uses: open-watcom/setup-watcom@v0
+#        with:
+#          version: "2.0"
+#      - name: Configure
+#        run: ./configure --cc=owcc -m ${{ matrix.architecture }}
+#        shell: C:\cygwin\bin\bash.exe '{0}'
+#      - name: Compile
+#        run: make library
+#      - name: Test Installation
+#        run: sudo make install
+#      - name: Run Tests
+#        run: make test

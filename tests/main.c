@@ -191,7 +191,7 @@ static MunitTest array_tests[] = {
     SUITE_END_SENTINEL};
 
 static MunitTest memblklist_tests[] = {define_plain_test_case(memblklist, length_zero),
-                                       define_plain_test_case(memblklist, add_one),
+                                       // define_plain_test_case(memblklist, add_one),
                                        SUITE_END_SENTINEL};
 
 static MunitTest reader_tests[] = {

@@ -63,9 +63,6 @@ MunitResult test_memblklist__add_one(const MunitParameter params[], void *userda
     memcpy(block_pointer, test_data, 31);
 
     void *retrieved_pointer = mdl_memblklist_getblockat(&list, 0);
-    munit_logf(MUNIT_LOG_INFO, "expect=%p got=%p (delta=%#tx)", block_pointer,
-               retrieved_pointer,
-               (ptrdiff_t)block_pointer - (ptrdiff_t)retrieved_pointer);
     munit_assert_ptr_equal(block_pointer, retrieved_pointer);
 
     retrieved_pointer = mdl_memblklist_head(&list);

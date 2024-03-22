@@ -102,6 +102,14 @@ void *mdl_memblklist_push(MDLMemBlkList *list)
 {
     MDLMemBlkListNode *new_tail;
 
+    // The head is always allocated, even if the list is empty. We can use this fact to
+    // automatically return the list's head block upon pushing the first element.
+    if (list->length == 0)
+    {
+        list->length++;
+        return list->head->data;
+    }
+
     new_tail = mdl_memblklist_appendnewnode(list);
     if (new_tail == NULL)
         return NULL;
@@ -112,14 +120,15 @@ void *mdl_memblklist_push(MDLMemBlkList *list)
 
 int mdl_memblklist_pop(MDLMemBlkList *list)
 {
-    MDLMemBlkListNode *tail;
-
     if (list->length == 0)
         return MDL_ERROR_EMPTY;
 
-    tail = list->head->prev;
+    // Always keep the head node allocated. If the head's previous node is itself, we know
+    // that it's the last remaining node in the list, and we must not deallocate it.
+    if (list->head != list->head->prev)
+        unlink_and_free_node(list->ds, list->head->prev);
+
     list->length--;
-    unlink_and_maybe_free_node(list, tail);
     return MDL_OK;
 }
 
@@ -234,15 +243,19 @@ int mdl_memblklist_removeatcopy(MDLMemBlkList *list, int index, void *buf)
 
 void mdl_memblklist_clear(MDLMemBlkList *list)
 {
-    MDLMemBlkListNode *next_node, *current_node;
+    MDLMemBlkListNode *current_node = list->head->next;
 
     /* Free every node except the head, which we always keep. */
-    for (current_node = list->head; list->length > 0; list->length--)
+    while (current_node != list->head)
     {
-        next_node = current_node->next;
-        unlink_and_free_node(list->ds, current_node);
+        MDLMemBlkListNode *next_node = current_node->next;
+        mdl_free(list->ds, current_node, sizeof(*current_node));
         current_node = next_node;
     }
+
+    list->length = 0;
+    list->head->next = list->head;
+    list->head->prev = list->head;
 }
 
 MDLMemBlkListNode *mdl_memblklist_findnode(const MDLMemBlkList *list, const void *value,

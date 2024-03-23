@@ -36,7 +36,7 @@ using a standards-compliant compiler, this won't be an issue.*
 Building
 --------
 
-.. code-block:: sh
+.. code-block:: shell
 
     # Set up the build system for your desired target platform
     ./configure [options]
@@ -92,13 +92,13 @@ Compilers
 +-----------------+----------+----------+------------+----------+------------+
 | MinGW_          | Cygwin   | Y        | Y          | Y        | Y          |
 |                 +----------+----------+------------+----------+------------+
-|                 | Linux    | Y [*]_   | NS         | Y        | NS         |
+|                 | Linux    | Y [#]_   | NS         | Y        | NS         |
 +-----------------+----------+----------+------------+----------+------------+
 | OpenWatcom      | MacOS    |          |            |          |            |
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| SDCC_ 4.2 [*]_  | See below for the list of architectures this compiles for|
+| SDCC_ 4.2 [#]_  | See below for the list of architectures this compiles for|
 +-----------------+----------+----------+------------+----------+------------+
 | TCC_            | Linux    | Y        | Y          | Y        | Y          |
 +-----------------+----------+----------+------------+----------+------------+
@@ -113,7 +113,7 @@ used for most of these. The microcontrollers require me to write a testbench
 using uCSim_ which is going to be time-consuming but (possibly) doable.
 
 ====================== ======== ============
-Achitecture            Compiles Passes Tests
+Architecture           Compiles Passes Tests
 ====================== ======== ============
 AMD64 (x86-64)         Y        Y
 DS390                  Y
@@ -123,7 +123,7 @@ GBZ80
 HC08 (Motorola 68HC08) Y
 macOS ARM64            Y        Y
 MCS-51                 Y
-MOS 6502               NS [*]_
+MOS 6502               NS [#]_
 Padauk PDK 13          Y
 Padauk PDK 14          Y
 Padauk PDK 15          Y
@@ -133,7 +133,7 @@ Rabbit 3000A           Y
 S08                    Y
 SM83                   NS
 STM8                   Y
-TININative             NS [*]_
+TININative             NS [#]_
 TLCS 90                Y
 x86-32                 Y        Y
 z180                   Y
@@ -152,7 +152,7 @@ Installing to a specific directory
 By default, everything is installed relative to ``/usr/share`` on \*NIX systems,
 including Cygwin. You can change where the files are installed during configuration:
 
-.. code-block:: sh
+.. code-block:: shell
 
     ./configure --prefix=path/to/directory
 
@@ -186,10 +186,10 @@ This uses `µunit <https://nemequ.github.io/munit>`_ for running tests.
 Footnotes
 ---------
 
-.. [*] I used a cross-compiler here because my Windows partition kicked the bucket.
-.. [*] SDCC 4.3 and 4.4 appear to be broken: https://sourceforge.net/p/sdcc/bugs/3715/
-.. [*] Requires SDCC 4.3+
-.. [*] Triggers a bug in SDCC and crashes the compiler.
+.. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
+.. [#] SDCC 4.3 and 4.4 appear to be broken (`ticket <https://sourceforge.net/p/sdcc/bugs/3715/>`_)
+.. [#] Requires SDCC 4.3+
+.. [#] Triggers a bug in SDCC and crashes the compiler.
 
 .. _Clang: https://clang.llvm.org/
 .. _GCC: https://gcc.gnu.org/

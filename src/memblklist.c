@@ -24,7 +24,7 @@ MDL_ANNOTN__NONNULL
 static void unlink_node(MDLMemBlkListNode *node);
 
 MDL_ANNOTN__NONNULL
-static void unlink_and_free_node(MDLState *ds, MDLMemBlkListNode *node);
+static void unlink_and_free_node(MDLMemBlkList *list, MDLMemBlkListNode *node);
 
 MDL_ANNOTN__NONNULL
 static void unlink_and_maybe_free_node(MDLMemBlkList *list, MDLMemBlkListNode *node);
@@ -39,11 +39,15 @@ MDL_ANNOTN__NONNULL
 static MDLMemBlkListNode *get_node_at_relative_index(const MDLMemBlkList *list,
                                                      int index);
 
+MDL_ANNOTN__NONNULL
+MDL_ANNOTN__REPRODUCIBLE
+static size_t get_node_size(const MDLMemBlkList *list);
+
 int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size)
 {
     /* Immediately allocate the head node. This simplifies other code by allowing it to
      * assume that the head is always valid. */
-    list->head = mdl_malloc(ds, sizeof(*list->head));
+    list->head = mdl_malloc(ds, sizeof(*list->head) + elem_size);
     if (list->head == NULL)
         return MDL_ERROR_NOMEM;
 
@@ -81,7 +85,7 @@ int mdl_memblklist_destroy(MDLMemBlkList *list)
     mdl_memblklist_clear(list);
 
     /* mdl_memblklist_clear doesn't free the head node, so we need to do it here. */
-    mdl_free(list->ds, list->head, sizeof(*list->head));
+    mdl_free(list->ds, list->head, get_node_size(list));
 
     if (list->was_allocated)
         mdl_free(list->ds, list, sizeof(*list));
@@ -126,7 +130,7 @@ int mdl_memblklist_pop(MDLMemBlkList *list)
     // Always keep the head node allocated. If the head's previous node is itself, we know
     // that it's the last remaining node in the list, and we must not deallocate it.
     if (list->head != list->head->prev)
-        unlink_and_free_node(list->ds, list->head->prev);
+        unlink_and_free_node(list, list->head->prev);
 
     list->length--;
     return MDL_OK;
@@ -177,7 +181,7 @@ int mdl_memblklist_popfront(MDLMemBlkList *list)
         return MDL_ERROR_EMPTY;
 
     next_head = list->head->next;
-    unlink_and_free_node(list->ds, list->head);
+    unlink_and_free_node(list, list->head);
     list->head = next_head;
     list->length--;
     return 0;
@@ -226,7 +230,7 @@ int mdl_memblklist_removeat(MDLMemBlkList *list, int index)
     if (node == NULL)
         return MDL_ERROR_OUT_OF_RANGE;
 
-    unlink_and_free_node(list->ds, node);
+    unlink_and_free_node(list, node);
     return 0;
 }
 
@@ -237,7 +241,7 @@ int mdl_memblklist_removeatcopy(MDLMemBlkList *list, int index, void *buf)
         return MDL_ERROR_OUT_OF_RANGE;
 
     mdl_memcpy(buf, node->data, list->elem_size);
-    unlink_and_free_node(list->ds, node);
+    unlink_and_free_node(list, node);
     return 0;
 }
 
@@ -249,7 +253,7 @@ void mdl_memblklist_clear(MDLMemBlkList *list)
     while (current_node != list->head)
     {
         MDLMemBlkListNode *next_node = current_node->next;
-        mdl_free(list->ds, current_node, sizeof(*current_node));
+        mdl_free(list->ds, current_node, get_node_size(list));
         current_node = next_node;
     }
 
@@ -354,7 +358,7 @@ int mdl_memblklist_removevalue(MDLMemBlkList *list, const void *value,
     if (node == NULL)
         return 0;
 
-    unlink_and_free_node(list->ds, node);
+    unlink_and_free_node(list, node);
     return 1;
 }
 
@@ -421,17 +425,17 @@ static void unlink_node(MDLMemBlkListNode *node)
     node->next->prev = node->prev;
 }
 
-static void unlink_and_free_node(MDLState *ds, MDLMemBlkListNode *node)
+static void unlink_and_free_node(MDLMemBlkList *list, MDLMemBlkListNode *node)
 {
     unlink_node(node);
-    mdl_free(ds, node, sizeof(*node));
+    mdl_free(list->ds, node, get_node_size(list));
 }
 
 static void unlink_and_maybe_free_node(MDLMemBlkList *list, MDLMemBlkListNode *node)
 {
     unlink_node(node);
     if (node != list->head)
-        mdl_free(list->ds, node, sizeof(*node));
+        mdl_free(list->ds, node, get_node_size(list));
 }
 
 void mdl_memblklist_movenodeafter(MDLMemBlkListNode *new_node,
@@ -477,10 +481,15 @@ static MDLMemBlkListNode *get_node_at_relative_index(const MDLMemBlkList *list, 
 
 MDLMemBlkListNode *mdl_memblklist_appendnewnode(MDLMemBlkList *list)
 {
-    MDLMemBlkListNode *node = mdl_malloc(list->ds, sizeof(*node));
+    MDLMemBlkListNode *node = mdl_malloc(list->ds, get_node_size(list));
     if (node == NULL)
         return NULL;
 
     mdl_memblklist_movenodeafter(node, list->head->prev);
     return node;
+}
+
+size_t get_node_size(const MDLMemBlkList *list)
+{
+    return sizeof(*list->head) + list->elem_size;
 }

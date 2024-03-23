@@ -14,14 +14,13 @@ static int get_node_location_by_index(const MDLArray *array, int index,
 
 MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor)
 {
-    int result;
     MDLArray *array;
 
     array = mdl_malloc(ds, sizeof(*array));
     if (array == NULL)
         return NULL;
 
-    result = mdl_array_init(ds, array, elem_destructor);
+    int result = mdl_array_init(ds, array, elem_destructor);
     if (result != MDL_OK)
     {
         mdl_free(ds, array, sizeof(*array));

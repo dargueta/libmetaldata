@@ -168,7 +168,11 @@ This pattern is also followed on Cygwin for the sake of simplicity.
 Developing
 ----------
 
-(TODO)
+Optional tools:
+
+* valgrind
+* kcallgrind (Debian)
+* massif-visualizer (Debian)
 
 License
 -------

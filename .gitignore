@@ -27,6 +27,9 @@ venv/
 .idea/
 .vscode/
 .DS_Store
+*-report.txt
+xtleak*
+vgcore*
 
 # Detritus from our compiler installation helper script
 __libmetaldata_install_downloads__/

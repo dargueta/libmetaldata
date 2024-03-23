@@ -16,8 +16,6 @@
 #include "munit/munit.h"
 #include <stddef.h>
 
-#include "metaldata/extras/hosted_allocator.c"
-
 #define import_test(suite, name)                                                         \
     extern MunitResult test_##suite##__##name(const MunitParameter params[],             \
                                               void *userdata)
@@ -82,6 +80,7 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
                 ptr, type_or_old_size, size, delta,
                 state->memory_info.current_memory_used);
             state->memory_info.num_reallocations++;
+            return realloc(ptr, size);
         }
         else
         {
@@ -91,8 +90,8 @@ void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud
                        type_or_old_size, size, delta,
                        state->memory_info.current_memory_used);
             state->memory_info.num_allocations++;
+            return munit_malloc(size);
         }
-        return realloc(ptr, size);
     }
 
     // If the size is 0, the caller wants to free memory. It doesn't make sense to pass a

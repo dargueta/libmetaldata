@@ -45,7 +45,7 @@ MunitResult test_memblklist__add_one(const MunitParameter params[], void *userda
     char test_data[31];
 
     for (int i = 0; i < 31; i++)
-        test_data[i] = (char)(rand() % CHAR_MAX);
+        test_data[i] = (char)i;
 
     int error = mdl_memblklist_init(ds, &list, 31);
     munit_assert_int(error, ==, MDL_OK);
@@ -70,6 +70,9 @@ MunitResult test_memblklist__add_one(const MunitParameter params[], void *userda
 
     retrieved_pointer = mdl_memblklist_tail(&list);
     munit_assert_ptr_equal(block_pointer, retrieved_pointer);
+
+    int cmp_result = memcmp(retrieved_pointer, test_data, 31);
+    munit_assert_int(0, ==, cmp_result);
 
     error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);

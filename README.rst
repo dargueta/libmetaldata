@@ -25,7 +25,7 @@ malloc    stdlib.h  N
 memcmp    string.h  Y
 memcpy    string.h  Y
 memset    string.h  Y
-ptrdiff_t stddef.h  \*
+realloc   stdlib.h  N
 size_t    stddef.h  \*
 strcmp    string.h  Y
 ========= ========= ==================
@@ -171,8 +171,8 @@ Developing
 Optional tools:
 
 * valgrind
-* kcallgrind (Debian)
-* massif-visualizer (Debian)
+* kcallgrind (Debian package)
+* massif-visualizer (Debian package)
 
 License
 -------

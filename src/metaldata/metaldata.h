@@ -67,6 +67,16 @@ MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
 void mdl_initstate(MDLState *ds, mdl_alloc_fptr alloc, void *userdata);
 
+/**
+ * Compare the values of two pointers; usable as a @ref mdl_comparator_fptr callback.
+ *
+ * @param ds Ignored, for compatibility with @ref mdl_comparator_fptr.
+ * @param left A pointer value to compare against @a right. The memory is not accessed.
+ * @param right A pointer value to compare against @a left. The memory is not accessed.
+ * @param size Ignored, for compatibility with @ref mdl_comparator_fptr.
+ *
+ * @return See @ref mdl_comparator_fptr.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__ACCESS_SIZED(read_only, 2, 4)
@@ -74,6 +84,25 @@ MDL_ANNOTN__ACCESS_SIZED(read_only, 3, 4)
 int mdl_default_ptr_value_comparator(MDLState *ds, const void *left, const void *right,
                                      size_t size);
 
+/**
+ * Compare bytes in two blocks of memory; usable as a @ref mdl_comparator_fptr callback.
+ *
+ * The function behaves just like `memcmp()` except for two cases:
+ *
+ * - If @a left and @a right are both null, they compare equal.
+ * - If only one pointer is null, the null pointer compares as strictly less than the
+ *   non-null pointer. In other words, if only @a left is null, the return value is
+ *   negative. If only @a right is null, the return value is positive.
+ *
+ * @param ds Ignored, for compatibility with @ref mdl_comparator_fptr.
+ * @param left A pointer to a block of memory to compare against @a right. May be null. If
+ *             not null, the memory block must be at least @a size bytes long.
+ * @param right A pointer to a block of memory to compare against @a left. May be null. If
+ *             not null, the memory block must be at least @a size bytes long.
+ * @param size The maximum number of bytes to compare.
+ *
+ * @return See @ref mdl_comparator_fptr.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__ACCESS_SIZED(read_only, 2, 4)
@@ -82,22 +111,19 @@ int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *ri
                                   size_t size);
 
 /**
- * Compare two null-terminated C strings, where one or both pointers may be null.
+ * Compare two C strings, where one or both pointers may be null.
  *
- * Null pointers compare equal. If one or both pointers is null, this becomes integer
- * arithmetic, i.e.
+ * If one or both pointers is null, this behaves like integer arithmetic, i.e.:
  *
- * - left is NULL, right is not: -1
- * - left is NULL, right is too: 0
- * - left is not NULL, right is NULL: 1
+ * - left is NULL, right is not: negative value
+ * - left is NULL, right is also NULL: 0
+ * - left is not NULL, right is NULL: positive value
  *
- * @param ds The MetalData state.
+ * @param ds Ignored, for compatibility with @ref mdl_comparator_fptr.
  * @param left A pointer to a null-terminated C string to compare. May be null.
- * @param right AA pointer to a null-terminated C string to compare. May be null.
- * @param size Ignored. It's only here to make this function usable as an
- *             @ref mdl_comparator_fptr.
- * @return The return value follows the same rules as `strcmp()`. Additional rules for
- *         null pointers is given in the description.
+ * @param right A pointer to a null-terminated C string to compare. May be null.
+ * @param size Ignored, for compatibility with @ref mdl_comparator_fptr.
+ * @return See @ref mdl_comparator_fptr.
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
@@ -110,6 +136,32 @@ MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 void mdl_default_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
 
+/**
+ * A function comparing @a left against @a right, whatever that means in the context it's
+ * used in.
+ *
+ * MetalData only uses comparator functions for sorting and searching within a single
+ * container. For example, if a comparator is passed to @ref mdl_array_sort, calling it
+ * with any two elements in the array must yield a valid result.
+ *
+ * @param ds The MetalData state.
+ * @param left A pointer or pointer-like value to compare against @a right.
+ * @param right A pointer or pointer-like value to compare against @a left.
+ * @param size For containers whose elements have a fixed size, this is that size.
+ *
+ * The return value must be:
+ *
+ * - Positive if @a left compares strictly greater than that @a right;
+ * - 0 if @a left and @a right compare equal;
+ * - Negative if @a left compares strictly less than @a right.
+ *
+ * Aside from 0, MetalData only examines the sign of the return value, and doesn't care
+ * about the magnitude.
+ *
+ * @see mdl_default_memory_comparator
+ * @see mdl_default_ptr_value_comparator
+ * @see mdl_default_string_comparator
+ */
 MDL_ANNOTN__NONNULL_ARGS(1)
 typedef int (*mdl_comparator_fptr)(MDLState *ds, const void *left, const void *right,
                                    size_t size) MDL_REENTRANT_MARKER;

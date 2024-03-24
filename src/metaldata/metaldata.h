@@ -173,7 +173,9 @@ typedef int (*mdl_comparator_fptr)(MDLState *ds, const void *left, const void *r
  * @param pointer   The pointer to the block of memory to free.
  * @param old_size  The size of the memory block.
  */
-MDL_API void mdl_free(MDLState *ds, void *pointer, size_t old_size);
+MDL_API
+MDL_ANNOTN__NONNULL_ARGS(1)
+void mdl_free(MDLState *ds, void *pointer, size_t old_size);
 
 /**
  * Allocate memory using the allocation function provided to @a ds.
@@ -199,6 +201,8 @@ void *mdl_malloc(MDLState *ds, size_t size);
  * @return A pointer to the reallocated memory, or NULL if reallocation failed.
  */
 MDL_API
+MDL_ANNOTN__NONNULL_ARGS(1)
+MDL_ANNOTN__NODISCARD
 void *mdl_realloc(MDLState *ds, void *pointer, size_t new_size, size_t old_size);
 
 #endif

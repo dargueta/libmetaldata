@@ -104,7 +104,7 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor);
 /**
  * Like @ref mdl_array_new but the destructor is a no-op.
  */
-#define mdl_array_basicnew(ds) mdl_array_new((ds), mdl_default_destructor)
+#define mdl_array_basicnew(ds) mdl_array_new((ds), mdl_no_op_destructor)
 
 /**
  * Initialize an allocated array.

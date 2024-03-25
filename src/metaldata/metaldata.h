@@ -132,7 +132,7 @@ typedef void (*mdl_destructor_fptr)(MDLState *ds, void *item) MDL_REENTRANT_MARK
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-void mdl_default_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
+void mdl_no_op_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
 
 /**
  * A function comparing @a left against @a right, whatever that means in the context it's

@@ -25,5 +25,5 @@ mdl_hash_type mdl_strmap_hashstring(const void *p, size_t size)
 int mdl_strmap_init(MDLState *ds, MDLMap *map, mdl_destructor_fptr value_destructor)
 {
     return mdl_map_init(ds, map, mdl_strmap_hashstring, mdl_default_string_comparator,
-                        mdl_default_destructor, value_destructor);
+                        mdl_no_op_destructor, value_destructor);
 }

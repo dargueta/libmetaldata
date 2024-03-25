@@ -98,7 +98,7 @@ Compilers
 |                 +----------+----------+------------+----------+------------+
 |                 | Linux    |          |            |          |            |
 +-----------------+----------+----------+------------+----------+------------+
-| SDCC_ 4.2 [#]_  | See below for the list of architectures this compiles for|
+| SDCC_           | See below for the list of architectures this compiles for|
 +-----------------+----------+----------+------------+----------+------------+
 | TCC_            | Linux    | Y        | Y          | Y        | Y          |
 +-----------------+----------+----------+------------+----------+------------+
@@ -123,17 +123,19 @@ GBZ80
 HC08 (Motorola 68HC08) Y
 macOS ARM64            Y        Y
 MCS-51                 Y
-MOS 6502               NS [#]_
+MOS 6502               Y
+MOS 65C02              Y
 Padauk PDK 13          Y
 Padauk PDK 14          Y
 Padauk PDK 15          Y
+Rabbit 800             Y
 Rabbit 2000            Y
 Rabbit 2000A           NS
 Rabbit 3000A           Y
 S08                    Y
 SM83                   NS
 STM8                   Y
-TININative             NS [#]_
+TININative             Y [#]_
 TLCS 90                Y
 x86-32                 Y        Y
 z180                   Y
@@ -187,8 +189,6 @@ Footnotes
 ---------
 
 .. [#] I used a cross-compiler here because my Windows partition kicked the bucket.
-.. [#] SDCC 4.3 and 4.4 appear to be broken (`ticket <https://sourceforge.net/p/sdcc/bugs/3715/>`_)
-.. [#] Requires SDCC 4.3+
 .. [#] Triggers a bug in SDCC and crashes the compiler.
 
 .. _Clang: https://clang.llvm.org/

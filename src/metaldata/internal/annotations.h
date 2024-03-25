@@ -130,8 +130,10 @@
 #    define GNU_ATTRIBUTE(x)
 #endif
 
-/* Clang, GCC 10.0+, and some compatible compilers (Intel is one exception). */
-#if defined(__has_attribute)
+/* Clang, GCC 10.0+, and some compatible compilers (Intel is one exception).
+ * We exclude SDCC here because it recognizes __has_attribute but 4.3+ chokes on it.
+ * For details, see the bug ticket: <https://sourceforge.net/p/sdcc/bugs/3715/> */
+#if defined(__has_attribute) && !defined(__SDCC)
 #    if __has_attribute(visibility)
 #        define MDL_API GNU_ATTRIBUTE(visibility("default"))
 #        define MDL_INTERNAL GNU_ATTRIBUTE(visibility("hidden"))

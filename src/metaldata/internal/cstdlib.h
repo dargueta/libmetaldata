@@ -22,7 +22,6 @@
 #define INCLUDE_METALDATA_INTERNAL_CSTDLIB_H_
 
 #include "../configuration.h"
-#include "../metaldata.h"
 #include "annotations.h"
 #include <stddef.h>
 

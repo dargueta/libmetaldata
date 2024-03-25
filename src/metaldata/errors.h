@@ -21,8 +21,6 @@
 #ifndef INCLUDE_METALDATA_ERRORS_H_
 #define INCLUDE_METALDATA_ERRORS_H_
 
-#include "configuration.h"
-
 #define MDL_EOF (-1)
 #define MDL_OK 0
 #define MDL_ERROR_EMPTY 1

@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Internal functions used by @ref MDLMemBlkList that are not part of the public API.
+ *
+ * @file memblklist.h
+ */
+
 #ifndef INCLUDE_METALDATA_INTERNAL_LLIST_H_
 #define INCLUDE_METALDATA_INTERNAL_LLIST_H_
 

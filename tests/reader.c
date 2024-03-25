@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "metaldata/reader.h"
+#include "metaldata/errors.h"
 #include "munit/munit.h"
 #include <string.h>
 

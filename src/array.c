@@ -1,4 +1,5 @@
 #include "metaldata/array.h"
+#include "metaldata/errors.h"
 #include "metaldata/internal/annotations.h"
 #include "metaldata/metaldata.h"
 

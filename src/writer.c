@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "metaldata/writer.h"
+#include "metaldata/errors.h"
 #include "metaldata/metaldata.h"
 
 /**

@@ -12,6 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * A hash map or dictionary.
+ *
+ * @file map.h
+ */
+
 #ifndef INCLUDE_METALDATA_MAP_H_
 #define INCLUDE_METALDATA_MAP_H_
 
@@ -83,11 +89,12 @@ int mdl_map_init(MDLState *ds, MDLMap *map, mdl_hash_fptr key_hasher,
  *
  * @param ds
  * @param map
+ * @param value_destructor
  * @return
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_strmap_init(MDLState *ds, MDLMap *map);
+int mdl_strmap_init(MDLState *ds, MDLMap *map, mdl_destructor_fptr value_destructor);
 
 /**
  * Initialize an allocated map that uses integer scalars as its keys.

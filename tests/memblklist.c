@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "metaldata/memblklist.h"
+#include "metaldata/errors.h"
 #include "munit/munit.h"
 #include <limits.h>
 #include <stdlib.h>

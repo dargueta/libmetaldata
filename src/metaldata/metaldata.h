@@ -22,9 +22,7 @@
 #define INCLUDE_METALDATA_METALDATA_H_
 
 #include "configuration.h"
-#include "errors.h"
 #include "internal/annotations.h"
-#include "internal/cstdlib.h"
 #include <stddef.h>
 
 /**
@@ -115,9 +113,9 @@ int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *ri
  *
  * If one or both pointers is null, this behaves like integer arithmetic, i.e.:
  *
- * - left is NULL, right is not: negative value
- * - left is NULL, right is also NULL: 0
- * - left is not NULL, right is NULL: positive value
+ * - @a left is NULL, @a right is not: returns a negative value
+ * - @a left is NULL, @a right is also NULL: returns 0
+ * - @a left is not NULL, @a right is NULL: returns a positive value
  *
  * @param ds Ignored, for compatibility with @ref mdl_comparator_fptr.
  * @param left A pointer to a null-terminated C string to compare. May be null.
@@ -151,7 +149,7 @@ void mdl_default_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
  *
  * The return value must be:
  *
- * - Positive if @a left compares strictly greater than that @a right;
+ * - Positive if @a left compares strictly greater than @a right;
  * - 0 if @a left and @a right compare equal;
  * - Negative if @a left compares strictly less than @a right.
  *

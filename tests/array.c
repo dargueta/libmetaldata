@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "metaldata/array.h"
+#include "metaldata/errors.h"
 #include "munit/munit.h"
 
 static void helper_test_adding_blocks(MDLArray *array, ptrdiff_t n_to_add);

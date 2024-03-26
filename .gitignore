@@ -27,9 +27,14 @@ venv/
 .idea/
 .vscode/
 .DS_Store
+
+# Profiling and other dev stuff
 *-report.txt
 xtleak*
 vgcore*
+*.gcno
+*.gcda
+*.gcov
 
 # Detritus from our compiler installation helper script
 __libmetaldata_install_downloads__/

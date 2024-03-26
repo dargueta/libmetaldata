@@ -27,6 +27,8 @@ TEST_C_SOURCE_FILES=$(wildcard tests/*.c)
 TEST_C_HEADERS=$(wildcard tests/*.h)
 TEST_OBJECT_FILES=$(TEST_C_SOURCE_FILES:%.c=%.$(OBJECT_FILE_EXT)) tests/munit/munit.$(OBJECT_FILE_EXT)
 
+ALL_C_SOURCE_FILES=$(LIBRARY_C_SOURCE_FILES) $(TEST_C_SOURCE_FILES)
+
 # Build targets and such
 BUILD_DIR=build
 LIB_NAME_STEM=$(LIB_NAME_PREFIX)metaldata
@@ -89,16 +91,18 @@ endif
 
 # These are the compilation flags that should be exposed to anyone trying to link
 # with the library. Custom macro definitions are one example.
-PUBLIC_COMPILE_FLAGS=$(strip $(MACROS_FROM_CONFIGURE))
+PUBLIC_COMPILE_FLAGS=$(strip $(MACROS_FROM_CONFIGURE) $(CFLAGS_FROM_CONFIGURE))
+PUBLIC_LINK_FLAGS=$(strip $(LDFLAGS_FROM_CONFIGURE))
 
 # This is the minimal set of flags needed to compile the library. It's
-ADDL_CFLAGS_MINIMAL = -I./src $(PUBLIC_COMPILE_FLAGS) $(MY_CFLAGS)
+ADDL_CFLAGS_MINIMAL = -I./src $(PUBLIC_COMPILE_FLAGS)
 ADDL_CFLAGS_FULL = $(ADDL_CFLAGS_MINIMAL) $(C_STANDARD_FLAG) $(CFLAGS_OPTIMIZATION) $(ARCH_FLAG)
 
+# MY_CFLAGS must come at the end
 ifeq ($(USE_MINIMAL_FLAGS),0)
-    COMPILE_COMMAND=$(CC) $(CFLAGS) $(ADDL_CFLAGS_FULL) -c
+    COMPILE_COMMAND=$(CC) $(CFLAGS) $(ADDL_CFLAGS_FULL) $(MY_CFLAGS) -c
 else
-    COMPILE_COMMAND=$(CC) $(CFLAGS) $(ADDL_CFLAGS_MINIMAL) -c
+    COMPILE_COMMAND=$(CC) $(CFLAGS) $(ADDL_CFLAGS_MINIMAL) $(MY_CFLAGS) -c
 endif
 
 INSTALL_BINARY = $(if $1,mkdir -p $2 && $(CMD_INSTALL_BIN) $1 $2)
@@ -112,7 +116,17 @@ MEMORY_ANALYSIS_FILE = valgrind-report.txt
 HEAP_ANALYSIS_FILE = massif-report.txt
 CACHE_ANALYSIS_FILE = cache-report.txt
 CALL_ANALYSIS_FILE = call-report.txt
-ANALYSIS_REPORT_FILES = $(MEMORY_ANALYSIS_FILE) $(HEAP_ANALYSIS_FILE) $(CACHE_ANALYSIS_FILE) $(CALL_ANALYSIS_FILE)
+COVERAGE_FILES_GCNO = $(ALL_C_SOURCE_FILES:%.c=%.gcno)
+COVERAGE_FILES_GCDA = $(ALL_C_SOURCE_FILES:%.c=%.gcda)
+COVERAGE_FILES_GCOV = $(addsuffix .gcov,$(ALL_C_SOURCE_FILES))
+ANALYSIS_REPORT_FILES = $(MEMORY_ANALYSIS_FILE) \
+                        $(HEAP_ANALYSIS_FILE)   \
+                        $(CACHE_ANALYSIS_FILE)  \
+                        $(CALL_ANALYSIS_FILE)   \
+                        $(COVERAGE_FILES_GCNO)  \
+                        $(COVERAGE_FILES_GCDA)  \
+                        $(COVERAGE_FILES_GCOV)
+
 
 # This must be included only after all variables are defined.
 include make/pkginfo-template.mk
@@ -148,6 +162,7 @@ VALGRIND_BASE_COMMAND = \
 	valgrind --error-exitcode=1    \
 	         --trace-children=yes  \
 	         --child-silent-after-fork=yes \
+	         --read-inline-info=yes
 
 
 $(MEMORY_ANALYSIS_FILE): $(TEST_BINARY)
@@ -168,7 +183,6 @@ $(HEAP_ANALYSIS_FILE): $(TEST_BINARY)
 	    --tool=massif \
 	    --stacks=yes \
 	    --massif-out-file=$@ \
-	    $(addprefix --ignore-fn=,$(IGNORE_LEAKY_FUNCTIONS)) \
 	    --      \
 	    $< $(ARGS)
 
@@ -220,7 +234,7 @@ $(STATIC_LIBRARY): $(LIBRARY_OBJECT_FILES) | $(BUILD_DIR)
 	$(AR) rcs $@ $^
 
 $(TEST_BINARY): $(TEST_OBJECT_FILES) $(STATIC_LIBRARY)
-	$(CC) $(LDFLAGS) $(MY_LDFLAGS) -o $@ $^
+	$(CC) $(LDFLAGS) $(PUBLIC_LINK_FLAGS) $(MY_LDFLAGS) -o $@ $^
 
 export PKGINFO_TEXT
 $(PKGCONFIG_FILE): Makefile.in make/pkginfo-template.mk | $(BUILD_DIR)

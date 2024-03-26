@@ -6,7 +6,9 @@ set -e
 
 unhosted=0
 debug=0
+additional_cflags=
 additional_defines=
+additional_ldflags=
 prefix=/usr/local
 minimal_flags=0
 no_fatal_warnings=0
@@ -39,6 +41,9 @@ General-Purpose Flags
     library is placed in 'PATH/lib', headers in 'PATH/include', etc. Directories
     are created where necessary.
     Default: $prefix
+--profiling
+    Enable code coverage and performance profiling. Implies --debug, requires
+    compiler to be GCC.
 -u | --unhosted
     Unhosted mode -- do not use the C standard library. Functions such as strcmp
     will use compiler intrinsics if possible, or otherwise fall back to naive
@@ -103,6 +108,11 @@ while [ -n "$1" ]; do
         exit 1
       fi
       ;;
+    --profile )
+      additional_cflags="$additional_cflags --coverage -pg -O0"
+      additional_ldflags="$additional_ldflags --coverage"
+      debug=1
+      ;;
     -u | --unhosted ) unhosted=1 ;;
     -U )
       additional_defines="$additional_defines -U$2"
@@ -163,6 +173,8 @@ cat <<EOF > Makefile.in
 UNHOSTED_IMPLEMENTATION=$unhosted
 DEBUG_MODE=$debug
 MACROS_FROM_CONFIGURE=$additional_defines
+CFLAGS_FROM_CONFIGURE=$additional_cflags
+LDFLAGS_FROM_CONFIGURE=$additional_ldflags
 PREFIX=$absolute_top
 INSTALL_TARGET_LIB=${install_target_lib:-\$(PREFIX)/lib}
 INSTALL_TARGET_INCLUDE=${install_target_include:-\$(PREFIX)/include/metaldata}

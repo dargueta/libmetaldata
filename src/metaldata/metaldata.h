@@ -128,11 +128,11 @@ MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_default_string_comparator(MDLState *ds, const void *left, const void *right,
                                   size_t size);
 
-typedef void (*mdl_destructor_fptr)(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
+typedef void (*mdl_destructor_fptr)(MDLState *ds, void *item);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-void mdl_no_op_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
+void mdl_no_op_destructor(MDLState *ds, void *item);
 
 /**
  * A function comparing @a left against @a right, whatever that means in the context it's
@@ -162,7 +162,7 @@ void mdl_no_op_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
  */
 MDL_ANNOTN__NONNULL_ARGS(1)
 typedef int (*mdl_comparator_fptr)(MDLState *ds, const void *left, const void *right,
-                                   size_t size) MDL_REENTRANT_MARKER;
+                                   size_t size);
 
 /**
  * Free raw memory allocated by @ref mdl_malloc and its related functions.

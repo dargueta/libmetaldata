@@ -132,16 +132,20 @@ library: $(STATIC_LIBRARY)
 test: $(TEST_BINARY)
 	$(TEST_BINARY) $(ARGS)
 
+# SDCC generates multiple output files per source file. When cleaning, we need to
+# ensure we delete all of them.
+SDCC_OTHER_GENERATED_EXTENSIONS = adb asm d lst rel sym
+SDCC_ALL_OTHER_GENERATED_FILES = \
+    $(foreach ext,\
+              $(SDCC_OTHER_GENERATED_EXTENSIONS),\
+              $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.$(ext)))
+
+
 clean: clean-analysis
 	$(RM) -r $(BUILD_DIR)
 	$(RM) -r $(dir $(DOC_INDEX_FILE))
 	$(RM) $(ALL_OBJECT_FILES)
-	$(RM) $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.adb)
-	$(RM) $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.asm)
-	$(RM) $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.lst)
-	$(RM) $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.rel)
-	$(RM) $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.sym)
-	$(RM) $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.d)
+	$(RM) $(SDCC_ALL_OTHER_GENERATED_FILES)
 
 format: $(LIBRARY_C_SOURCE_FILES) $(LIBRARY_C_ALL_HEADER_FILES) \
         $(TEST_C_SOURCE_FILES) $(TEST_C_HEADERS) $(LIBRARY_EXTRAS)

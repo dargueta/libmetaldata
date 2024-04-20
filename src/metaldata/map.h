@@ -77,7 +77,7 @@ typedef MDLMap MDLScalarMap;
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-int mdl_map_init(MDLState *ds, MDLMap *map, mdl_hash_fptr key_hasher,
+int mdl_map_init(MDLState *mds, MDLMap *map, mdl_hash_fptr key_hasher,
                  mdl_comparator_fptr key_comparator, mdl_destructor_fptr key_destructor,
                  mdl_destructor_fptr value_destructor);
 
@@ -87,14 +87,14 @@ int mdl_map_init(MDLState *ds, MDLMap *map, mdl_hash_fptr key_hasher,
  * This is a special case of maps, optimized for better performance when strings are used
  * as the keys.
  *
- * @param ds
+ * @param mds
  * @param map
  * @param value_destructor
  * @return
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_strmap_init(MDLState *ds, MDLMap *map, mdl_destructor_fptr value_destructor);
+int mdl_strmap_init(MDLState *mds, MDLMap *map, mdl_destructor_fptr value_destructor);
 
 /**
  * Initialize an allocated map that uses integer scalars as its keys.
@@ -102,13 +102,13 @@ int mdl_strmap_init(MDLState *ds, MDLMap *map, mdl_destructor_fptr value_destruc
  * This is a special case of maps, optimized for better performance when pointers or
  * other int-like values are used as the keys.
  *
- * @param ds
+ * @param mds
  * @param map
  * @return
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_scalarmap_init(MDLState *ds, MDLMap *map);
+int mdl_scalarmap_init(MDLState *mds, MDLMap *map);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)

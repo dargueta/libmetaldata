@@ -77,7 +77,7 @@ struct MDLMemBlkListNode_
 struct MDLMemBlkList_
 {
     /** The MetalData state. */
-    MDLState *ds;
+    MDLState *mds;
 
     /**
      * A pointer to the first node in the list.
@@ -130,7 +130,7 @@ struct MDLMemBlkListIterator_
  * This is not quite the same as running @ref mdl_memblklist_init on memory you've
  * allocated with @ref mdl_malloc.
  *
- * @param ds
+ * @param mds
  * @param elem_size
  * @param elem_comparator
  * @return
@@ -140,7 +140,7 @@ struct MDLMemBlkListIterator_
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD
-MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size);
+MDLMemBlkList *mdl_memblklist_new(MDLState *mds, size_t elem_size);
 
 /**
  * Initialize an allocated list.
@@ -149,7 +149,7 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size);
  * will use this to initialize it. They will still need to destroy the list using
  * @ref mdl_memblklist_destroy.
  *
- * @param ds The MetalData state.
+ * @param mds The MetalData state.
  * @param list The list to initialize.
  * @param elem_size The size of a single element in the list.
  * @return 0 on success, an error code otherwise.
@@ -159,7 +159,7 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size);
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size);
+int mdl_memblklist_init(MDLState *mds, MDLMemBlkList *list, size_t elem_size);
 
 /**
  * Destroy a list.

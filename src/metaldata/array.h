@@ -40,7 +40,7 @@ typedef struct MDLArrayBlock_
 
 typedef struct MDLArray_
 {
-    MDLState *ds;
+    MDLState *mds;
 
     /**
      * A function to call when deleting an element.
@@ -89,7 +89,7 @@ typedef struct MDLArrayIterator_
  * This is similar to but not the same as @ref mdl_malloc followed by @ref
  * mdl_array_init.
  *
- * @param ds
+ * @param mds
  * @param elem_size
  * @param elem_destructor
  * @return
@@ -99,12 +99,12 @@ typedef struct MDLArrayIterator_
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__NODISCARD
-MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor);
+MDLArray *mdl_array_new(MDLState *mds, mdl_destructor_fptr elem_destructor);
 
 /**
  * Like @ref mdl_array_new but the destructor is a no-op.
  */
-#define mdl_array_basicnew(ds) mdl_array_new((ds), mdl_no_op_destructor)
+#define mdl_array_basicnew(mds) mdl_array_new((mds), mdl_no_op_destructor)
 
 /**
  * Initialize an allocated array.
@@ -113,7 +113,7 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor);
  * allocation) will use this to initialize the array. They will still need to destroy the
  * array using @ref mdl_array_destroy.
  *
- * @param ds The MetalData state.
+ * @param mds The MetalData state.
  * @param array The array to initialize.
  * @param elem_destructor
  * @return 0 on success, an error code otherwise.
@@ -122,7 +122,7 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor);
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destructor);
+int mdl_array_init(MDLState *mds, MDLArray *array, mdl_destructor_fptr elem_destructor);
 
 /**
  * Destroy an array.

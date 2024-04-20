@@ -55,7 +55,7 @@
 #    include <assert.h>
 #    include <string.h>
 
-#    define mdl_assert(ds, expr) assert(expr)
+#    define mdl_assert(mds, expr) assert(expr)
 #    define mdl_memcmp memcmp
 #    define mdl_memcpy memcpy
 #    define mdl_memset memset

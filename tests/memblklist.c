@@ -22,10 +22,10 @@ MunitResult test_memblklist__length_zero(const MunitParameter params[], void *us
 {
     (void)params;
 
-    MDLState *ds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)userdata;
     MDLMemBlkList list;
 
-    int error = mdl_memblklist_init(ds, &list, 32);
+    int error = mdl_memblklist_init(mds, &list, 32);
     munit_assert_int(error, ==, MDL_OK);
     munit_assert_size(list.elem_size, ==, 32);
 
@@ -41,14 +41,14 @@ MunitResult test_memblklist__add_one(const MunitParameter params[], void *userda
 {
     (void)params;
 
-    MDLState *ds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)userdata;
     MDLMemBlkList list;
     char test_data[31];
 
     for (int i = 0; i < 31; i++)
         test_data[i] = (char)i;
 
-    int error = mdl_memblklist_init(ds, &list, 31);
+    int error = mdl_memblklist_init(mds, &list, 31);
     munit_assert_int(error, ==, MDL_OK);
     munit_assert_size(list.elem_size, ==, 31);
 

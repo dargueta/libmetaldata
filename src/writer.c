@@ -23,35 +23,35 @@
  */
 static int memory_putc(MDLWriter *writer, int chr);
 
-MDLWriter *mdl_writer_new(MDLState *ds, mdl_writer_putc_fptr putc_ptr,
+MDLWriter *mdl_writer_new(MDLState *mds, mdl_writer_putc_fptr putc_ptr,
                           mdl_writer_close_fptr close_ptr, void *udata)
 {
     MDLWriter *writer;
-    writer = mdl_malloc(ds, sizeof(*writer));
+    writer = mdl_malloc(mds, sizeof(*writer));
     if (writer == NULL)
         return NULL;
 
-    mdl_writer_init(ds, writer, putc_ptr, close_ptr, udata);
+    mdl_writer_init(mds, writer, putc_ptr, close_ptr, udata);
     return writer;
 }
 
-MDLWriter *mdl_writer_newwithbuffer(MDLState *ds, void *buffer, size_t size)
+MDLWriter *mdl_writer_newwithbuffer(MDLState *mds, void *buffer, size_t size)
 {
-    MDLWriter *writer = mdl_writer_new(ds, memory_putc, NULL, NULL);
+    MDLWriter *writer = mdl_writer_new(mds, memory_putc, NULL, NULL);
     if (writer == NULL)
         return NULL;
 
-    mdl_writer_initwithbuffer(ds, writer, buffer, size);
+    mdl_writer_initwithbuffer(mds, writer, buffer, size);
     return writer;
 }
 
-void mdl_writer_init(MDLState *ds, MDLWriter *writer, mdl_writer_putc_fptr putc_ptr,
+void mdl_writer_init(MDLState *mds, MDLWriter *writer, mdl_writer_putc_fptr putc_ptr,
                      mdl_writer_close_fptr close_ptr, void *udata)
 {
     if (close_ptr == NULL)
         close_ptr = mdl_writer_noopclose;
 
-    writer->ds = ds;
+    writer->mds = mds;
     writer->putc_ptr = putc_ptr;
     writer->close_ptr = close_ptr;
     writer->udata = udata;
@@ -61,9 +61,10 @@ void mdl_writer_init(MDLState *ds, MDLWriter *writer, mdl_writer_putc_fptr putc_
     writer->was_allocated = false;
 }
 
-void mdl_writer_initwithbuffer(MDLState *ds, MDLWriter *writer, void *buffer, size_t size)
+void mdl_writer_initwithbuffer(MDLState *mds, MDLWriter *writer, void *buffer,
+                               size_t size)
 {
-    mdl_writer_init(ds, writer, memory_putc, NULL, NULL);
+    mdl_writer_init(mds, writer, memory_putc, NULL, NULL);
     writer->output_buffer = buffer;
     writer->buffer_size = size;
 }
@@ -89,7 +90,7 @@ int mdl_writer_close(MDLWriter *writer)
         writer->close_ptr(writer);
 
     if (writer->was_allocated)
-        mdl_free(writer->ds, writer, sizeof(*writer));
+        mdl_free(writer->mds, writer, sizeof(*writer));
     return 0;
 }
 

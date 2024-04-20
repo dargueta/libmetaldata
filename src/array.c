@@ -13,18 +13,18 @@ MDL_ANNOTN__NONNULL
 static int get_node_location_by_index(const MDLArray *array, int index,
                                       MDLArrayBlock **block, size_t *offset);
 
-MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor)
+MDLArray *mdl_array_new(MDLState *mds, mdl_destructor_fptr elem_destructor)
 {
     MDLArray *array;
 
-    array = mdl_malloc(ds, sizeof(*array));
+    array = mdl_malloc(mds, sizeof(*array));
     if (array == NULL)
         return NULL;
 
-    int result = mdl_array_init(ds, array, elem_destructor);
+    int result = mdl_array_init(mds, array, elem_destructor);
     if (result != MDL_OK)
     {
-        mdl_free(ds, array, sizeof(*array));
+        mdl_free(mds, array, sizeof(*array));
         return NULL;
     }
 
@@ -32,20 +32,20 @@ MDLArray *mdl_array_new(MDLState *ds, mdl_destructor_fptr elem_destructor)
     return array;
 }
 
-int mdl_array_init(MDLState *ds, MDLArray *array, mdl_destructor_fptr elem_destructor)
+int mdl_array_init(MDLState *mds, MDLArray *array, mdl_destructor_fptr elem_destructor)
 {
-    array->blocks = mdl_malloc(ds, sizeof(MDLArrayBlock *));
+    array->blocks = mdl_malloc(mds, sizeof(MDLArrayBlock *));
     if (array->blocks == NULL)
         return MDL_ERROR_NOMEM;
 
-    array->blocks[0] = mdl_malloc(ds, sizeof(MDLArrayBlock));
+    array->blocks[0] = mdl_malloc(mds, sizeof(MDLArrayBlock));
     if (array->blocks[0] == NULL)
     {
-        mdl_free(ds, array->blocks, sizeof(MDLArrayBlock *));
+        mdl_free(mds, array->blocks, sizeof(MDLArrayBlock *));
         return MDL_ERROR_NOMEM;
     }
 
-    array->ds = ds;
+    array->mds = mds;
     array->length = 0;
     array->was_allocated = false;
     array->elem_destructor = elem_destructor;
@@ -60,11 +60,11 @@ int mdl_array_destroy(MDLArray *array)
         return result;
 
     // After the array has been cleared there will be exactly one allocated block left.
-    mdl_free(array->ds, array->blocks[0], sizeof(MDLArrayBlock));
-    mdl_free(array->ds, array->blocks, sizeof(MDLArrayBlock *));
+    mdl_free(array->mds, array->blocks[0], sizeof(MDLArrayBlock));
+    mdl_free(array->mds, array->blocks, sizeof(MDLArrayBlock *));
 
     if (array->was_allocated)
-        mdl_free(array->ds, array, sizeof(*array));
+        mdl_free(array->mds, array, sizeof(*array));
 
     return 0;
 }
@@ -183,7 +183,8 @@ int mdl_array_clear(MDLArray *array)
 
             for (size_t elem_i = 0; elem_i < loop_limit; elem_i++)
             {
-                array->elem_destructor(array->ds, array->blocks[block_i]->values[elem_i]);
+                array->elem_destructor(array->mds,
+                                       array->blocks[block_i]->values[elem_i]);
                 elements_remaining--;
             }
         }
@@ -218,7 +219,7 @@ int mdl_array_ensurecapacity(MDLArray *array, size_t capacity)
 
 MDLArrayIterator *mdl_array_getiterator(const MDLArray *array, bool reverse)
 {
-    MDLArrayIterator *iter = mdl_malloc(array->ds, sizeof(*iter));
+    MDLArrayIterator *iter = mdl_malloc(array->mds, sizeof(*iter));
     if (iter == NULL)
         return NULL;
 
@@ -282,7 +283,7 @@ bool mdl_arrayiter_hasnext(const MDLArrayIterator *iter)
 void mdl_arrayiter_destroy(MDLArrayIterator *iter)
 {
     if (iter->was_allocated)
-        mdl_free(iter->array->ds, iter, sizeof(*iter));
+        mdl_free(iter->array->mds, iter, sizeof(*iter));
 }
 
 /******** Helper functions ********/
@@ -303,7 +304,7 @@ static int resize_block_list(MDLArray *array, size_t new_total)
     {
         // Growing the array.
         new_block_list =
-            mdl_realloc(array->ds, array->blocks, new_total * sizeof(MDLArrayBlock *),
+            mdl_realloc(array->mds, array->blocks, new_total * sizeof(MDLArrayBlock *),
                         n_current_blocks * sizeof(MDLArrayBlock *));
 
         if (new_block_list == NULL)
@@ -311,15 +312,15 @@ static int resize_block_list(MDLArray *array, size_t new_total)
 
         for (size_t i = n_current_blocks; i < new_total; i++)
         {
-            MDLArrayBlock *new_block = mdl_malloc(array->ds, sizeof(MDLArrayBlock));
+            MDLArrayBlock *new_block = mdl_malloc(array->mds, sizeof(MDLArrayBlock));
             if (new_block == NULL)
             {
                 // Failed to allocate a new block. Free any new blocks we'd previously
                 // allocated inside this loop, as well as the resized block list.
                 for (--i; i >= n_current_blocks; i--)
-                    mdl_free(array->ds, new_block_list[i], sizeof(MDLArrayBlock));
+                    mdl_free(array->mds, new_block_list[i], sizeof(MDLArrayBlock));
 
-                mdl_free(array->ds, new_block_list, new_total * sizeof(MDLArrayBlock *));
+                mdl_free(array->mds, new_block_list, new_total * sizeof(MDLArrayBlock *));
                 return MDL_ERROR_NOMEM;
             }
 
@@ -330,11 +331,11 @@ static int resize_block_list(MDLArray *array, size_t new_total)
     {
         // Shrinking the array. Free blocks from the end.
         for (size_t i = n_current_blocks - 1; i >= new_total; i--)
-            mdl_free(array->ds, array->blocks[i], sizeof(MDLArrayBlock));
+            mdl_free(array->mds, array->blocks[i], sizeof(MDLArrayBlock));
 
         // Shrink the top-level block array. This shouldn't fail.
         new_block_list =
-            mdl_realloc(array->ds, array->blocks, new_total * sizeof(MDLArrayBlock *),
+            mdl_realloc(array->mds, array->blocks, new_total * sizeof(MDLArrayBlock *),
                         n_current_blocks * sizeof(MDLArrayBlock *));
 
         if (new_block_list == NULL)

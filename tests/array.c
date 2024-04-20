@@ -22,12 +22,12 @@ MunitResult test_array__length_zero(const MunitParameter params[], void *userdat
 {
     (void)params;
 
-    MDLState *ds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)userdata;
     MDLArray array;
     size_t length;
     int error;
 
-    error = mdl_array_init(ds, &array, NULL);
+    error = mdl_array_init(mds, &array, NULL);
     munit_assert_int(error, ==, MDL_OK);
 
     length = mdl_array_length(&array);
@@ -44,11 +44,11 @@ MunitResult test_array__head_empty_fails(const MunitParameter params[], void *us
 {
     (void)params;
 
-    MDLState *ds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)userdata;
     MDLArray array;
     int error;
 
-    error = mdl_array_init(ds, &array, NULL);
+    error = mdl_array_init(mds, &array, NULL);
     munit_assert_int(error, ==, MDL_OK);
 
     void *value = (void *)12345;
@@ -68,11 +68,11 @@ MunitResult test_array__tail_empty_fails(const MunitParameter params[], void *us
 {
     (void)params;
 
-    MDLState *ds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)userdata;
     MDLArray array;
     int error;
 
-    error = mdl_array_init(ds, &array, NULL);
+    error = mdl_array_init(mds, &array, NULL);
     munit_assert_int(error, ==, MDL_OK);
 
     void *value = (void *)12345;
@@ -91,8 +91,8 @@ MunitResult test_array__allocate_empty_ok(const MunitParameter params[], void *u
 {
     (void)params;
 
-    MDLState *ds = (MDLState *)userdata;
-    MDLArray *array = mdl_array_basicnew(ds);
+    MDLState *mds = (MDLState *)userdata;
+    MDLArray *array = mdl_array_basicnew(mds);
     munit_assert_not_null(array);
 
     munit_assert_size(mdl_array_length(array), ==, 0);
@@ -111,8 +111,8 @@ MunitResult test_array__add_less_than_one_block(const MunitParameter params[],
 {
     (void)params;
 
-    MDLState *ds = (MDLState *)userdata;
-    MDLArray *array = mdl_array_basicnew(ds);
+    MDLState *mds = (MDLState *)userdata;
+    MDLArray *array = mdl_array_basicnew(mds);
     munit_assert_not_null(array);
 
     helper_test_adding_blocks(array, MDL_DEFAULT_ARRAY_BLOCK_SIZE - 1);
@@ -130,8 +130,8 @@ MunitResult test_array__add_exactly_one_block(const MunitParameter params[],
 {
     (void)params;
 
-    MDLState *ds = (MDLState *)userdata;
-    MDLArray *array = mdl_array_basicnew(ds);
+    MDLState *mds = (MDLState *)userdata;
+    MDLArray *array = mdl_array_basicnew(mds);
     munit_assert_not_null(array);
 
     helper_test_adding_blocks(array, MDL_DEFAULT_ARRAY_BLOCK_SIZE);
@@ -146,8 +146,8 @@ MunitResult test_array__add_one_more_than_one_block(const MunitParameter params[
 {
     (void)params;
 
-    MDLState *ds = (MDLState *)userdata;
-    MDLArray *array = mdl_array_basicnew(ds);
+    MDLState *mds = (MDLState *)userdata;
+    MDLArray *array = mdl_array_basicnew(mds);
     munit_assert_not_null(array);
 
     helper_test_adding_blocks(array, MDL_DEFAULT_ARRAY_BLOCK_SIZE + 1);
@@ -162,8 +162,8 @@ MunitResult test_array__add_more_than_one_block(const MunitParameter params[],
 {
     (void)params;
 
-    MDLState *ds = (MDLState *)userdata;
-    MDLArray *array = mdl_array_basicnew(ds);
+    MDLState *mds = (MDLState *)userdata;
+    MDLArray *array = mdl_array_basicnew(mds);
     munit_assert_not_null(array);
 
     helper_test_adding_blocks(array, (MDL_DEFAULT_ARRAY_BLOCK_SIZE * 2) + 1);

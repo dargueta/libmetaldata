@@ -42,7 +42,7 @@ typedef void (*mdl_writer_close_fptr)(MDLWriter *writer) MDL_REENTRANT_MARKER;
  */
 struct MDLWriter_
 {
-    MDLState *ds;
+    MDLState *mds;
     mdl_writer_putc_fptr putc_ptr;
     mdl_writer_close_fptr close_ptr;
     void *udata;
@@ -67,13 +67,13 @@ struct MDLWriter_
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
 MDL_ANNOTN__NODISCARD
-MDLWriter *mdl_writer_new(MDLState *ds, mdl_writer_putc_fptr putc_ptr,
+MDLWriter *mdl_writer_new(MDLState *mds, mdl_writer_putc_fptr putc_ptr,
                           mdl_writer_close_fptr close_ptr, void *udata);
 
 /**
  * Allocate a new @ref MDLWriter that writes into a fixed-size buffer.
  *
- * @param ds
+ * @param mds
  * @param buffer A pointer to the buffer to write to.
  * @param size The size of the buffer to write to, in bytes.
  *
@@ -82,17 +82,17 @@ MDLWriter *mdl_writer_new(MDLState *ds, mdl_writer_putc_fptr putc_ptr,
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD
-MDLWriter *mdl_writer_newwithbuffer(MDLState *ds, void *buffer, size_t size);
+MDLWriter *mdl_writer_newwithbuffer(MDLState *mds, void *buffer, size_t size);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-void mdl_writer_init(MDLState *ds, MDLWriter *writer, mdl_writer_putc_fptr putc_ptr,
+void mdl_writer_init(MDLState *mds, MDLWriter *writer, mdl_writer_putc_fptr putc_ptr,
                      mdl_writer_close_fptr close_ptr, void *udata);
 
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__ACCESS_SIZED(write_only, 3, 4)
-void mdl_writer_initwithbuffer(MDLState *ds, MDLWriter *writer, void *buffer,
+void mdl_writer_initwithbuffer(MDLState *mds, MDLWriter *writer, void *buffer,
                                size_t size);
 
 MDL_API

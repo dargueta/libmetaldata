@@ -39,7 +39,7 @@ typedef int (*mdl_reader_close_fptr)(MDLReader *reader, void *udata) MDL_REENTRA
  */
 struct MDLReader_
 {
-    MDLState *ds;
+    MDLState *mds;
     mdl_reader_getc_fptr getc_ptr;
     mdl_reader_close_fptr close_ptr;
     void *udata;
@@ -53,22 +53,22 @@ struct MDLReader_
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
 MDL_ANNOTN__NODISCARD
-MDLReader *mdl_reader_new(MDLState *ds, mdl_reader_getc_fptr getc_ptr,
+MDLReader *mdl_reader_new(MDLState *mds, mdl_reader_getc_fptr getc_ptr,
                           mdl_reader_close_fptr close_ptr, void *udata);
 
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD
-MDLReader *mdl_reader_newfrombuffer(MDLState *ds, const void *buffer, size_t size);
+MDLReader *mdl_reader_newfrombuffer(MDLState *mds, const void *buffer, size_t size);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-void mdl_reader_init(MDLState *ds, MDLReader *reader, mdl_reader_getc_fptr getc_ptr,
+void mdl_reader_init(MDLState *mds, MDLReader *reader, mdl_reader_getc_fptr getc_ptr,
                      mdl_reader_close_fptr close_ptr, void *udata);
 
 MDL_API
 MDL_ANNOTN__NONNULL
-void mdl_reader_initfrombuffer(MDLState *ds, MDLReader *reader, const void *buffer,
+void mdl_reader_initfrombuffer(MDLState *mds, MDLReader *reader, const void *buffer,
                                size_t size);
 
 MDL_API

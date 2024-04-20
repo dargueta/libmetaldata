@@ -17,23 +17,23 @@
 #include "metaldata/metaldata.h"
 #include <stddef.h>
 
-void mdl_initstate(MDLState *ds, mdl_alloc_fptr alloc, void *userdata)
+void mdl_initstate(MDLState *mds, mdl_alloc_fptr alloc, void *userdata)
 {
-    ds->allocator = alloc;
-    ds->userdata = userdata;
+    mds->allocator = alloc;
+    mds->userdata = userdata;
 }
 
-int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *right,
+int mdl_default_memory_comparator(MDLState *mds, const void *left, const void *right,
                                   size_t size)
 {
-    (void)ds;
+    (void)mds;
     return mdl_memcmp(left, right, size);
 }
 
-int mdl_default_ptr_value_comparator(MDLState *ds, const void *left, const void *right,
+int mdl_default_ptr_value_comparator(MDLState *mds, const void *left, const void *right,
                                      size_t size)
 {
-    (void)ds, (void)size;
+    (void)mds, (void)size;
 
     // Because ptrdiff_t may be larger than an int, and demotion of signed types is
     // implementation-defined, we do this instead of casting the result of a pointer
@@ -45,10 +45,10 @@ int mdl_default_ptr_value_comparator(MDLState *ds, const void *left, const void 
     return 0;
 }
 
-int mdl_default_string_comparator(MDLState *ds, const void *left, const void *right,
+int mdl_default_string_comparator(MDLState *mds, const void *left, const void *right,
                                   size_t size)
 {
-    (void)ds, (void)size;
+    (void)mds, (void)size;
 
     if ((left != NULL) && (right != NULL))
         return mdl_strcmp((const char *)left, (const char *)right);
@@ -61,26 +61,26 @@ int mdl_default_string_comparator(MDLState *ds, const void *left, const void *ri
     return 1;
 }
 
-void mdl_no_op_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER
+void mdl_no_op_destructor(MDLState *mds, void *item) MDL_REENTRANT_MARKER
 {
-    (void)ds, (void)item;
+    (void)mds, (void)item;
 }
 
 #if !MDL_COMPILED_AS_UNHOSTED
 #    include "metaldata/extras/hosted_allocator.c"
 #endif
 
-void mdl_free(MDLState *ds, void *pointer, size_t old_size)
+void mdl_free(MDLState *mds, void *pointer, size_t old_size)
 {
-    (void)ds->allocator(pointer, 0, old_size, ds->userdata);
+    (void)mds->allocator(pointer, 0, old_size, mds->userdata);
 }
 
-void *mdl_malloc(MDLState *ds, size_t size)
+void *mdl_malloc(MDLState *mds, size_t size)
 {
-    return ds->allocator(NULL, size, 0, ds->userdata);
+    return mds->allocator(NULL, size, 0, mds->userdata);
 }
 
-void *mdl_realloc(MDLState *ds, void *pointer, size_t new_size, size_t old_size)
+void *mdl_realloc(MDLState *mds, void *pointer, size_t new_size, size_t old_size)
 {
-    return ds->allocator(pointer, new_size, old_size, ds->userdata);
+    return mds->allocator(pointer, new_size, old_size, mds->userdata);
 }

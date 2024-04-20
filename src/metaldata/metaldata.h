@@ -69,7 +69,7 @@ typedef struct MDLState_
 /**
  * Initialize a new MetalData state.
  *
- * @param ds       The MetalData state.
+ * @param mds       The MetalData state.
  * @param alloc    The function to use for memory allocation. Hosted implementations can
  *                 use @ref mdl_default_hosted_alloc by including @file hosted_allocator.c
  *                 in their sources.
@@ -78,12 +78,12 @@ typedef struct MDLState_
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-void mdl_initstate(MDLState *ds, mdl_alloc_fptr alloc, void *userdata);
+void mdl_initstate(MDLState *mds, mdl_alloc_fptr alloc, void *userdata);
 
 /**
  * Compare the values of two pointers; usable as a @ref mdl_comparator_fptr callback.
  *
- * @param ds Ignored, for compatibility with @ref mdl_comparator_fptr.
+ * @param mds Ignored, for compatibility with @ref mdl_comparator_fptr.
  * @param left A pointer value to compare against @a right. The memory is not accessed.
  * @param right A pointer value to compare against @a left. The memory is not accessed.
  * @param size Ignored, for compatibility with @ref mdl_comparator_fptr.
@@ -94,7 +94,7 @@ MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__ACCESS_SIZED(read_only, 2, 4)
 MDL_ANNOTN__ACCESS_SIZED(read_only, 3, 4)
-int mdl_default_ptr_value_comparator(MDLState *ds, const void *left, const void *right,
+int mdl_default_ptr_value_comparator(MDLState *mds, const void *left, const void *right,
                                      size_t size);
 
 /**
@@ -107,7 +107,7 @@ int mdl_default_ptr_value_comparator(MDLState *ds, const void *left, const void 
  *   non-null pointer. In other words, if only @a left is null, the return value is
  *   negative. If only @a right is null, the return value is positive.
  *
- * @param ds Ignored, for compatibility with @ref mdl_comparator_fptr.
+ * @param mds Ignored, for compatibility with @ref mdl_comparator_fptr.
  * @param left A pointer to a block of memory to compare against @a right. May be null. If
  *             not null, the memory block must be at least @a size bytes long.
  * @param right A pointer to a block of memory to compare against @a left. May be null. If
@@ -120,7 +120,7 @@ MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__ACCESS_SIZED(read_only, 2, 4)
 MDL_ANNOTN__ACCESS_SIZED(read_only, 3, 4)
-int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *right,
+int mdl_default_memory_comparator(MDLState *mds, const void *left, const void *right,
                                   size_t size);
 
 /**
@@ -132,7 +132,7 @@ int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *ri
  * - @a left is NULL, @a right is also NULL: returns 0
  * - @a left is not NULL, @a right is NULL: returns a positive value
  *
- * @param ds Ignored, for compatibility with @ref mdl_comparator_fptr.
+ * @param mds Ignored, for compatibility with @ref mdl_comparator_fptr.
  * @param left A pointer to a null-terminated C string to compare. May be null.
  * @param right A pointer to a null-terminated C string to compare. May be null.
  * @param size Ignored, for compatibility with @ref mdl_comparator_fptr.
@@ -140,14 +140,14 @@ int mdl_default_memory_comparator(MDLState *ds, const void *left, const void *ri
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-int mdl_default_string_comparator(MDLState *ds, const void *left, const void *right,
+int mdl_default_string_comparator(MDLState *mds, const void *left, const void *right,
                                   size_t size);
 
-typedef void (*mdl_destructor_fptr)(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
+typedef void (*mdl_destructor_fptr)(MDLState *mds, void *item) MDL_REENTRANT_MARKER;
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-void mdl_no_op_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
+void mdl_no_op_destructor(MDLState *mds, void *item) MDL_REENTRANT_MARKER;
 
 /**
  * A function comparing @a left against @a right, whatever that means in the context it's
@@ -157,7 +157,7 @@ void mdl_no_op_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
  * container. For example, if a comparator is passed to @ref mdl_array_sort, calling it
  * with any two elements in the array must yield a valid result.
  *
- * @param ds The MetalData state.
+ * @param mds The MetalData state.
  * @param left A pointer or pointer-like value to compare against @a right.
  * @param right A pointer or pointer-like value to compare against @a left.
  * @param size For containers whose elements have a fixed size, this is that size.
@@ -176,38 +176,38 @@ void mdl_no_op_destructor(MDLState *ds, void *item) MDL_REENTRANT_MARKER;
  * @see mdl_default_string_comparator
  */
 MDL_ANNOTN__NONNULL_ARGS(1)
-typedef int (*mdl_comparator_fptr)(MDLState *ds, const void *left, const void *right,
+typedef int (*mdl_comparator_fptr)(MDLState *mds, const void *left, const void *right,
                                    size_t size) MDL_REENTRANT_MARKER;
 
 /**
  * Free raw memory allocated by @ref mdl_malloc and its related functions.
  *
- * @param ds        The MetalData state.
+ * @param mds        The MetalData state.
  * @param pointer   The pointer to the block of memory to free.
  * @param old_size  The size of the memory block.
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-void mdl_free(MDLState *ds, void *pointer, size_t old_size);
+void mdl_free(MDLState *mds, void *pointer, size_t old_size);
 
 /**
- * Allocate memory using the allocation function provided to @a ds.
+ * Allocate memory using the allocation function provided to @a mds.
  *
- * @param ds    The MetalData state.
+ * @param mds    The MetalData state.
  * @param size  The size of the memory block to allocate, in bytes.
  * @return A pointer to the allocated memory, or NULL if allocation failed.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD
-void *mdl_malloc(MDLState *ds, size_t size);
+void *mdl_malloc(MDLState *mds, size_t size);
 
 /**
  * Change the size of a block of memory allocated by @ref mdl_malloc.
  *
  * This behaves the same as the C standard library realloc.
  *
- * @param ds The MetalData state.
+ * @param mds The MetalData state.
  * @param pointer A pointer to the memory block to reallocate.
  * @param new_size The desired size of the memory block.
  * @param old_size The current size of the memory block.
@@ -216,6 +216,6 @@ void *mdl_malloc(MDLState *ds, size_t size);
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__NODISCARD
-void *mdl_realloc(MDLState *ds, void *pointer, size_t new_size, size_t old_size);
+void *mdl_realloc(MDLState *mds, void *pointer, size_t new_size, size_t old_size);
 
 #endif

@@ -20,11 +20,11 @@
 MunitResult test_writer__buffer_init_static(const MunitParameter params[], void *userdata)
 {
     (void)params;
-    MDLState *ds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)userdata;
     MDLWriter writer;
     char buffer[8];
 
-    mdl_writer_initwithbuffer(ds, &writer, buffer, 0);
+    mdl_writer_initwithbuffer(mds, &writer, buffer, 0);
     // Because the writer was statically allocated, was_allocated must be false.
     munit_assert_false(writer.was_allocated);
     mdl_writer_close(&writer);
@@ -34,11 +34,11 @@ MunitResult test_writer__buffer_init_static(const MunitParameter params[], void 
 MunitResult test_writer__buffer_putc(const MunitParameter params[], void *userdata)
 {
     (void)params;
-    MDLState *ds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)userdata;
     MDLWriter writer;
     char buffer[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
-    mdl_writer_initwithbuffer(ds, &writer, buffer, 8);
+    mdl_writer_initwithbuffer(mds, &writer, buffer, 8);
     munit_assert_size(writer.buffer_size, ==, 8);
     munit_assert_size(writer.buffer_position, ==, 0);
     munit_assert_string_equal(buffer, "");

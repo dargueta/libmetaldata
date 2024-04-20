@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "metaldata/internal/memblklist.h"
 #include "metaldata/errors.h"
 #include "metaldata/internal/cstdlib.h"
-#include "metaldata/internal/memblklist.h"
 #include "metaldata/memblklist.h"
 #include "metaldata/metaldata.h"
 #include <stdbool.h>
@@ -43,16 +43,16 @@ MDL_ANNOTN__NONNULL
 MDL_ANNOTN__REPRODUCIBLE
 static size_t get_node_size(const MDLMemBlkList *list);
 
-int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size)
+int mdl_memblklist_init(MDLState *mds, MDLMemBlkList *list, size_t elem_size)
 {
     /* Immediately allocate the head node. This simplifies other code by allowing it to
      * assume that the head is always valid. */
-    list->head = mdl_malloc(ds, sizeof(*list->head) + elem_size);
+    list->head = mdl_malloc(mds, sizeof(*list->head) + elem_size);
     if (list->head == NULL)
         return MDL_ERROR_NOMEM;
 
     list->was_allocated = false;
-    list->ds = ds;
+    list->mds = mds;
     list->length = 0;
     list->elem_size = elem_size;
     list->head->next = list->head;
@@ -60,15 +60,15 @@ int mdl_memblklist_init(MDLState *ds, MDLMemBlkList *list, size_t elem_size)
     return MDL_OK;
 }
 
-MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size)
+MDLMemBlkList *mdl_memblklist_new(MDLState *mds, size_t elem_size)
 {
     int init_result;
-    MDLMemBlkList *list = mdl_malloc(ds, sizeof(*list));
+    MDLMemBlkList *list = mdl_malloc(mds, sizeof(*list));
 
     if (list == NULL)
         return NULL;
 
-    init_result = mdl_memblklist_init(ds, list, elem_size);
+    init_result = mdl_memblklist_init(mds, list, elem_size);
     if (init_result == MDL_OK)
     {
         list->was_allocated = true;
@@ -76,7 +76,7 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *ds, size_t elem_size)
     }
 
     /* Something went wrong after the list was allocated. Free it. */
-    mdl_free(ds, list, sizeof(*list));
+    mdl_free(mds, list, sizeof(*list));
     return NULL;
 }
 
@@ -85,10 +85,10 @@ int mdl_memblklist_destroy(MDLMemBlkList *list)
     mdl_memblklist_clear(list);
 
     /* mdl_memblklist_clear doesn't free the head node, so we need to do it here. */
-    mdl_free(list->ds, list->head, get_node_size(list));
+    mdl_free(list->mds, list->head, get_node_size(list));
 
     if (list->was_allocated)
-        mdl_free(list->ds, list, sizeof(*list));
+        mdl_free(list->mds, list, sizeof(*list));
     return MDL_OK;
 }
 
@@ -253,7 +253,7 @@ void mdl_memblklist_clear(MDLMemBlkList *list)
     while (current_node != list->head)
     {
         MDLMemBlkListNode *next_node = current_node->next;
-        mdl_free(list->ds, current_node, get_node_size(list));
+        mdl_free(list->mds, current_node, get_node_size(list));
         current_node = next_node;
     }
 
@@ -270,7 +270,7 @@ MDLMemBlkListNode *mdl_memblklist_findnode(const MDLMemBlkList *list, const void
 
     for (index = 0; index < list->length; ++index)
     {
-        if (cmp(list->ds, node->data, value, list->elem_size) == 0)
+        if (cmp(list->mds, node->data, value, list->elem_size) == 0)
             return node;
 
         node = node->next;
@@ -299,7 +299,7 @@ int mdl_memblklist_findindex(const MDLMemBlkList *list, const void *value,
 
     for (index = 0; (size_t)index < list->length; ++index)
     {
-        if (cmp(list->ds, current_node->data, value, list->elem_size) == 0)
+        if (cmp(list->mds, current_node->data, value, list->elem_size) == 0)
             return index;
 
         current_node = current_node->next;
@@ -321,7 +321,7 @@ int mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value,
 
     for (index = (int)list->length - 1; index >= 0; --index)
     {
-        if (cmp(list->ds, current_node->data, value, list->elem_size) == 0)
+        if (cmp(list->mds, current_node->data, value, list->elem_size) == 0)
             return index;
 
         current_node = current_node->prev;
@@ -366,7 +366,7 @@ MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list, boo
 {
     MDLMemBlkListIterator *iter;
 
-    iter = mdl_malloc(list->ds, sizeof(*iter));
+    iter = mdl_malloc(list->mds, sizeof(*iter));
     if (iter == NULL)
         return NULL;
 
@@ -410,7 +410,7 @@ int mdl_memblklistiter_hasnext(const MDLMemBlkListIterator *iter)
 void mdl_memblklistiter_destroy(MDLMemBlkListIterator *iter)
 {
     if (iter->was_allocated)
-        mdl_free(iter->list->ds, iter, sizeof(*iter));
+        mdl_free(iter->list->mds, iter, sizeof(*iter));
 }
 
 /******** Helper functions ********/
@@ -428,14 +428,14 @@ static void unlink_node(MDLMemBlkListNode *node)
 static void unlink_and_free_node(MDLMemBlkList *list, MDLMemBlkListNode *node)
 {
     unlink_node(node);
-    mdl_free(list->ds, node, get_node_size(list));
+    mdl_free(list->mds, node, get_node_size(list));
 }
 
 static void unlink_and_maybe_free_node(MDLMemBlkList *list, MDLMemBlkListNode *node)
 {
     unlink_node(node);
     if (node != list->head)
-        mdl_free(list->ds, node, get_node_size(list));
+        mdl_free(list->mds, node, get_node_size(list));
 }
 
 void mdl_memblklist_movenodeafter(MDLMemBlkListNode *new_node,
@@ -481,7 +481,7 @@ static MDLMemBlkListNode *get_node_at_relative_index(const MDLMemBlkList *list, 
 
 MDLMemBlkListNode *mdl_memblklist_appendnewnode(MDLMemBlkList *list)
 {
-    MDLMemBlkListNode *node = mdl_malloc(list->ds, get_node_size(list));
+    MDLMemBlkListNode *node = mdl_malloc(list->mds, get_node_size(list));
     if (node == NULL)
         return NULL;
 

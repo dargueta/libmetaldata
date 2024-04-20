@@ -41,6 +41,21 @@
  *      the memory block.
  * @param userdata
  *      The custom userdata given when the MetalData state was created.
+ *
+ * @return When allocating
+ *
+ * Example usages:
+ *
+ * ```c
+ * // Allocate 1024 bytes.
+ * void *ptr = allocator(NULL, 1024, MDL_TBINARY, mdl->userdata);
+ *
+ * // Increase the size to 2048.
+ * ptr = allocator(ptr, 2048, 1024, mdl->userdata);
+ *
+ * // Free the pointer.
+ * allocator(ptr, 2048, 0, mdl->userdata);
+ * ```
  */
 typedef void *(*mdl_alloc_fptr)(void *ptr, size_t size, size_t type_or_old_size,
                                 void *ud)MDL_REENTRANT_MARKER;

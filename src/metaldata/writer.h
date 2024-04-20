@@ -35,7 +35,7 @@ typedef int (*mdl_writer_putc_fptr)(MDLWriter *writer, int chr) MDL_REENTRANT_MA
 typedef void (*mdl_writer_close_fptr)(MDLWriter *writer) MDL_REENTRANT_MARKER;
 
 /**
- * A byte-oriented writer that abstracts away details of the source.
+ * A byte-oriented writer that abstracts away details of the target.
  *
  * @warning The struct is declared in the header only to allow users to allocate it on the
  *          stack. Do not modify it directly.

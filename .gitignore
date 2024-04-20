@@ -6,8 +6,12 @@
 *.dll
 *.dylib
 *.gch
+*.ihx
 *.lib
+*.lk
 *.lst
+*.map
+*.noi
 *.o
 *.obj
 *.rel

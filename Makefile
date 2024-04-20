@@ -35,7 +35,7 @@ LIB_NAME_STEM=$(LIB_NAME_PREFIX)metaldata
 STATIC_LIBRARY=$(BUILD_DIR)/$(LIB_NAME_STEM).$(STATIC_LIB_EXT)
 TEST_BINARY=$(BUILD_DIR)/test
 
-ALL_OBJECT_FILES = $(LIBRARY_OBJECT_FILES) $(TEST_OBJECT_FILES)
+ALL_OBJECT_FILES=$(LIBRARY_OBJECT_FILES) $(TEST_OBJECT_FILES)
 
 # Stuff to generate
 CONFIG_HEADER_FILE=src/metaldata/configuration.h
@@ -51,8 +51,8 @@ INSTALL_TARGET_INCLUDE=$(PREFIX)/include/metaldata
 INSTALL_TARGET_BIN=$(PREFIX)/bin
 INSTALL_TARGET_PKGCONFIG=$(INSTALL_TARGET_LIB)/pkgconfig
 
-C_STANDARD = c99
-ARCH_FLAG =
+C_STANDARD=c99
+ARCH_FLAG=
 
 ifeq ($(notdir $(CC)),sdcc)
 	include make/compiler-support/sdcc.mk
@@ -63,29 +63,29 @@ else
 endif
 
 ifeq ($(DEBUG_MODE),0)
-    CFLAGS_OPTIMIZATION = $(GENERIC_OPTIMIZATION_FLAG)
+    CFLAGS_OPTIMIZATION=$(GENERIC_OPTIMIZATION_FLAG)
 else
-    CFLAGS_OPTIMIZATION = $(GENERIC_OPTIMIZATION_FLAG) $(DEBUG_SYMBOLS_FLAG)
+    CFLAGS_OPTIMIZATION=$(GENERIC_OPTIMIZATION_FLAG) $(DEBUG_SYMBOLS_FLAG)
 endif
 
 ifeq ($(UNHOSTED_IMPLEMENTATION),1)
-    CFLAGS_FREESTANDING = $(FREESTANDING_FLAG) $(NOSTDLIB_FLAG)
+    CFLAGS_FREESTANDING=$(FREESTANDING_FLAG) $(NOSTDLIB_FLAG)
 else
 	CFLAGS_FREESTANDING=
 endif
 
 ifneq ($(USE_MINIMAL_FLAGS),0)
-    BUILD_WARNING_FLAGS =
-    TEST_WARNING_FLAGS =
+    BUILD_WARNING_FLAGS=
+    TEST_WARNING_FLAGS=
 else
     ifeq ($(NO_FATAL_WARNINGS),1)
         # No fatal warnings at all
-        BUILD_WARNING_FLAGS = $(BASE_WARNING_FLAGS)
-        TEST_WARNING_FLAGS = $(BUILD_WARNING_FLAGS)
+        BUILD_WARNING_FLAGS=$(BASE_WARNING_FLAGS)
+        TEST_WARNING_FLAGS=$(BUILD_WARNING_FLAGS)
     else
         # Warnings are fatal except when building tests.
-        BUILD_WARNING_FLAGS = $(BASE_WARNING_FLAGS) $(WERROR_FLAG)
-        TEST_WARNING_FLAGS = $(BASE_WARNING_FLAGS)
+        BUILD_WARNING_FLAGS=$(BASE_WARNING_FLAGS) $(WERROR_FLAG)
+        TEST_WARNING_FLAGS=$(BASE_WARNING_FLAGS)
     endif
 endif
 
@@ -95,8 +95,8 @@ PUBLIC_COMPILE_FLAGS=$(strip $(MACROS_FROM_CONFIGURE) $(CFLAGS_FROM_CONFIGURE))
 PUBLIC_LINK_FLAGS=$(strip $(LDFLAGS_FROM_CONFIGURE))
 
 # This is the minimal set of flags needed to compile the library. It's
-ADDL_CFLAGS_MINIMAL = -I./src $(PUBLIC_COMPILE_FLAGS)
-ADDL_CFLAGS_FULL = $(ADDL_CFLAGS_MINIMAL) $(C_STANDARD_FLAG) $(CFLAGS_OPTIMIZATION) $(ARCH_FLAG)
+ADDL_CFLAGS_MINIMAL=-I./src $(PUBLIC_COMPILE_FLAGS)
+ADDL_CFLAGS_FULL=$(ADDL_CFLAGS_MINIMAL) $(C_STANDARD_FLAG) $(CFLAGS_OPTIMIZATION) $(ARCH_FLAG)
 
 # MY_CFLAGS must come at the end
 ifeq ($(USE_MINIMAL_FLAGS),0)
@@ -105,12 +105,12 @@ else
     COMPILE_COMMAND=$(CC) $(CFLAGS) $(ADDL_CFLAGS_MINIMAL) $(MY_CFLAGS) -c
 endif
 
-INSTALL_BINARY = $(if $1,mkdir -p $2 && $(CMD_INSTALL_BIN) $1 $2)
-INSTALL_BINARY_WILDCARD = $(call INSTALL_BINARY,$(wildcard $1),$2)
-INSTALL_FILE = $(if $1,mkdir -p $2 && $(CMD_INSTALL) $1 $2)
-INSTALL_FILE_WILDCARD = $(call INSTALL_FILE,$(wildcard $1),$2)
-INSTALL_RECURSIVE = mkdir -p $2 && cp -r $1/. $2
-DOC_INDEX_FILE = documentation/api/html/index.html
+INSTALL_BINARY=$(if $1,mkdir -p $2 && $(CMD_INSTALL_BIN) $1 $2)
+INSTALL_BINARY_WILDCARD=$(call INSTALL_BINARY,$(wildcard $1),$2)
+INSTALL_FILE=$(if $1,mkdir -p $2 && $(CMD_INSTALL) $1 $2)
+INSTALL_FILE_WILDCARD=$(call INSTALL_FILE,$(wildcard $1),$2)
+INSTALL_RECURSIVE=mkdir -p $2 && cp -r $1/. $2
+DOC_INDEX_FILE=documentation/api/html/index.html
 
 # This must be included only after all variables are defined.
 include make/pkginfo-template.mk
@@ -134,8 +134,8 @@ test: $(TEST_BINARY)
 
 # SDCC generates multiple output files per source file. When cleaning, we need to
 # ensure we delete all of them.
-SDCC_OTHER_GENERATED_EXTENSIONS = adb asm d lst rel sym
-SDCC_ALL_OTHER_GENERATED_FILES = \
+SDCC_OTHER_GENERATED_EXTENSIONS=adb asm d ihx lst map noi rel sym
+SDCC_ALL_OTHER_GENERATED_FILES=\
     $(foreach ext,\
               $(SDCC_OTHER_GENERATED_EXTENSIONS),\
               $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.$(ext)))

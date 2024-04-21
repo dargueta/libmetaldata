@@ -17,10 +17,10 @@
 #include "munit/munit.h"
 #include <string.h>
 
-MunitResult test_reader__buffer_init_static(const MunitParameter params[], void *userdata)
+MunitResult test_reader__buffer_init_static(const MunitParameter params[], void *udata)
 {
     (void)params;
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLReader reader;
 
     mdl_reader_initfrombuffer(mds, &reader, "", 0);
@@ -30,10 +30,10 @@ MunitResult test_reader__buffer_init_static(const MunitParameter params[], void 
     return MUNIT_OK;
 }
 
-MunitResult test_reader__buffer_init_malloc(const MunitParameter params[], void *userdata)
+MunitResult test_reader__buffer_init_malloc(const MunitParameter params[], void *udata)
 {
     (void)params;
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLReader *reader;
 
     reader = mdl_reader_newfrombuffer(mds, "", 0);
@@ -44,10 +44,10 @@ MunitResult test_reader__buffer_init_malloc(const MunitParameter params[], void 
 }
 
 MunitResult test_reader__buffer_getc_initially_empty(const MunitParameter params[],
-                                                     void *userdata)
+                                                     void *udata)
 {
     (void)params;
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLReader reader;
 
     mdl_reader_initfrombuffer(mds, &reader, "", 0);
@@ -62,10 +62,10 @@ MunitResult test_reader__buffer_getc_initially_empty(const MunitParameter params
     return MUNIT_OK;
 }
 
-MunitResult test_reader__buffer_getc(const MunitParameter params[], void *userdata)
+MunitResult test_reader__buffer_getc(const MunitParameter params[], void *udata)
 {
     (void)params;
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLReader reader;
     const char *data = "qwertyuiop";
     size_t data_length = strlen(data);
@@ -90,11 +90,10 @@ MunitResult test_reader__buffer_getc(const MunitParameter params[], void *userda
     return MUNIT_OK;
 }
 
-MunitResult test_reader__buffer_unget_at_eof(const MunitParameter params[],
-                                             void *userdata)
+MunitResult test_reader__buffer_unget_at_eof(const MunitParameter params[], void *udata)
 {
     (void)params;
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLReader reader;
     const char *data = "qwertyuiop";
     size_t data_length = strlen(data);
@@ -125,11 +124,10 @@ MunitResult test_reader__buffer_unget_at_eof(const MunitParameter params[],
     return MUNIT_OK;
 }
 
-MunitResult test_reader__buffer_unget_at_sof(const MunitParameter params[],
-                                             void *userdata)
+MunitResult test_reader__buffer_unget_at_sof(const MunitParameter params[], void *udata)
 {
     (void)params;
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLReader reader;
     const char *data = "qwertyuiop";
     size_t data_length = strlen(data);
@@ -157,10 +155,10 @@ MunitResult test_reader__buffer_unget_at_sof(const MunitParameter params[],
 }
 
 MunitResult test_reader__buffer_unget_empty_buffer(const MunitParameter params[],
-                                                   void *userdata)
+                                                   void *udata)
 {
     (void)params;
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLReader reader;
 
     mdl_reader_initfrombuffer(mds, &reader, "", 0);

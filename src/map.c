@@ -16,10 +16,10 @@
 #include "metaldata/internal/misc.h"
 #include "metaldata/metaldata.h"
 
-mdl_hash_type mdl_strmap_hashstring(const void *p, size_t size)
+mdl_hash_type mdl_strmap_hashstring(const void *string, size_t size)
 {
     (void)size;
-    return mdl_hash_string((const char *)p);
+    return mdl_hash_string((const char *)string);
 }
 
 int mdl_strmap_init(MDLState *mds, MDLMap *map, mdl_destructor_fptr value_destructor)

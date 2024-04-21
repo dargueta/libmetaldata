@@ -18,11 +18,11 @@
 #include <limits.h>
 #include <stdlib.h>
 
-MunitResult test_memblklist__length_zero(const MunitParameter params[], void *userdata)
+MunitResult test_memblklist__length_zero(const MunitParameter params[], void *udata)
 {
     (void)params;
 
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLMemBlkList list;
 
     int error = mdl_memblklist_init(mds, &list, 32);
@@ -37,11 +37,11 @@ MunitResult test_memblklist__length_zero(const MunitParameter params[], void *us
     return MUNIT_OK;
 }
 
-MunitResult test_memblklist__add_one(const MunitParameter params[], void *userdata)
+MunitResult test_memblklist__add_one(const MunitParameter params[], void *udata)
 {
     (void)params;
 
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLMemBlkList list;
     char test_data[31];
 

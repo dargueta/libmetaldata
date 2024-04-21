@@ -29,9 +29,10 @@
 #    include "../metaldata.h"
 #    include <stdlib.h>
 
-void *mdl_default_hosted_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud)
+void *mdl_default_hosted_alloc(void *ptr, size_t size, size_t type_or_old_size,
+                               void *udata)
 {
-    (void)type_or_old_size, (void)ud;
+    (void)type_or_old_size, (void)udata;
     /* If the size is non-zero then the caller wants to either allocate new memory (`ptr`
      * is NULL) or resize existing memory. */
     if (size != 0)

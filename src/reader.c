@@ -88,12 +88,12 @@ int mdl_reader_peekc(MDLReader *reader)
     return value;
 }
 
-int mdl_reader_ungetc(MDLReader *reader, int c)
+int mdl_reader_ungetc(MDLReader *reader, int chr)
 {
     if (reader->unget_character != MDL_EOF)
         return MDL_ERROR_ALREADY_EXISTS;
 
-    reader->unget_character = c;
+    reader->unget_character = chr;
     return MDL_OK;
 }
 
@@ -122,7 +122,7 @@ static int buffer_getc(MDLReader *reader, void *udata)
         reader->unget_character = MDL_EOF;
         return return_value;
     }
-    else if (reader->buffer_position >= reader->input_size)
+    if (reader->buffer_position >= reader->input_size)
         return MDL_EOF;
     return (int)reader->input_buffer[reader->buffer_position++];
 }

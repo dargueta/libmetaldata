@@ -18,11 +18,11 @@
 
 static void helper_test_adding_blocks(MDLArray *array, ptrdiff_t n_to_add);
 
-MunitResult test_array__length_zero(const MunitParameter params[], void *userdata)
+MunitResult test_array__length_zero(const MunitParameter params[], void *udata)
 {
     (void)params;
 
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLArray array;
     size_t length;
     int error;
@@ -40,11 +40,11 @@ MunitResult test_array__length_zero(const MunitParameter params[], void *userdat
 
 // head() on an empty list should return an error code and leave the pointer argument
 // unchanged.
-MunitResult test_array__head_empty_fails(const MunitParameter params[], void *userdata)
+MunitResult test_array__head_empty_fails(const MunitParameter params[], void *udata)
 {
     (void)params;
 
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLArray array;
     int error;
 
@@ -64,11 +64,11 @@ MunitResult test_array__head_empty_fails(const MunitParameter params[], void *us
 
 // tail() on an empty list should return an error code and leave the pointer argument
 // unchanged.
-MunitResult test_array__tail_empty_fails(const MunitParameter params[], void *userdata)
+MunitResult test_array__tail_empty_fails(const MunitParameter params[], void *udata)
 {
     (void)params;
 
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLArray array;
     int error;
 
@@ -87,11 +87,11 @@ MunitResult test_array__tail_empty_fails(const MunitParameter params[], void *us
 }
 
 // Allocating an array on the heap should be fine.
-MunitResult test_array__allocate_empty_ok(const MunitParameter params[], void *userdata)
+MunitResult test_array__allocate_empty_ok(const MunitParameter params[], void *udata)
 {
     (void)params;
 
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLArray *array = mdl_array_basicnew(mds);
     munit_assert_not_null(array);
 
@@ -107,11 +107,11 @@ MunitResult test_array__allocate_empty_ok(const MunitParameter params[], void *u
 
 // Add a few elements to the list, but shorter than one block.
 MunitResult test_array__add_less_than_one_block(const MunitParameter params[],
-                                                void *userdata)
+                                                void *udata)
 {
     (void)params;
 
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLArray *array = mdl_array_basicnew(mds);
     munit_assert_not_null(array);
 
@@ -125,12 +125,11 @@ MunitResult test_array__add_less_than_one_block(const MunitParameter params[],
 }
 
 // Add a few elements to the list, but shorter than one block.
-MunitResult test_array__add_exactly_one_block(const MunitParameter params[],
-                                              void *userdata)
+MunitResult test_array__add_exactly_one_block(const MunitParameter params[], void *udata)
 {
     (void)params;
 
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLArray *array = mdl_array_basicnew(mds);
     munit_assert_not_null(array);
 
@@ -142,11 +141,11 @@ MunitResult test_array__add_exactly_one_block(const MunitParameter params[],
 }
 
 MunitResult test_array__add_one_more_than_one_block(const MunitParameter params[],
-                                                    void *userdata)
+                                                    void *udata)
 {
     (void)params;
 
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLArray *array = mdl_array_basicnew(mds);
     munit_assert_not_null(array);
 
@@ -158,11 +157,11 @@ MunitResult test_array__add_one_more_than_one_block(const MunitParameter params[
 }
 
 MunitResult test_array__add_more_than_one_block(const MunitParameter params[],
-                                                void *userdata)
+                                                void *udata)
 {
     (void)params;
 
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLArray *array = mdl_array_basicnew(mds);
     munit_assert_not_null(array);
 

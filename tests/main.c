@@ -17,8 +17,7 @@
 #include <stddef.h>
 
 #define import_test(suite, name)                                                         \
-    extern MunitResult test_##suite##__##name(const MunitParameter params[],             \
-                                              void *userdata)
+    extern MunitResult test_##suite##__##name(const MunitParameter params[], void *udata)
 #define define_plain_test_case(suite, name)                                              \
     {                                                                                    \
         "/" #name, test_##suite##__##name, test_setup, test_tear_down,                   \
@@ -48,13 +47,14 @@ typedef struct
     } memory_info;
 } StateTracking;
 
-void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *ud)
+void *malloc_for_tests(void *ptr, size_t size, size_t type_or_old_size, void *udata)
 {
-    StateTracking *state = (StateTracking *)ud;
+    StateTracking *state = (StateTracking *)udata;
     munit_assert_not_null(state);
 
-    munit_logf(MUNIT_LOG_DEBUG, "Calling allocator: ptr=%p size=%zu old_size=%zu ud=%p",
-               ptr, size, type_or_old_size, (void *)state);
+    munit_logf(MUNIT_LOG_DEBUG,
+               "Calling allocator: ptr=%p size=%zu old_size=%zu udata=%p", ptr, size,
+               type_or_old_size, (void *)state);
 
     // If the size is non-zero then the caller wants to either allocate new memory (`ptr`
     // is NULL) or resize existing memory.
@@ -135,14 +135,14 @@ static void *test_setup(const MunitParameter params[], void *test_state)
 
     MDLState *mdl = munit_malloc(sizeof(*mdl));
     mdl_initstate(mdl, malloc_for_tests, test_state);
-    munit_assert_not_null(mdl->userdata);
+    munit_assert_not_null(mdl->udata);
     return mdl;
 }
 
 static void test_tear_down(void *fixture)
 {
     MDLState *mdl = (MDLState *)fixture;
-    StateTracking *test_state = (StateTracking *)mdl->userdata;
+    StateTracking *test_state = (StateTracking *)mdl->udata;
 
     free(fixture);
 

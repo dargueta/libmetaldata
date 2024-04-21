@@ -39,7 +39,7 @@
  *      @ref MDL_TINTEGER, etc.).
  *      When reallocating or freeing memory, this will be the previous size of
  *      the memory block.
- * @param userdata
+ * @param udata
  *      The custom userdata given when the MetalData state was created.
  *
  * @return When allocating
@@ -48,21 +48,21 @@
  *
  * ```c
  * // Allocate 1024 bytes.
- * void *ptr = allocator(NULL, 1024, MDL_TBINARY, mdl->userdata);
+ * void *ptr = allocator(NULL, 1024, MDL_TBINARY, mdl->udata);
  *
  * // Increase the size to 2048.
- * ptr = allocator(ptr, 2048, 1024, mdl->userdata);
+ * ptr = allocator(ptr, 2048, 1024, mdl->udata);
  *
  * // Free the pointer.
- * allocator(ptr, 2048, 0, mdl->userdata);
+ * allocator(ptr, 2048, 0, mdl->udata);
  * ```
  */
 typedef void *(*mdl_alloc_fptr)(void *ptr, size_t size, size_t type_or_old_size,
-                                void *ud)MDL_REENTRANT_MARKER;
+                                void *udata)MDL_REENTRANT_MARKER;
 
 typedef struct MDLState_
 {
-    void *userdata;
+    void *udata;
     mdl_alloc_fptr allocator;
 } MDLState;
 
@@ -73,12 +73,12 @@ typedef struct MDLState_
  * @param alloc    The function to use for memory allocation. Hosted implementations can
  *                 use @ref mdl_default_hosted_alloc by including @file hosted_allocator.c
  *                 in their sources.
- * @param userdata User-defined data to store on the state, made available to callbacks.
+ * @param udata User-defined data to store on the state, made available to callbacks.
  *                 MetalData ignores this.
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1, 2)
-void mdl_initstate(MDLState *mds, mdl_alloc_fptr alloc, void *userdata);
+void mdl_initstate(MDLState *mds, mdl_alloc_fptr alloc, void *udata);
 
 /**
  * Compare the values of two pointers; usable as a @ref mdl_comparator_fptr callback.

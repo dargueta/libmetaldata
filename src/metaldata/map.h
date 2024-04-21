@@ -40,7 +40,7 @@
 typedef mdl_hash_type (*mdl_hash_fptr)(const void *what, size_t size);
 
 MDL_API
-mdl_hash_type mdl_strmap_hashstring(const void *p, size_t size);
+mdl_hash_type mdl_strmap_hashstring(const void *string, size_t size);
 
 typedef struct MDLMapNode_
 {

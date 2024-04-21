@@ -34,14 +34,14 @@ MDLArray *mdl_array_new(MDLState *mds, mdl_destructor_fptr elem_destructor)
 
 int mdl_array_init(MDLState *mds, MDLArray *array, mdl_destructor_fptr elem_destructor)
 {
-    array->blocks = mdl_malloc(mds, sizeof(MDLArrayBlock *));
+    array->blocks = (MDLArrayBlock **)mdl_malloc(mds, sizeof(MDLArrayBlock *));
     if (array->blocks == NULL)
         return MDL_ERROR_NOMEM;
 
     array->blocks[0] = mdl_malloc(mds, sizeof(MDLArrayBlock));
     if (array->blocks[0] == NULL)
     {
-        mdl_free(mds, array->blocks, sizeof(MDLArrayBlock *));
+        mdl_free(mds, (void *)array->blocks, sizeof(MDLArrayBlock *));
         return MDL_ERROR_NOMEM;
     }
 
@@ -61,7 +61,7 @@ int mdl_array_destroy(MDLArray *array)
 
     // After the array has been cleared there will be exactly one allocated block left.
     mdl_free(array->mds, array->blocks[0], sizeof(MDLArrayBlock));
-    mdl_free(array->mds, array->blocks, sizeof(MDLArrayBlock *));
+    mdl_free(array->mds, (void *)array->blocks, sizeof(MDLArrayBlock *));
 
     if (array->was_allocated)
         mdl_free(array->mds, array, sizeof(*array));
@@ -131,9 +131,9 @@ int mdl_array_pop(MDLArray *array, void **item)
     return resize_block_list(array, array->n_allocated_blocks - 1);
 }
 
-int mdl_array_pushfront(MDLArray *array, void *item);
+// int mdl_array_pushfront(MDLArray *array, void *item);
 
-int mdl_array_popfront(MDLArray *array, void **item);
+// int mdl_array_popfront(MDLArray *array, void **item);
 
 int mdl_array_getat(const MDLArray *array, int index, void **value)
 {
@@ -163,9 +163,9 @@ int mdl_array_setat(MDLArray *array, int index, void *new_value)
     return MDL_OK;
 }
 
-int mdl_array_insertafter(MDLArray *array, int index, void *new_value);
+// int mdl_array_insertafter(MDLArray *array, int index, void *new_value);
 
-int mdl_array_removeat(MDLArray *array, int index, void **value);
+// int mdl_array_removeat(MDLArray *array, int index, void **value);
 
 int mdl_array_clear(MDLArray *array)
 {
@@ -197,11 +197,11 @@ int mdl_array_clear(MDLArray *array)
     return resize_block_list(array, 1);
 }
 
-int mdl_array_find(const MDLArray *array, const void *value, mdl_comparator_fptr cmp);
+// int mdl_array_find(const MDLArray *array, const void *value, mdl_comparator_fptr cmp);
 
-int mdl_array_rfind(const MDLArray *array, const void *value, mdl_comparator_fptr cmp);
+// int mdl_array_rfind(const MDLArray *array, const void *value, mdl_comparator_fptr cmp);
 
-int mdl_array_removevalue(MDLArray *array, const void *value, mdl_comparator_fptr cmp);
+// int mdl_array_removevalue(MDLArray *array, const void *value, mdl_comparator_fptr cmp);
 
 int mdl_array_ensurecapacity(MDLArray *array, size_t capacity)
 {
@@ -303,9 +303,9 @@ static int resize_block_list(MDLArray *array, size_t new_total)
     if (new_total > n_current_blocks)
     {
         // Growing the array.
-        new_block_list =
-            mdl_realloc(array->mds, array->blocks, new_total * sizeof(MDLArrayBlock *),
-                        n_current_blocks * sizeof(MDLArrayBlock *));
+        new_block_list = mdl_realloc(array->mds, (void *)array->blocks,
+                                     new_total * sizeof(MDLArrayBlock *),
+                                     n_current_blocks * sizeof(MDLArrayBlock *));
 
         if (new_block_list == NULL)
             return MDL_ERROR_NOMEM;

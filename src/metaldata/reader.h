@@ -89,7 +89,7 @@ int mdl_reader_peekc(MDLReader *reader);
 
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_reader_ungetc(MDLReader *reader, int c);
+int mdl_reader_ungetc(MDLReader *reader, int chr);
 
 MDL_API
 MDL_ANNOTN__NONNULL

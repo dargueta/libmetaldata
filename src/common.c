@@ -17,10 +17,10 @@
 #include "metaldata/metaldata.h"
 #include <stddef.h>
 
-void mdl_initstate(MDLState *mds, mdl_alloc_fptr alloc, void *userdata)
+void mdl_initstate(MDLState *mds, mdl_alloc_fptr alloc, void *udata)
 {
     mds->allocator = alloc;
-    mds->userdata = userdata;
+    mds->udata = udata;
 }
 
 int mdl_default_memory_comparator(MDLState *mds, const void *left, const void *right,
@@ -72,15 +72,15 @@ void mdl_no_op_destructor(MDLState *mds, void *item) MDL_REENTRANT_MARKER
 
 void mdl_free(MDLState *mds, void *pointer, size_t old_size)
 {
-    (void)mds->allocator(pointer, 0, old_size, mds->userdata);
+    (void)mds->allocator(pointer, 0, old_size, mds->udata);
 }
 
 void *mdl_malloc(MDLState *mds, size_t size)
 {
-    return mds->allocator(NULL, size, 0, mds->userdata);
+    return mds->allocator(NULL, size, 0, mds->udata);
 }
 
 void *mdl_realloc(MDLState *mds, void *pointer, size_t new_size, size_t old_size)
 {
-    return mds->allocator(pointer, new_size, old_size, mds->userdata);
+    return mds->allocator(pointer, new_size, old_size, mds->udata);
 }

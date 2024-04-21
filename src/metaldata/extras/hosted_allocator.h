@@ -16,6 +16,7 @@
 #define INCLUDE_METALDATA_EXTRAS_HOSTED_ALLOCATOR_H_
 
 #include <stddef.h>
-void *mdl_default_hosted_alloc(void *ptr, size_t size, size_t type_or_old_size, void *ud);
+void *mdl_default_hosted_alloc(void *ptr, size_t size, size_t type_or_old_size,
+                               void *udata);
 
 #endif /* INCLUDE_METALDATA_EXTRAS_HOSTED_ALLOCATOR_H_ */

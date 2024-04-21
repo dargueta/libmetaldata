@@ -17,10 +17,10 @@
 #include "munit/munit.h"
 #include <stdbool.h>
 
-MunitResult test_writer__buffer_init_static(const MunitParameter params[], void *userdata)
+MunitResult test_writer__buffer_init_static(const MunitParameter params[], void *udata)
 {
     (void)params;
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLWriter writer;
     char buffer[8];
 
@@ -31,10 +31,10 @@ MunitResult test_writer__buffer_init_static(const MunitParameter params[], void 
     return MUNIT_OK;
 }
 
-MunitResult test_writer__buffer_putc(const MunitParameter params[], void *userdata)
+MunitResult test_writer__buffer_putc(const MunitParameter params[], void *udata)
 {
     (void)params;
-    MDLState *mds = (MDLState *)userdata;
+    MDLState *mds = (MDLState *)udata;
     MDLWriter writer;
     char buffer[] = {0, 0, 0, 0, 0, 0, 0, 0};
 

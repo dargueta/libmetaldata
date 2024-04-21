@@ -35,19 +35,19 @@ typedef unsigned long mdl_hash_type;
  * @return The integer hash of the string.
  */
 MDL_API
-mdl_hash_type mdl_hash_string(const char *restrict s);
+mdl_hash_type mdl_hash_string(const char *restrict string);
 
 /**
  * Generate a hash value for the given block of memory.
  *
  * If @a p is NULL, this will return 0.
  *
- * @param[in] p  A pointer to the block of memory to hash.
+ * @param[in] block  A pointer to the block of memory to hash.
  * @param size   The size in bytes of the memory block @a p points to.
  * @return The integer hash of the memory block.
  */
 MDL_API
 MDL_ANNOTN__ACCESS_SIZED(read_only, 1, 2)
-mdl_hash_type mdl_hash_memory(const void *restrict p, size_t size);
+mdl_hash_type mdl_hash_memory(const void *restrict block, size_t size);
 
 #endif // INCLUDE_METALDATA_INTERNAL_MISC_H_

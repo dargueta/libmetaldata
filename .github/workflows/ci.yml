@@ -37,6 +37,11 @@ jobs:
           ./configure -d \
                       --cc=${{ matrix.compiler.binary }} \
                       ${{ matrix.unhosted-flag }}
+      - name: Environment
+        run: |-
+          ${{ matrix.compiler.binary }} --version ;
+          uname -a ;
+          export ;
       - name: Compile
         run: make library
       - name: Install
@@ -83,6 +88,11 @@ jobs:
         run: make -C make -f compiler-support/install.mk install-sdcc SDCC_VERSION=4.4.0
       - name: Configure
         run: ./configure --cc=sdcc -m ${{ matrix.architecture }}
+      - name: Environment
+        run: |-
+          sdcc --version ;
+          uname -a ;
+          export ;
       - name: Compile
         run: make library
 
@@ -108,6 +118,12 @@ jobs:
             gcc
             make
             mingw64-x86_64-gcc-core
+      - name: Environment
+        run: >-
+          ${{ matrix.compiler.binary }} --version ;
+          uname -a ;
+          export ;
+        shell: C:\cygwin\bin\bash.exe '{0}'
       - name: Configure
         run: ./configure --cc ${{ matrix.compiler.binary }} ${{ matrix.unhosted-flag }}
         shell: C:\cygwin\bin\bash.exe '{0}'

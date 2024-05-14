@@ -28,21 +28,16 @@
 /**
  * A pointer to a function handling all memory allocation for MetalData.
  *
- * @param ptr
- *      If reallocating memory, the old pointer. When allocating new memory,
- *      this will be null.
- * @param size
- *      The new size of the allocation. To free memory, set this to 0.
- * @param type_or_old_size
- *      When allocating new memory, this will be the type of the memory block
- *      being allocated (one of the `MDL_T*` values such as @ref MDL_TSTRING,
- *      @ref MDL_TINTEGER, etc.).
- *      When reallocating or freeing memory, this will be the previous size of
- *      the memory block.
- * @param udata
- *      The custom userdata given when the MetalData state was created.
+ * The following is a summary of expected behavior, and guarantees that MetalData makes
+ * when calling the allocator. If the function is called directly, outside of MetalData,
+ * none of the guarantees listed here apply.
  *
- * @return When allocating
+ * - Allocation: @a ptr is null, @a size is guaranteed to be non-zero. @a type_or_old_size
+ *   is guaranteed to be one of the `MDL_T*` values such as @ref MDL_TSTRING,
+ *   @ref MDL_TINTEGER, etc.
+ * - Reallocation: @a ptr is non-null, both @a size and @a type_or_old_size are guaranteed
+ *   to be non-zero.
+ * - Freeing: @a ptr is non-null, @a size is 0, @a type_or_old_size is non-zero.
  *
  * Example usages:
  *
@@ -56,6 +51,26 @@
  * // Free the pointer.
  * allocator(ptr, 2048, 0, mdl->udata);
  * ```
+ *
+ * @param ptr
+ *      If reallocating memory, a pointer to the existing memory to reallocate. When
+ *      allocating new memory, this will be null.
+ * @param size
+ *      The new size of the allocation. When freeing memory, this is 0. If 0, @a ptr is
+ *      guaranteed to not be null.
+ * @param type_or_old_size
+ *      When allocating new memory, this will be the type of the memory block being
+ *      allocated (one of the `MDL_T*` values such as @ref MDL_TSTRING, @ref MDL_TINTEGER,
+ *      etc.).
+ *      When reallocating or freeing memory, this will be the previous size of the memory
+ *      block. In these cases, it's guaranteed to be non-zero.
+ * @param udata
+ *      The custom userdata given when the MetalData state was created.
+ *
+ * @return
+ *      NULL if an error occurred or when freeing memory. When a memory allocation
+ *      succeeded, this is a pointer to a valid readable and writable memory block of at
+ *      least @a size bytes.
  */
 typedef void *(*mdl_alloc_fptr)(void *ptr, size_t size, size_t type_or_old_size,
                                 void *udata)MDL_REENTRANT_MARKER;

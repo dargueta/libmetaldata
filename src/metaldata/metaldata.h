@@ -200,6 +200,7 @@ void mdl_free(MDLState *mds, void *pointer, size_t old_size);
 MDL_API
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__NODISCARD
+MDL_ANNOTN__MALLOC(mdl_free, 2)
 void *mdl_malloc(MDLState *mds, size_t size);
 
 /**

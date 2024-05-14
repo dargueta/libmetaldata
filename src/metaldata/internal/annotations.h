@@ -50,6 +50,12 @@
  * Marks a function as deprecated and should not be used in new code.
  *
  *
+ * @def MDL_ANNOTN__MALLOC
+ * Marks a function as working like `malloc()`. Allows the compiler to detect memory leaks
+ * and make other optimizations like assuming the function will only rarely return a null
+ * pointer.
+ *
+ *
  * @def MDL_ANNOTN__NODISCARD
  * Signals to the compiler that the return value of the function should not be ignored.
  *
@@ -180,6 +186,12 @@
 #    if __has_attribute(nonstring)
 #        define MDL_ANNOTN__NONSTRING GNU_ATTRIBUTE(nonstring)
 #    endif
+
+#    if __has_attribute(malloc) && !defined(__clang__)
+#        define MDL_ANNOTN__MALLOC(dealloc, arg_i) GNU_ATTRIBUTE(malloc(dealloc, arg_i))
+#    elif __has_attribute(malloc) && defined(__clang__)
+#        define MDL_ANNOTN__MALLOC(dealloc, arg_i) GNU_ATTRIBUTE(malloc)
+#    endif
 #elif defined(__GNUC__)
 /* GCC versions that don't have __has_attribute(), non-Windows ICC, TCC... */
 #    define MDL_API GNU_ATTRIBUTE(visibility("default"))
@@ -219,6 +231,13 @@
 /* GCC 8+ supports the `nonstring` attribute but Clang doesn't. */
 #    if !defined(__clang__) && MINIMUM_GNU_VERSION(8, 0, 0)
 #        define MDL_ANNOTN__NONSTRING GNU_ATTRIBUTE(nonstring)
+#    endif
+
+/* Clang's implementation of `malloc` doesn't support arguments. */
+#    if !defined(__clang__) && MINIMUM_GNU_VERSION(11, 1, 0)
+#        define MDL_ANNOTN__MALLOC(dealloc, arg_i) GNU_ATTRIBUTE(malloc(dealloc, arg_i))
+#    elif defined(__clang__) || MINIMUM_GNU_VERSION(4, 0, 0)
+#        define MDL_ANNOTN__MALLOC(dealloc, arg_i) GNU_ATTRIBUTE(malloc)
 #    endif
 #endif
 
@@ -313,6 +332,10 @@
 
 #ifndef MDL_ANNOTN__NONSTRING
 #    define MDL_ANNOTN__NONSTRING
+#endif
+
+#ifndef MDL_ANNOTN__MALLOC
+#    define MDL_ANNOTN__MALLOC(a, b)
 #endif
 
 #if defined(__SDCC_ds390) || defined(__SDCC_ds400) || defined(__SDCC_hc08) ||            \

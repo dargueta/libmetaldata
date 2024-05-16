@@ -18,6 +18,9 @@
 #include <limits.h>
 #include <stdlib.h>
 
+static char **generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
+                            size_t element_size);
+
 MunitResult test_memblklist__length_zero(const MunitParameter params[], void *udata)
 {
     (void)params;
@@ -43,39 +46,80 @@ MunitResult test_memblklist__add_one(const MunitParameter params[], void *udata)
 
     MDLState *mds = (MDLState *)udata;
     MDLMemBlkList list;
-    char test_data[31];
 
-    for (int i = 0; i < 31; i++)
-        test_data[i] = (char)i;
+    char **test_data = generate_list(&list, mds, 1, 31);
+    free(test_data);
 
-    int error = mdl_memblklist_init(mds, &list, 31);
-    munit_assert_int(error, ==, MDL_OK);
-    munit_assert_size(list.elem_size, ==, 31);
-
-    size_t length = mdl_memblklist_length(&list);
-    munit_assert_size(length, ==, 0);
-
-    void *block_pointer = mdl_memblklist_push(&list);
-    munit_assert_not_null(block_pointer);
-
-    length = mdl_memblklist_length(&list);
-    munit_assert_size(length, ==, 1);
-
-    memcpy(block_pointer, test_data, 31);
-
-    void *retrieved_pointer = mdl_memblklist_getblockat(&list, 0);
-    munit_assert_ptr_equal(block_pointer, retrieved_pointer);
-
-    retrieved_pointer = mdl_memblklist_head(&list);
-    munit_assert_ptr_equal(block_pointer, retrieved_pointer);
-
-    retrieved_pointer = mdl_memblklist_tail(&list);
-    munit_assert_ptr_equal(block_pointer, retrieved_pointer);
-
-    int cmp_result = memcmp(retrieved_pointer, test_data, 31);
-    munit_assert_int(0, ==, cmp_result);
-
-    error = mdl_memblklist_destroy(&list);
+    int error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
     return MUNIT_OK;
+}
+
+MunitResult test_memblklist__add_many_odd(const MunitParameter params[], void *udata)
+{
+    (void)params;
+
+    MDLState *mds = (MDLState *)udata;
+    MDLMemBlkList list;
+
+    char **test_data = generate_list(&list, mds, 83, 20);
+    free(test_data);
+
+    int error = mdl_memblklist_destroy(&list);
+    munit_assert_int(error, ==, MDL_OK);
+    return MUNIT_OK;
+}
+
+MunitResult test_memblklist__add_many_even(const MunitParameter params[], void *udata)
+{
+    (void)params;
+
+    MDLState *mds = (MDLState *)udata;
+    MDLMemBlkList list;
+
+    char **test_data = generate_list(&list, mds, 40, 16);
+    free(test_data);
+
+    int error = mdl_memblklist_destroy(&list);
+    munit_assert_int(error, ==, MDL_OK);
+    return MUNIT_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Helpers
+
+static char **generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
+                            size_t element_size)
+{
+    char **test_data = munit_malloc(n_elements * element_size);
+
+    for (size_t i = 0; i < n_elements; i++)
+    {
+        for (size_t j = 0; j < element_size; j++)
+            test_data[i][j] = (char)((i + j) % CHAR_MAX);
+    }
+
+    int error = mdl_memblklist_init(mds, list, element_size);
+    munit_assert_int(error, ==, MDL_OK);
+    munit_assert_size(list->elem_size, ==, element_size);
+
+    size_t length = mdl_memblklist_length(list);
+    munit_assert_size(length, ==, 0);
+
+    for (size_t i = 0; i < n_elements; i++)
+    {
+        void *this_block = mdl_memblklist_push(list);
+        munit_assert_ptr_not_null(this_block);
+        munit_assert_size(mdl_memblklist_length(list), ==, i + 1);
+
+        memcpy(this_block, test_data[i], element_size);
+    }
+
+    for (size_t i = 0; i < n_elements; i++)
+    {
+        void *this_block = mdl_memblklist_getblockat(list, (int)i);
+        munit_assert_ptr_not_null(this_block);
+        munit_assert_memory_equal(element_size, this_block, test_data[i]);
+    }
+    return test_data;
 }

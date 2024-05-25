@@ -110,9 +110,9 @@ struct MDLMemBlkList_
 
 struct MDLMemBlkListIterator_
 {
+    const MDLMemBlkList *list;
     MDLMemBlkListNode *current;
-    MDLMemBlkListNode *end;
-    MDLMemBlkList *list;
+    size_t n_seen;
     bool reverse;
 
     /**
@@ -392,9 +392,10 @@ void mdl_memblklist_clear(MDLMemBlkList *list);
  *
  * @param list
  * @param value
+ * @param cmp
+ * @param[out] ptr
  *
- * @return The absolute index of the first matching data found, or a negative
- * number if no match was found.
+ * @return @ref MDL_OK if a match was found, an error code otherwise.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -403,15 +404,15 @@ int mdl_memblklist_find(const MDLMemBlkList *list, const void *value,
 
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_findindex(const MDLMemBlkList *list, const void *value,
-                             mdl_comparator_fptr cmp);
+size_t mdl_memblklist_findindex(const MDLMemBlkList *list, const void *value,
+                                mdl_comparator_fptr cmp);
 
 /**
- * Like @ref mdl_memblklist_find except this searches the queue back to front.
+ * Like @ref mdl_memblklist_find except this searches the list back to front.
  *
  * @param list
  * @param value
- * @return
+ * @return @ref MDL_OK if a match was found, an error code otherwise.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -420,8 +421,8 @@ int mdl_memblklist_rfind(const MDLMemBlkList *list, const void *value,
 
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value,
-                              mdl_comparator_fptr cmp);
+size_t mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value,
+                                 mdl_comparator_fptr cmp);
 
 /**
  * Rotate the list forward or backward without copying any data.

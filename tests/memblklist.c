@@ -17,10 +17,10 @@
 #include "munit/munit.h"
 #include <limits.h>
 #include <stdlib.h>
+#include <time.h>
 
-static char **generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
-                            size_t element_size);
-static void free_test_data_array(char **data, size_t n_elements);
+static void generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
+                          size_t element_size);
 
 MunitResult test_memblklist__length_zero(const MunitParameter params[], void *udata)
 {
@@ -48,8 +48,7 @@ MunitResult test_memblklist__add_one(const MunitParameter params[], void *udata)
     MDLState *mds = (MDLState *)udata;
     MDLMemBlkList list;
 
-    char **test_data = generate_list(&list, mds, 1, 31);
-    free_test_data_array(test_data, 1);
+    generate_list(&list, mds, 1, 31);
 
     int error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
@@ -63,8 +62,7 @@ MunitResult test_memblklist__add_many_odd(const MunitParameter params[], void *u
     MDLState *mds = (MDLState *)udata;
     MDLMemBlkList list;
 
-    char **test_data = generate_list(&list, mds, 83, 20);
-    free_test_data_array(test_data, 83);
+    generate_list(&list, mds, 83, 20);
 
     int error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
@@ -78,8 +76,7 @@ MunitResult test_memblklist__add_many_even(const MunitParameter params[], void *
     MDLState *mds = (MDLState *)udata;
     MDLMemBlkList list;
 
-    char **test_data = generate_list(&list, mds, 40, 16);
-    free_test_data_array(test_data, 40);
+    generate_list(&list, mds, 40, 16);
 
     int error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
@@ -89,21 +86,16 @@ MunitResult test_memblklist__add_many_even(const MunitParameter params[], void *
 //////////////////////////////////////////////////////////////////////////////////////////
 // Helpers
 
-static char **generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
-                            size_t element_size)
+static void generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
+                          size_t element_size)
 {
-    char **test_data = munit_malloc(n_elements * sizeof(*test_data));
-    munit_assert_ptr_not_null(test_data);
+    char test_data[n_elements][element_size];
+    void *allocated_pointers[n_elements];
 
     for (size_t i = 0; i < n_elements; i++)
     {
-        char *block = munit_malloc(element_size);
-        munit_assert_ptr_not_null(block);
-
         for (size_t j = 0; j < element_size; j++)
-            block[j] = (char)((i + j) % CHAR_MAX);
-
-        test_data[i] = block;
+            test_data[i][j] = (char)munit_rand_int_range(0, CHAR_MAX);
     }
 
     int error = mdl_memblklist_init(mds, list, element_size);
@@ -119,21 +111,26 @@ static char **generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_element
         munit_assert_ptr_not_null(this_block);
         munit_assert_size(mdl_memblklist_length(list), ==, i + 1);
 
-        memcpy(this_block, test_data[i], element_size);
+        allocated_pointers[i] = this_block;
+        memcpy(this_block, &test_data[i], element_size);
+        munit_assert_memory_equal(element_size, this_block, test_data[i]);
     }
 
     for (size_t i = 0; i < n_elements; i++)
     {
-        void *this_block = mdl_memblklist_getblockat(list, (int)i);
+        void *this_block = mdl_memblklist_getblockat(list, i);
         munit_assert_ptr_not_null(this_block);
-        munit_assert_memory_equal(element_size, this_block, test_data[i]);
-    }
-    return test_data;
-}
+        munit_assert_ptr(allocated_pointers[i], ==, this_block);
 
-static void free_test_data_array(char **data, size_t n_elements)
-{
-    for (size_t i = 0; i < n_elements; i++)
-        free(data[i]);
-    free(data);
+        for (size_t j = 0; j < element_size; j++)
+        {
+            if (((char *)this_block)[j] != test_data[i][j])
+            {
+                munit_logf(MUNIT_LOG_ERROR,
+                           "Block at index %zu of [0, %zu) is wrong; at offset %zu "
+                           "expected %d, got %d",
+                           i, n_elements, j, test_data[i][j], ((char *)this_block)[j]);
+            }
+        }
+    }
 }

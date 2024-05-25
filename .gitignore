@@ -39,6 +39,8 @@ vgcore*
 *.gcno
 *.gcda
 *.gcov
+pyproject.toml
+poetry.lock
 
 # Detritus from our compiler installation helper script
 __libmetaldata_install_downloads__/

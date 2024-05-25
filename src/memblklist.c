@@ -30,14 +30,7 @@ MDL_ANNOTN__NONNULL
 static void unlink_and_maybe_free_node(MDLMemBlkList *list, MDLMemBlkListNode *node);
 
 MDL_ANNOTN__NONNULL
-static size_t to_absolute_index(const MDLMemBlkList *list, int index);
-
-MDL_ANNOTN__NONNULL
 static MDLMemBlkListNode *get_node_at_abs_index(const MDLMemBlkList *list, size_t index);
-
-MDL_ANNOTN__NONNULL
-static MDLMemBlkListNode *get_node_at_relative_index(const MDLMemBlkList *list,
-                                                     int index);
 
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__REPRODUCIBLE
@@ -95,6 +88,19 @@ int mdl_memblklist_destroy(MDLMemBlkList *list)
 size_t mdl_memblklist_length(const MDLMemBlkList *list)
 {
     return list->length;
+}
+
+size_t mdl_memblklist_absindex(const MDLMemBlkList *list, long relative_index)
+{
+    size_t abs_index;
+    if (relative_index >= 0)
+        abs_index = (size_t)relative_index;
+    else
+        abs_index = list->length - (size_t)(-relative_index);
+
+    if (abs_index >= list->length)
+        return 0;
+    return abs_index;
 }
 
 size_t mdl_memblklist_getelementsize(const MDLMemBlkList *list)
@@ -196,15 +202,15 @@ int mdl_memblklist_popfrontcopy(MDLMemBlkList *list, void *buf)
     return mdl_memblklist_popfront(list);
 }
 
-void *mdl_memblklist_getblockat(const MDLMemBlkList *list, int index)
+void *mdl_memblklist_getblockat(const MDLMemBlkList *list, size_t index)
 {
-    const MDLMemBlkListNode *node = get_node_at_relative_index(list, index);
+    const MDLMemBlkListNode *node = get_node_at_abs_index(list, index);
     if (node == NULL)
         return NULL;
     return (void *)node->data;
 }
 
-int mdl_memblklist_copyblockat(const MDLMemBlkList *list, int index, void *buf)
+int mdl_memblklist_copyblockat(const MDLMemBlkList *list, long index, void *buf)
 {
     void *source = mdl_memblklist_getblockat(list, index);
     if (source == NULL)
@@ -214,9 +220,9 @@ int mdl_memblklist_copyblockat(const MDLMemBlkList *list, int index, void *buf)
     return MDL_OK;
 }
 
-int mdl_memblklist_set(MDLMemBlkList *list, int index, const void *src)
+int mdl_memblklist_set(MDLMemBlkList *list, size_t index, const void *src)
 {
-    MDLMemBlkListNode *node = get_node_at_relative_index(list, index);
+    MDLMemBlkListNode *node = get_node_at_abs_index(list, index);
     if (node == NULL)
         return MDL_ERROR_OUT_OF_RANGE;
 
@@ -224,9 +230,9 @@ int mdl_memblklist_set(MDLMemBlkList *list, int index, const void *src)
     return 0;
 }
 
-int mdl_memblklist_removeat(MDLMemBlkList *list, int index)
+int mdl_memblklist_removeat(MDLMemBlkList *list, size_t index)
 {
-    MDLMemBlkListNode *node = get_node_at_relative_index(list, index);
+    MDLMemBlkListNode *node = get_node_at_abs_index(list, index);
     if (node == NULL)
         return MDL_ERROR_OUT_OF_RANGE;
 
@@ -234,9 +240,9 @@ int mdl_memblklist_removeat(MDLMemBlkList *list, int index)
     return 0;
 }
 
-int mdl_memblklist_removeatcopy(MDLMemBlkList *list, int index, void *buf)
+int mdl_memblklist_removeatcopy(MDLMemBlkList *list, size_t index, void *buf)
 {
-    MDLMemBlkListNode *node = get_node_at_relative_index(list, index);
+    MDLMemBlkListNode *node = get_node_at_abs_index(list, index);
     if (node == NULL)
         return MDL_ERROR_OUT_OF_RANGE;
 
@@ -330,7 +336,7 @@ int mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value,
     return -1;
 }
 
-int mdl_memblklist_rotate(MDLMemBlkList *list, int places)
+int mdl_memblklist_rotate(MDLMemBlkList *list, long places)
 {
     if (list->length == 0)
         return MDL_ERROR_EMPTY;
@@ -446,14 +452,6 @@ void mdl_memblklist_movenodeafter(MDLMemBlkListNode *new_node,
     prev_node->next = new_node;
 }
 
-static size_t to_absolute_index(const MDLMemBlkList *list, int index)
-{
-    if (index >= 0)
-        return (size_t)index;
-
-    return list->length - (size_t)(-index);
-}
-
 /* TODO (dargueta): Iterate backwards if the node is past the halfway point.
  *
  * The algorithm is still O(n) but for iterations forward or backward it can
@@ -471,12 +469,6 @@ static MDLMemBlkListNode *get_node_at_abs_index(const MDLMemBlkList *list, size_
     for (i = 0; i < index; i++)
         node = node->next;
     return (MDLMemBlkListNode *)node;
-}
-
-static MDLMemBlkListNode *get_node_at_relative_index(const MDLMemBlkList *list, int index)
-{
-    size_t absolute_index = to_absolute_index(list, index);
-    return get_node_at_abs_index(list, absolute_index);
 }
 
 MDLMemBlkListNode *mdl_memblklist_appendnewnode(MDLMemBlkList *list)

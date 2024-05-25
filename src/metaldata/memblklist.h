@@ -180,6 +180,10 @@ MDL_API
 MDL_ANNOTN__NONNULL
 size_t mdl_memblklist_length(const MDLMemBlkList *list);
 
+MDL_API
+MDL_ANNOTN__NONNULL
+size_t mdl_memblklist_absindex(const MDLMemBlkList *list, long relative_index);
+
 /**
  * Get the size of an element data block, in bytes.
  *
@@ -284,48 +288,45 @@ int mdl_memblklist_popfrontcopy(MDLMemBlkList *list, void *buf);
  * Get a pointer to the data block at the given index of the list.
  *
  * @param list The list to operate on.
- * @param index The index of the data to access. Negative values index from the end of
- *              the list, i.e. -1 is the last data, -2 is second-to-last, etc.
+ * @param index The index of the data to access.
  * @return A pointer to the data block, or NULL if the index is invalid.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-void *mdl_memblklist_getblockat(const MDLMemBlkList *list, int index);
+void *mdl_memblklist_getblockat(const MDLMemBlkList *list, size_t index);
 
 /**
  * Copy @a src to the list element at @a index.
  *
  * @param list    The list to operate on.
- * @param index   The index of the element to modify. Negative values index from the end
- *                of the array.
+ * @param index   The index of the element to modify.
  * @param[in] src A pointer to the data to copy.
  *
  * @return 0 on success, @ref MDL_ERROR_OUT_OF_RANGE if the index is invalid.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_set(MDLMemBlkList *list, int index, const void *src);
+int mdl_memblklist_set(MDLMemBlkList *list, size_t index, const void *src);
 
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
-int mdl_memblklist_insertafter(MDLMemBlkList *list, int index, void **ptr);
+int mdl_memblklist_insertafter(MDLMemBlkList *list, size_t index, void **ptr);
 
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_insertaftercopy(MDLMemBlkList *list, int index, const void *buf);
+int mdl_memblklist_insertaftercopy(MDLMemBlkList *list, size_t index, const void *buf);
 
 /**
  * Remove an item from the list.
  *
  * @param list  The list to operate on.
- * @param index The index of the element to remove. Negative values index from the end of
- *              the array.
+ * @param index The index of the element to remove.
  *
  * @return 0 on success, an error code otherwise (most likely @ref MDL_ERROR_OUT_OF_RANGE)
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_removeat(MDLMemBlkList *list, int index);
+int mdl_memblklist_removeat(MDLMemBlkList *list, size_t index);
 
 /**
  * Copy the memory block at the given index, then remove it.
@@ -335,8 +336,7 @@ int mdl_memblklist_removeat(MDLMemBlkList *list, int index);
  * only makes one pass through the list.
  *
  * @param list          The list to operate on.
- * @param index         The index of the element to remove. Negative numbers index from
- *                      the end of the list.
+ * @param index         The index of the element to remove.
  * @param[out] buf      The buffer that the memory block will be copied to.
  *
  * @return @ref MDL_OK on success, @ref MDL_ERROR_EMPTY if the list is empty. If the list
@@ -344,7 +344,7 @@ int mdl_memblklist_removeat(MDLMemBlkList *list, int index);
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_removeatcopy(MDLMemBlkList *list, int index, void *buf);
+int mdl_memblklist_removeatcopy(MDLMemBlkList *list, size_t index, void *buf);
 
 /**
  * Remove all elements in the queue.
@@ -409,7 +409,7 @@ int mdl_memblklist_rfindindex(const MDLMemBlkList *list, const void *value,
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_rotate(MDLMemBlkList *list, int places);
+int mdl_memblklist_rotate(MDLMemBlkList *list, long places);
 
 #define mdl_memblklist_rotateone(list) mdl_memblklist_rotate((list), 1)
 

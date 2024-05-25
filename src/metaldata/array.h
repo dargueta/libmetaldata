@@ -86,15 +86,18 @@ typedef struct MDLArrayIterator_
 /**
  * Allocate and initialize a new empty array.
  *
- * This is similar to but not the same as @ref mdl_malloc followed by @ref
- * mdl_array_init.
+ * This is similar to but not quite the same as @ref mdl_malloc followed by @ref
+ * mdl_array_init. @ref mdl_array_destroy will deallocate an array created with this
+ * function, but will not deallocate an array created an array allocated independently.
  *
- * @param mds
- * @param elem_size
+ * @param mds The MetalData state.
  * @param elem_destructor
- * @return
+ *      A destructor function to call on elements when deleted. If no destructor is
+ *      needed, pass NULL (or use @ref mdl_array_basicnew instead).
+ * @return A pointer to the newly-allocated array, or NULL if an error occurred.
  *
  * @see mdl_array_init
+ * @see mdl_destructor_fptr
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
@@ -116,6 +119,8 @@ MDLArray *mdl_array_new(MDLState *mds, mdl_destructor_fptr elem_destructor);
  * @param mds The MetalData state.
  * @param array The array to initialize.
  * @param elem_destructor
+ *      A destructor function to call on elements when deleted. If no destructor is
+ *      needed, pass NULL (or use @ref mdl_array_basicnew instead).
  * @return 0 on success, an error code otherwise.
  *
  * @see mdl_array_new
@@ -180,17 +185,18 @@ MDL_ANNOTN__NONNULL_ARGS(1)
 int mdl_array_push(MDLArray *array, void *item);
 
 /**
- * Append the given item to the end of the array.
+ * Append multiple items to the end of the array.
  *
  * @param array The array to operate on.
- * @param items An array of values to append to the array.
+ * @param[in] items An array of values to append to the array.
  * @param count The number of values to append. @a items must have at least this
  *              many elements.
  * @return 0 on success, an error code otherwise.
  */
 MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
-int mdl_array_bulkpush(MDLArray *array, void **items, size_t count);
+MDL_ANNOTN__NONNULL
+MDL_ANNOTN__ACCESS_SIZED(read_only, 2, 3)
+int mdl_array_bulkpush(MDLArray *array, void *const *items, size_t count);
 
 /**
  * Remove an item from the end of the array.
@@ -212,16 +218,17 @@ int mdl_array_pop(MDLArray *array, void **item);
  * If @a count is greater than the number of elements left in the list,
  *
  * @param array The array to operate on.
- * @param items[out]
+ * @param count
+ *      The number of values to pop off the end.
+ * @param[out] items
  *      A pointer to an array of pointers receiving the values just popped. Callers may
  *      pass NULL if the removed values don't need to be saved. If it's non-NULL, @a items
  *      must have space for at least @a count elements.
- * @param count
- *      The number of values to pop off the end.
  * @return 0 on success, an error code otherwise.
  */
 MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
+MDL_ANNOTN__ACCESS_SIZED(write_only, 2, 3)
 int mdl_array_bulkpop(MDLArray *array, void **items, size_t count);
 
 /**

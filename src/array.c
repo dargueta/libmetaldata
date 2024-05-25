@@ -119,6 +119,20 @@ int mdl_array_push(MDLArray *array, void *item)
     return MDL_OK;
 }
 
+int mdl_array_bulkpush(MDLArray *array, void *const *items, size_t count)
+{
+    int error = mdl_array_ensurecapacity(array, array->length + count);
+    if (error != MDL_OK)
+        return error;
+
+    for (size_t i = 0; i < count; i++, array->length++)
+    {
+        array->blocks[array->length / MDL_DEFAULT_ARRAY_BLOCK_SIZE]
+            ->values[array->length % MDL_DEFAULT_ARRAY_BLOCK_SIZE] = items[i];
+    }
+    return MDL_OK;
+}
+
 int mdl_array_pop(MDLArray *array, void **item)
 {
     if (array->length == 0)
@@ -144,6 +158,8 @@ int mdl_array_pop(MDLArray *array, void **item)
 
     return resize_block_list(array, array->n_allocated_blocks - 1);
 }
+
+// int mdl_array_bulkpop(MDLArray *array, size_t count, void **items);
 
 // int mdl_array_pushfront(MDLArray *array, void *item);
 

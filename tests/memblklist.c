@@ -16,11 +16,9 @@
 #include "metaldata/errors.h"
 #include "munit/munit.h"
 #include <limits.h>
-#include <stdlib.h>
-#include <time.h>
 
-static void generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
-                          size_t element_size);
+static void create_and_test_list_using_push(MDLMemBlkList *list, MDLState *mds,
+                                            size_t n_elements, size_t element_size);
 
 MunitResult test_memblklist__length_zero(const MunitParameter params[], void *udata)
 {
@@ -48,7 +46,7 @@ MunitResult test_memblklist__add_one(const MunitParameter params[], void *udata)
     MDLState *mds = (MDLState *)udata;
     MDLMemBlkList list;
 
-    generate_list(&list, mds, 1, 31);
+    create_and_test_list_using_push(&list, mds, 1, 31);
 
     int error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
@@ -62,7 +60,7 @@ MunitResult test_memblklist__add_many_odd(const MunitParameter params[], void *u
     MDLState *mds = (MDLState *)udata;
     MDLMemBlkList list;
 
-    generate_list(&list, mds, 83, 20);
+    create_and_test_list_using_push(&list, mds, 83, 20);
 
     int error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
@@ -76,7 +74,7 @@ MunitResult test_memblklist__add_many_even(const MunitParameter params[], void *
     MDLState *mds = (MDLState *)udata;
     MDLMemBlkList list;
 
-    generate_list(&list, mds, 40, 16);
+    create_and_test_list_using_push(&list, mds, 40, 16);
 
     int error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
@@ -86,8 +84,8 @@ MunitResult test_memblklist__add_many_even(const MunitParameter params[], void *
 //////////////////////////////////////////////////////////////////////////////////////////
 // Helpers
 
-static void generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
-                          size_t element_size)
+static void create_and_test_list_using_push(MDLMemBlkList *list, MDLState *mds,
+                                            size_t n_elements, size_t element_size)
 {
     char test_data[n_elements][element_size];
     void *allocated_pointers[n_elements];
@@ -121,16 +119,6 @@ static void generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
         void *this_block = mdl_memblklist_getblockat(list, i);
         munit_assert_ptr_not_null(this_block);
         munit_assert_ptr(allocated_pointers[i], ==, this_block);
-
-        for (size_t j = 0; j < element_size; j++)
-        {
-            if (((char *)this_block)[j] != test_data[i][j])
-            {
-                munit_logf(MUNIT_LOG_ERROR,
-                           "Block at index %zu of [0, %zu) is wrong; at offset %zu "
-                           "expected %d, got %d",
-                           i, n_elements, j, test_data[i][j], ((char *)this_block)[j]);
-            }
-        }
+        munit_assert_memory_equal(element_size, this_block, test_data[i]);
     }
 }

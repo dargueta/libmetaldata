@@ -20,6 +20,7 @@
 
 static char **generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
                             size_t element_size);
+static void free_test_data_array(char **data, size_t n_elements);
 
 MunitResult test_memblklist__length_zero(const MunitParameter params[], void *udata)
 {
@@ -48,7 +49,7 @@ MunitResult test_memblklist__add_one(const MunitParameter params[], void *udata)
     MDLMemBlkList list;
 
     char **test_data = generate_list(&list, mds, 1, 31);
-    free(test_data);
+    free_test_data_array(test_data, 1);
 
     int error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
@@ -63,7 +64,7 @@ MunitResult test_memblklist__add_many_odd(const MunitParameter params[], void *u
     MDLMemBlkList list;
 
     char **test_data = generate_list(&list, mds, 83, 20);
-    free(test_data);
+    free_test_data_array(test_data, 83);
 
     int error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
@@ -78,7 +79,7 @@ MunitResult test_memblklist__add_many_even(const MunitParameter params[], void *
     MDLMemBlkList list;
 
     char **test_data = generate_list(&list, mds, 40, 16);
-    free(test_data);
+    free_test_data_array(test_data, 40);
 
     int error = mdl_memblklist_destroy(&list);
     munit_assert_int(error, ==, MDL_OK);
@@ -91,12 +92,18 @@ MunitResult test_memblklist__add_many_even(const MunitParameter params[], void *
 static char **generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_elements,
                             size_t element_size)
 {
-    char **test_data = munit_malloc(n_elements * element_size);
+    char **test_data = munit_malloc(n_elements * sizeof(*test_data));
+    munit_assert_ptr_not_null(test_data);
 
     for (size_t i = 0; i < n_elements; i++)
     {
+        char *block = munit_malloc(element_size);
+        munit_assert_ptr_not_null(block);
+
         for (size_t j = 0; j < element_size; j++)
-            test_data[i][j] = (char)((i + j) % CHAR_MAX);
+            block[j] = (char)((i + j) % CHAR_MAX);
+
+        test_data[i] = block;
     }
 
     int error = mdl_memblklist_init(mds, list, element_size);
@@ -122,4 +129,11 @@ static char **generate_list(MDLMemBlkList *list, MDLState *mds, size_t n_element
         munit_assert_memory_equal(element_size, this_block, test_data[i]);
     }
     return test_data;
+}
+
+static void free_test_data_array(char **data, size_t n_elements)
+{
+    for (size_t i = 0; i < n_elements; i++)
+        free(data[i]);
+    free(data);
 }

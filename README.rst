@@ -26,6 +26,7 @@ memcmp    string.h  Y
 memcpy    string.h  Y
 memset    string.h  Y
 realloc   stdlib.h  N
+SIZE_MAX  stdint.h  \*
 size_t    stddef.h  \*
 strcmp    string.h  Y
 ========= ========= ==================

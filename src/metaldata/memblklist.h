@@ -180,6 +180,37 @@ MDL_API
 MDL_ANNOTN__NONNULL
 size_t mdl_memblklist_length(const MDLMemBlkList *list);
 
+/**
+ * Determine if the given relative index is within the bounds of @a list.
+ *
+ * @param list The list to operate on.
+ * @param relative_index A relative index to validate.
+ * @return
+ *      A boolean indicating if @a relative_index can be converted into a valid absolute
+ *      index.
+ *
+ * @see mdl_memblklist_absindex
+ */
+MDL_API
+MDL_ANNOTN__NONNULL
+bool mdl_memblklist_isrelindexvalid(const MDLMemBlkList *list, long relative_index);
+
+/**
+ * Convert a relative index into an absolute index.
+ *
+ * The return value is guaranteed to be valid if @ref mdl_memblklist_isrelindexvalid
+ * returns true. If @a relative_index evaluates to an invalid absolute index, the return
+ * value is @ref MDL_INVALID_INDEX.
+ *
+ * @param list
+ * @param relative_index
+ *
+ * @return
+ *      The absolute index into the array corresponding to @a relative_index, or
+ *      @ref MDL_INVALID_INDEX if @a relative_index is out of bounds.
+ *
+ * @see mdl_memblklist_isrelindexvalid
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 size_t mdl_memblklist_absindex(const MDLMemBlkList *list, long relative_index);

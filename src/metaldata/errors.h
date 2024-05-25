@@ -21,6 +21,8 @@
 #ifndef INCLUDE_METALDATA_ERRORS_H_
 #define INCLUDE_METALDATA_ERRORS_H_
 
+#include <stdint.h>
+
 #define MDL_EOF (-1)
 #define MDL_OK 0
 #define MDL_ERROR_EMPTY 1
@@ -42,5 +44,10 @@
  * An error code indicating the attempted operation is not supported by the target.
  */
 #define MDL_ERROR_NOT_SUPPORTED 10
+
+/**
+ * A sentinel value of type `size_t` used as an invalid array index.
+ */
+#define MDL_INVALID_INDEX SIZE_MAX
 
 #endif /* INCLUDE_METALDATA_ERRORS_H_ */

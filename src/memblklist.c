@@ -90,17 +90,25 @@ size_t mdl_memblklist_length(const MDLMemBlkList *list)
     return list->length;
 }
 
+bool mdl_memblklist_isrelindexvalid(const MDLMemBlkList *list, long relative_index)
+{
+    if (relative_index >= 0)
+        return (size_t)relative_index < list->length;
+    return (size_t)(-relative_index) <= list->length;
+}
+
 size_t mdl_memblklist_absindex(const MDLMemBlkList *list, long relative_index)
 {
-    size_t abs_index;
     if (relative_index >= 0)
-        abs_index = (size_t)relative_index;
-    else
-        abs_index = list->length - (size_t)(-relative_index);
+    {
+        if ((size_t)relative_index < list->length)
+            return (size_t)relative_index;
+        return MDL_INVALID_INDEX;
+    }
 
-    if (abs_index >= list->length)
-        return 0;
-    return abs_index;
+    if ((size_t)(-relative_index) <= list->length)
+        return list->length - (size_t)(-relative_index);
+    return MDL_INVALID_INDEX;
 }
 
 size_t mdl_memblklist_getelementsize(const MDLMemBlkList *list)

@@ -9,7 +9,7 @@ UNAME = $(shell uname -s)
 # the exception of compiler flags and disallowing versioned libraries by default.
 STATIC_LIB_EXT=a
 LIB_NAME_PREFIX=lib
-OBJECT_FILE_EXT=o
+OBJECT_EXT=o
 DEFAULT_PREFIX=/usr/local
 FREESTANDING_FLAG=
 
@@ -26,7 +26,7 @@ else ifeq ($(IS_CYGWIN),1)
 else ifeq ($(IS_WINDOWS),1)
     STATIC_LIB_EXT=lib
     LIB_NAME_PREFIX=
-    OBJECT_FILE_EXT=obj
+    OBJECT_EXT=obj
     DEFAULT_PREFIX=C:\\Windows\\System32
 else
     $(error Unsupported operating system: OS='$(OS)' UNAME='$(UNAME)')

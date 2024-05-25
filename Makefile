@@ -20,12 +20,12 @@ LIBRARY_C_SOURCE_FILES=$(wildcard $(SOURCE_ROOT)/*.c)
 LIBRARY_C_PUBLIC_HEADERS=$(wildcard $(HEADER_ROOT)/*.h)
 LIBRARY_C_PRIVATE_HEADERS=$(wildcard $(HEADER_ROOT)/internal/*.h)
 LIBRARY_C_ALL_HEADER_FILES=$(LIBRARY_C_PUBLIC_HEADERS) $(LIBRARY_C_PRIVATE_HEADERS)
-LIBRARY_OBJECT_FILES=$(LIBRARY_C_SOURCE_FILES:%.c=%.$(OBJECT_FILE_EXT))
+LIBRARY_OBJECT_FILES=$(LIBRARY_C_SOURCE_FILES:%.c=%.$(OBJECT_EXT))
 LIBRARY_EXTRAS=$(wildcard $(HEADER_ROOT)/extras/*.c) $(wildcard $(HEADER_ROOT)/extras/*.h)
 
 TEST_C_SOURCE_FILES=$(wildcard tests/*.c)
 TEST_C_HEADERS=$(wildcard tests/*.h)
-TEST_OBJECT_FILES=$(TEST_C_SOURCE_FILES:%.c=%.$(OBJECT_FILE_EXT)) tests/munit/munit.$(OBJECT_FILE_EXT)
+TEST_OBJECT_FILES=$(TEST_C_SOURCE_FILES:%.c=%.$(OBJECT_EXT)) tests/munit/munit.$(OBJECT_EXT)
 
 ALL_C_SOURCE_FILES=$(LIBRARY_C_SOURCE_FILES) $(TEST_C_SOURCE_FILES)
 
@@ -105,27 +105,27 @@ else
     COMPILE_COMMAND=$(CC) $(CFLAGS) $(ADDL_CFLAGS_MINIMAL) $(MY_CFLAGS) -c
 endif
 
-INSTALL_BINARY=$(if $1,mkdir -p $2 && $(CMD_INSTALL_BIN) $1 $2)
-INSTALL_BINARY_WILDCARD=$(call INSTALL_BINARY,$(wildcard $1),$2)
-INSTALL_FILE=$(if $1,mkdir -p $2 && $(CMD_INSTALL) $1 $2)
-INSTALL_FILE_WILDCARD=$(call INSTALL_FILE,$(wildcard $1),$2)
-INSTALL_RECURSIVE=mkdir -p $2 && cp -r $1/. $2
+do_install_binary=$(if $1,mkdir -p $2 && $(CMD_INSTALL_BIN) $1 $2)
+do_install_binary_wildcard=$(call do_install_binary,$(wildcard $1),$2)
+do_install_file=$(if $1,mkdir -p $2 && $(CMD_INSTALL) $1 $2)
+do_install_file_wildcard=$(call do_install_file,$(wildcard $1),$2)
+do_install_recursive=mkdir -p $2 && cp -r $1/. $2
+
 DOC_INDEX_FILE=documentation/api/html/index.html
 
 # This must be included only after all variables are defined.
 include make/pkginfo-template.mk
 include make/configuration-header.mk
-include make/development-targets.mk
 
 .PHONY: all clean docs format header install library show_docs test
-.DELETE_ON_ERROR: %.$(OBJECT_FILE_EXT)
+.DELETE_ON_ERROR: %.$(OBJECT_EXT)
 
 all: library $(PKGCONFIG_FILE)
 
 install: all $(LIBRARY_C_ALL_HEADER_FILES) $(LIBRARY_EXTRAS)
-	$(call INSTALL_FILE,$(STATIC_LIBRARY),$(INSTALL_TARGET_LIB))
-	$(call INSTALL_RECURSIVE,$(HEADER_ROOT),$(INSTALL_TARGET_INCLUDE))
-	$(call INSTALL_FILE,$(PKGCONFIG_FILE),$(INSTALL_TARGET_PKGCONFIG))
+	$(call do_install_file,$(STATIC_LIBRARY),$(INSTALL_TARGET_LIB))
+	$(call do_install_recursive,$(HEADER_ROOT),$(INSTALL_TARGET_INCLUDE))
+	$(call do_install_file,$(PKGCONFIG_FILE),$(INSTALL_TARGET_PKGCONFIG))
 
 library: $(STATIC_LIBRARY)
 
@@ -138,7 +138,7 @@ SDCC_OTHER_GENERATED_EXTENSIONS=adb asm d ihx lst map noi rel sym
 SDCC_ALL_OTHER_GENERATED_FILES=\
     $(foreach ext,\
               $(SDCC_OTHER_GENERATED_EXTENSIONS),\
-              $(ALL_OBJECT_FILES:%.$(OBJECT_FILE_EXT)=%.$(ext)))
+              $(ALL_OBJECT_FILES:%.$(OBJECT_EXT)=%.$(ext)))
 
 
 clean: clean-analysis
@@ -176,10 +176,10 @@ export CONFIGURATION_HEADER_TEXT
 $(CONFIG_HEADER_FILE): Makefile.in make/configuration-header.mk
 	echo "$${CONFIGURATION_HEADER_TEXT}" | tr '`' '#' > $@
 
-tests/%.$(OBJECT_FILE_EXT): tests/%.c $(CONFIG_HEADER_FILE)
+tests/%.$(OBJECT_EXT): tests/%.c $(CONFIG_HEADER_FILE)
 	$(COMPILE_COMMAND) $(TEST_WARNING_FLAGS) -D MDL_CURRENTLY_COMPILING_TESTS=1 -I./tests -o $@ $<
 
-%.$(OBJECT_FILE_EXT): %.c $(CONFIG_HEADER_FILE)
+%.$(OBJECT_EXT): %.c $(CONFIG_HEADER_FILE)
 	$(COMPILE_COMMAND) $(BUILD_WARNING_FLAGS) -D MDL_CURRENTLY_COMPILING_LIBRARY=1 $(CFLAGS_FREESTANDING) -o $@ $<
 
 $(BUILD_DIR):
@@ -188,3 +188,6 @@ $(BUILD_DIR):
 # PEBKAC Rules -----------------------------------------------------------------
 Makefile.in:
 	@echo 'You must run the `configure` script before running Make.' ; exit 1
+
+# Analysis ---------------------------------------------------------------------
+include make/development-targets.mk

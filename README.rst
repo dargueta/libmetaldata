@@ -120,7 +120,6 @@ AMD64 (x86-64)         Y        Y
 DS390                  Y
 DS400                  Y
 ez80-z80               Y
-GBZ80
 HC08 (Motorola 68HC08) Y
 macOS ARM64            Y        Y
 MCS-51                 Y

@@ -172,9 +172,9 @@ MDL_ANNOTN__NONNULL
 int mdl_memblklist_destroy(MDLMemBlkList *list);
 
 /**
- * Return the length of the queue.
+ * Return the number of elements in the list.
  *
- * @param list The queue to examine.
+ * @param list The list to examine.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -378,10 +378,9 @@ MDL_ANNOTN__NONNULL
 int mdl_memblklist_removeatcopy(MDLMemBlkList *list, size_t index, void *buf);
 
 /**
- * Remove all elements in the queue.
+ * Remove all elements in the list.
  *
- * @param list The queue to operate on.
- * @return
+ * @param list The list to operate on.
  */
 MDL_API
 MDL_ANNOTN__NONNULL
@@ -390,7 +389,7 @@ void mdl_memblklist_clear(MDLMemBlkList *list);
 /**
  * Search the list for the first data matching @a value.
  *
- * @param list
+ * @param list The list to search through.
  * @param value
  * @param cmp
  * @param[out] ptr
@@ -402,6 +401,16 @@ MDL_ANNOTN__NONNULL
 int mdl_memblklist_find(const MDLMemBlkList *list, const void *value,
                         mdl_comparator_fptr cmp, const void **ptr);
 
+/**
+ * Like @ref mdl_memblklist_find, but returns the index of the first matching element.
+ *
+ * @param list The list to search through.
+ * @param value The value to compare the list elements against.
+ * @param cmp A function to use to compare elements against @a value.
+ * @return
+ *      The index of the first element matching @a value, or @ref MDL_INVALID_INDEX if no
+ *      match was found.
+ */
 MDL_API
 MDL_ANNOTN__NONNULL
 size_t mdl_memblklist_findindex(const MDLMemBlkList *list, const void *value,

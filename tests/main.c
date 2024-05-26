@@ -170,6 +170,8 @@ import_test(memblklist, length_zero);
 import_test(memblklist, add_one);
 import_test(memblklist, add_many_odd);
 import_test(memblklist, add_many_even);
+import_test(memblklist, relindex__empty);
+import_test(memblklist, relindex__basic);
 import_test(reader, buffer_init_static);
 import_test(reader, buffer_init_malloc);
 import_test(reader, buffer_getc);
@@ -191,11 +193,14 @@ static MunitTest array_tests[] = {
     define_plain_test_case(array, add_more_than_one_block),
     SUITE_END_SENTINEL};
 
-static MunitTest memblklist_tests[] = {define_plain_test_case(memblklist, length_zero),
-                                       define_plain_test_case(memblklist, add_one),
-                                       define_plain_test_case(memblklist, add_many_odd),
-                                       define_plain_test_case(memblklist, add_many_even),
-                                       SUITE_END_SENTINEL};
+static MunitTest memblklist_tests[] = {
+    define_plain_test_case(memblklist, length_zero),
+    define_plain_test_case(memblklist, add_one),
+    define_plain_test_case(memblklist, add_many_odd),
+    define_plain_test_case(memblklist, add_many_even),
+    define_plain_test_case(memblklist, relindex__empty),
+    define_plain_test_case(memblklist, relindex__basic),
+    SUITE_END_SENTINEL};
 
 static MunitTest reader_tests[] = {
     define_plain_test_case(reader, buffer_init_static),

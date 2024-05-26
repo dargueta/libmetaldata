@@ -81,6 +81,55 @@ MunitResult test_memblklist__add_many_even(const MunitParameter params[], void *
     return MUNIT_OK;
 }
 
+MunitResult test_memblklist__relindex__empty(const MunitParameter params[], void *udata)
+{
+    (void)params;
+
+    MDLState *mds = (MDLState *)udata;
+    MDLMemBlkList list;
+
+    mdl_memblklist_init(mds, &list, 64);
+    munit_assert_false(mdl_memblklist_isrelindexvalid(&list, 0));
+    munit_assert_size(mdl_memblklist_absindex(&list, 0), ==, MDL_INVALID_INDEX);
+
+    int error = mdl_memblklist_destroy(&list);
+    munit_assert_int(error, ==, MDL_OK);
+    return MUNIT_OK;
+}
+
+MunitResult test_memblklist__relindex__basic(const MunitParameter params[], void *udata)
+{
+    (void)params;
+
+    MDLState *mds = (MDLState *)udata;
+    MDLMemBlkList list;
+
+    mdl_memblklist_init(mds, &list, 32);
+    for (long i = 0; i < 44; i++)
+    {
+        (void)mdl_memblklist_push(&list);
+
+        munit_assert_size(mdl_memblklist_length(&list), ==, (size_t)i + 1);
+        munit_assert_false(mdl_memblklist_isrelindexvalid(&list, i + 1));
+        munit_assert_false(mdl_memblklist_isrelindexvalid(&list, -i - 2));
+        munit_assert_size(mdl_memblklist_absindex(&list, i + 1), ==, MDL_INVALID_INDEX);
+        munit_assert_size(mdl_memblklist_absindex(&list, -i - 2), ==, MDL_INVALID_INDEX);
+
+        for (long j = 0; j <= i; j++)
+        {
+            munit_assert_true(mdl_memblklist_isrelindexvalid(&list, j));
+            munit_assert_true(mdl_memblklist_isrelindexvalid(&list, -j - 1));
+            munit_assert_size((size_t)j, ==, mdl_memblklist_absindex(&list, j));
+            munit_assert_size((size_t)(i - j), ==,
+                              mdl_memblklist_absindex(&list, -j - 1));
+        }
+    }
+
+    int error = mdl_memblklist_destroy(&list);
+    munit_assert_int(error, ==, MDL_OK);
+    return MUNIT_OK;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // Helpers
 

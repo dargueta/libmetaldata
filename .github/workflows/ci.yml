@@ -60,8 +60,8 @@ jobs:
           - ez80_z80
           - hc08
           - mcs51
-          # - mos6502
-          # - mos65c02
+          - mos6502
+          - mos65c02
           - pdk13
           - pdk14
           - pdk15

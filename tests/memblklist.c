@@ -149,7 +149,7 @@ static void create_and_test_list_using_push(MDLMemBlkList *list, MDLState *mds,
         munit_assert_size(mdl_memblklist_length(list), ==, i + 1);
 
         allocated_pointers[i] = this_block;
-        memcpy(this_block, &test_data[i], element_size);
+        memcpy(this_block, test_data[i], element_size);
         munit_assert_memory_equal(element_size, this_block, test_data[i]);
     }
 

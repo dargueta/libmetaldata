@@ -36,34 +36,24 @@ MDL_ANNOTN__NONNULL
 MDL_ANNOTN__REPRODUCIBLE
 static size_t get_node_size(const MDLMemBlkList *list);
 
-int mdl_memblklist_init(MDLState *mds, MDLMemBlkList *list, size_t elem_size)
+void mdl_memblklist_init(MDLState *mds, MDLMemBlkList *list, size_t elem_size)
 {
     list->was_allocated = false;
     list->mds = mds;
     list->length = 0;
     list->elem_size = elem_size;
     list->head = NULL;
-    return MDL_OK;
 }
 
 MDLMemBlkList *mdl_memblklist_new(MDLState *mds, size_t elem_size)
 {
-    int init_result;
     MDLMemBlkList *list = mdl_malloc(mds, sizeof(*list));
-
     if (list == NULL)
         return NULL;
 
-    init_result = mdl_memblklist_init(mds, list, elem_size);
-    if (init_result == MDL_OK)
-    {
-        list->was_allocated = true;
-        return list;
-    }
-
-    /* Something went wrong after the list was allocated. Free it. */
-    mdl_free(mds, list, sizeof(*list));
-    return NULL;
+    mdl_memblklist_init(mds, list, elem_size);
+    list->was_allocated = true;
+    return list;
 }
 
 int mdl_memblklist_destroy(MDLMemBlkList *list)

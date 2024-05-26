@@ -27,15 +27,12 @@ MunitResult test_memblklist__length_zero(const MunitParameter params[], void *ud
     MDLState *mds = (MDLState *)udata;
     MDLMemBlkList list;
 
-    int error = mdl_memblklist_init(mds, &list, 32);
-    munit_assert_int(error, ==, MDL_OK);
+    mdl_memblklist_init(mds, &list, 32);
     munit_assert_size(list.elem_size, ==, 32);
 
     size_t length = mdl_memblklist_length(&list);
     munit_assert_size(length, ==, 0);
-
-    error = mdl_memblklist_destroy(&list);
-    munit_assert_int(error, ==, MDL_OK);
+    munit_assert_int(mdl_memblklist_destroy(&list), ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -47,9 +44,7 @@ MunitResult test_memblklist__add_one(const MunitParameter params[], void *udata)
     MDLMemBlkList list;
 
     create_and_test_list_using_push(&list, mds, 1, 31);
-
-    int error = mdl_memblklist_destroy(&list);
-    munit_assert_int(error, ==, MDL_OK);
+    munit_assert_int(mdl_memblklist_destroy(&list), ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -61,9 +56,7 @@ MunitResult test_memblklist__add_many_odd(const MunitParameter params[], void *u
     MDLMemBlkList list;
 
     create_and_test_list_using_push(&list, mds, 83, 20);
-
-    int error = mdl_memblklist_destroy(&list);
-    munit_assert_int(error, ==, MDL_OK);
+    munit_assert_int(mdl_memblklist_destroy(&list), ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -75,9 +68,7 @@ MunitResult test_memblklist__add_many_even(const MunitParameter params[], void *
     MDLMemBlkList list;
 
     create_and_test_list_using_push(&list, mds, 40, 16);
-
-    int error = mdl_memblklist_destroy(&list);
-    munit_assert_int(error, ==, MDL_OK);
+    munit_assert_int(mdl_memblklist_destroy(&list), ==, MDL_OK);
     return MUNIT_OK;
 }
 
@@ -145,8 +136,7 @@ static void create_and_test_list_using_push(MDLMemBlkList *list, MDLState *mds,
             test_data[i][j] = (char)munit_rand_int_range(0, CHAR_MAX);
     }
 
-    int error = mdl_memblklist_init(mds, list, element_size);
-    munit_assert_int(error, ==, MDL_OK);
+    mdl_memblklist_init(mds, list, element_size);
     munit_assert_size(list->elem_size, ==, element_size);
 
     size_t length = mdl_memblklist_length(list);

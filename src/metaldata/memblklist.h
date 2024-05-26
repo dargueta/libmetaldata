@@ -152,14 +152,13 @@ MDLMemBlkList *mdl_memblklist_new(MDLState *mds, size_t elem_size);
  * @param mds The MetalData state.
  * @param list The list to initialize.
  * @param elem_size The size of a single element in the list.
- * @return 0 on success, an error code otherwise.
  *
  * @see mdl_memblklist_new
  * @see mdl_memblklist_destroy
  */
 MDL_API
 MDL_ANNOTN__NONNULL
-int mdl_memblklist_init(MDLState *mds, MDLMemBlkList *list, size_t elem_size);
+void mdl_memblklist_init(MDLState *mds, MDLMemBlkList *list, size_t elem_size);
 
 /**
  * Destroy a list.

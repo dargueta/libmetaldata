@@ -1,13 +1,12 @@
-C_STANDARD_FLAG = -std=$(C_STANDARD)
-NOSTDLIB_FLAG = -nostdlib
-BASE_WARNING_FLAGS = -Wall -Wextra -Wpedantic
-WERROR_FLAG = -Werror
-DEBUG_SYMBOLS_FLAG = -g
-ifeq ($(DEBUG_MODE),0)
-	GENERIC_OPTIMIZATION_FLAG = -O2
-else
-	GENERIC_OPTIMIZATION_FLAG = -Og
-endif
-ifneq ($(TARGET_ARCHITECTURE),)
-	ARCH_FLAG = -march=$(TARGET_ARCHITECTURE)
-endif
+CFLAG_ARCH=-march=$(or $(strip $(1)),native)
+CFLAG_OPT_DEBUG=-Og -g
+CFLAG_OPT_GENERIC=-O2
+CFLAG_OPT_SIZE=-Oz
+CFLAG_OPT_SPEED=-Os
+CFLAG_PEDANTIC=-Wpedantic
+CFLAG_STD=-std=$(1)
+CFLAG_UNHOSTED=-ffreestanding -nostdlib
+CFLAG_WALL=-Wall -Wextra -Wpedantic
+# TODO (dargueta): Add -pedantic-errors except for TCC
+CFLAG_WERROR=-Werror
+OBJECT_EXT=o

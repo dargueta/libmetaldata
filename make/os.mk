@@ -9,7 +9,9 @@ UNAME = $(shell uname -s)
 # the exception of compiler flags and disallowing versioned libraries by default.
 STATIC_LIB_EXT=a
 LIB_NAME_PREFIX=lib
-OBJECT_EXT=o
+ifndef OBJECT_EXT
+    OBJECT_EXT=o
+endif
 DEFAULT_PREFIX=/usr/local
 FREESTANDING_FLAG=
 

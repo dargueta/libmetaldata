@@ -18,6 +18,7 @@ install_target_bin=
 install_target_pkgconfig=
 cc=${CC:-}
 machine=
+c_standard=c99
 
 HELP_TEXT="
 General-Purpose Flags
@@ -188,6 +189,7 @@ USE_MINIMAL_FLAGS=$minimal_flags
 NO_FATAL_WARNINGS=$no_fatal_warnings
 $compiler_override
 TARGET_ARCHITECTURE=$machine
+C_STANDARD=$c_standard
 EOF
 
 echo "Done."

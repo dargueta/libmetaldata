@@ -12,6 +12,15 @@ CMD_INSTALL_BIN=install -m755
 # ============================================================================ #
 #        End users shouldn't need to modify anything below this line.          #
 # ============================================================================ #
+
+ifeq ($(notdir $(CC)),sdcc)
+    include make/compiler-support/sdcc.mk
+else ifeq ($(USE_MINIMAL_FLAGS),1)
+    include make/compiler-support/minimal.mk
+else
+    include make/compiler-support/default.mk
+endif
+
 SOURCE_ROOT=src
 HEADER_ROOT=$(SOURCE_ROOT)/metaldata
 
@@ -52,26 +61,17 @@ INSTALL_TARGET_BIN=$(PREFIX)/bin
 INSTALL_TARGET_PKGCONFIG=$(INSTALL_TARGET_LIB)/pkgconfig
 
 C_STANDARD=c99
-ARCH_FLAG=
-
-ifeq ($(notdir $(CC)),sdcc)
-	include make/compiler-support/sdcc.mk
-else ifeq ($(USE_MINIMAL_FLAGS),1)
-	include make/compiler-support/minimal.mk
-else
-	include make/compiler-support/default.mk
-endif
 
 ifeq ($(DEBUG_MODE),0)
-    CFLAGS_OPTIMIZATION=$(GENERIC_OPTIMIZATION_FLAG)
+    OPTIMIZING_FLAGS=$(CFLAG_OPT_GENERIC)
 else
-    CFLAGS_OPTIMIZATION=$(GENERIC_OPTIMIZATION_FLAG) $(DEBUG_SYMBOLS_FLAG)
+    OPTIMIZING_FLAGS=$(CFLAG_OPT_DEBUG)
 endif
 
 ifeq ($(UNHOSTED_IMPLEMENTATION),1)
-    CFLAGS_FREESTANDING=$(FREESTANDING_FLAG) $(NOSTDLIB_FLAG)
+    UNHOSTED_FLAGS=$(CFLAG_UNHOSTED)
 else
-	CFLAGS_FREESTANDING=
+    UNHOSTED_FLAGS=
 endif
 
 ifneq ($(USE_MINIMAL_FLAGS),0)
@@ -80,12 +80,12 @@ ifneq ($(USE_MINIMAL_FLAGS),0)
 else
     ifeq ($(NO_FATAL_WARNINGS),1)
         # No fatal warnings at all
-        BUILD_WARNING_FLAGS=$(BASE_WARNING_FLAGS)
-        TEST_WARNING_FLAGS=$(BUILD_WARNING_FLAGS)
+        BUILD_WARNING_FLAGS=$(CFLAG_WALL)
+        TEST_WARNING_FLAGS=$(CFLAG_WALL)
     else
         # Warnings are fatal except when building tests.
-        BUILD_WARNING_FLAGS=$(BASE_WARNING_FLAGS) $(WERROR_FLAG)
-        TEST_WARNING_FLAGS=$(BASE_WARNING_FLAGS)
+        BUILD_WARNING_FLAGS=$(CFLAG_WALL) $(CFLAG_WERROR)
+        TEST_WARNING_FLAGS=$(CFLAG_WALL)
     endif
 endif
 
@@ -96,7 +96,7 @@ PUBLIC_LINK_FLAGS=$(strip $(LDFLAGS_FROM_CONFIGURE))
 
 # This is the minimal set of flags needed to compile the library. It's
 ADDL_CFLAGS_MINIMAL=-I./src $(PUBLIC_COMPILE_FLAGS)
-ADDL_CFLAGS_FULL=$(ADDL_CFLAGS_MINIMAL) $(C_STANDARD_FLAG) $(CFLAGS_OPTIMIZATION) $(ARCH_FLAG)
+ADDL_CFLAGS_FULL=$(ADDL_CFLAGS_MINIMAL) $(C_STANDARD_FLAG) $(OPTIMIZING_FLAGS) $(call CFLAG_ARCH,$(TARGET_ARCHITECTURE))
 
 # MY_CFLAGS must come at the end
 ifeq ($(USE_MINIMAL_FLAGS),0)
@@ -180,7 +180,7 @@ tests/%.$(OBJECT_EXT): tests/%.c $(CONFIG_HEADER_FILE)
 	$(COMPILE_COMMAND) $(TEST_WARNING_FLAGS) -D MDL_CURRENTLY_COMPILING_TESTS=1 -I./tests -o $@ $<
 
 %.$(OBJECT_EXT): %.c $(CONFIG_HEADER_FILE)
-	$(COMPILE_COMMAND) $(BUILD_WARNING_FLAGS) -D MDL_CURRENTLY_COMPILING_LIBRARY=1 $(CFLAGS_FREESTANDING) -o $@ $<
+	$(COMPILE_COMMAND) $(BUILD_WARNING_FLAGS) -D MDL_CURRENTLY_COMPILING_LIBRARY=1 $(UNHOSTED_FLAGS) -o $@ $<
 
 $(BUILD_DIR):
 	mkdir -p $@

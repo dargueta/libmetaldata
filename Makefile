@@ -34,7 +34,7 @@ LIBRARY_EXTRAS=$(wildcard $(HEADER_ROOT)/extras/*.c) $(wildcard $(HEADER_ROOT)/e
 
 TEST_C_SOURCE_FILES=$(wildcard tests/*.c)
 TEST_C_HEADERS=$(wildcard tests/*.h)
-TEST_OBJECT_FILES=$(TEST_C_SOURCE_FILES:%.c=%.$(OBJECT_EXT)) tests/munit/munit.$(OBJECT_EXT)
+TEST_OBJECT_FILES=$(TEST_C_SOURCE_FILES:.c=.$(OBJECT_EXT)) tests/munit/munit.$(OBJECT_EXT)
 
 ALL_C_SOURCE_FILES=$(LIBRARY_C_SOURCE_FILES) $(TEST_C_SOURCE_FILES)
 
@@ -96,7 +96,8 @@ PUBLIC_LINK_FLAGS=$(strip $(LDFLAGS_FROM_CONFIGURE))
 
 # This is the minimal set of flags needed to compile the library. It's
 ADDL_CFLAGS_MINIMAL=-I./src $(PUBLIC_COMPILE_FLAGS)
-ADDL_CFLAGS_FULL=$(ADDL_CFLAGS_MINIMAL) $(C_STANDARD_FLAG) $(OPTIMIZING_FLAGS) $(call CFLAG_ARCH,$(TARGET_ARCHITECTURE))
+ADDL_CFLAGS_FULL=$(ADDL_CFLAGS_MINIMAL) $(C_STANDARD_FLAG) $(OPTIMIZING_FLAGS) \
+                 $(call CFLAG_ARCH,$(TARGET_ARCHITECTURE))
 
 # MY_CFLAGS must come at the end
 ifeq ($(USE_MINIMAL_FLAGS),0)
@@ -120,14 +121,14 @@ include make/configuration-header.mk
 .PHONY: all clean docs format header install library show_docs test
 .DELETE_ON_ERROR: %.$(OBJECT_EXT)
 
-all: library $(PKGCONFIG_FILE)
+library: $(STATIC_LIBRARY) $(PKGCONFIG_FILE)
 
-install: all $(LIBRARY_C_ALL_HEADER_FILES) $(LIBRARY_EXTRAS)
+all: library $(TEST_BINARY)
+
+install: library $(LIBRARY_C_ALL_HEADER_FILES) $(LIBRARY_EXTRAS)
 	$(call do_install_file,$(STATIC_LIBRARY),$(INSTALL_TARGET_LIB))
 	$(call do_install_recursive,$(HEADER_ROOT),$(INSTALL_TARGET_INCLUDE))
 	$(call do_install_file,$(PKGCONFIG_FILE),$(INSTALL_TARGET_PKGCONFIG))
-
-library: $(STATIC_LIBRARY)
 
 test: $(TEST_BINARY)
 	$(TEST_BINARY) $(ARGS)
@@ -138,7 +139,7 @@ SDCC_OTHER_GENERATED_EXTENSIONS=adb asm d ihx lst map noi rel sym
 SDCC_ALL_OTHER_GENERATED_FILES=\
     $(foreach ext,\
               $(SDCC_OTHER_GENERATED_EXTENSIONS),\
-              $(ALL_OBJECT_FILES:%.$(OBJECT_EXT)=%.$(ext)))
+              $(ALL_OBJECT_FILES:.$(OBJECT_EXT)=.$(ext)))
 
 
 clean: clean-analysis
@@ -176,11 +177,13 @@ export CONFIGURATION_HEADER_TEXT
 $(CONFIG_HEADER_FILE): Makefile.in make/configuration-header.mk
 	echo "$${CONFIGURATION_HEADER_TEXT}" | tr '`' '#' > $@
 
-tests/%.$(OBJECT_EXT): tests/%.c $(CONFIG_HEADER_FILE)
-	$(COMPILE_COMMAND) $(TEST_WARNING_FLAGS) -D MDL_CURRENTLY_COMPILING_TESTS=1 -I./tests -o $@ $<
+tests/%.$(OBJECT_EXT): tests/%.c $(CONFIG_HEADER_FILE) $(TEST_C_HEADERS)
+	$(COMPILE_COMMAND) $(TEST_WARNING_FLAGS) -D MDL_CURRENTLY_COMPILING_TESTS=1 \
+	    -I./tests -o $@ $(filter-out %.h,$^)
 
 %.$(OBJECT_EXT): %.c $(CONFIG_HEADER_FILE)
-	$(COMPILE_COMMAND) $(BUILD_WARNING_FLAGS) -D MDL_CURRENTLY_COMPILING_LIBRARY=1 $(UNHOSTED_FLAGS) -o $@ $<
+	$(COMPILE_COMMAND) $(BUILD_WARNING_FLAGS) -D MDL_CURRENTLY_COMPILING_LIBRARY=1 \
+	    $(UNHOSTED_FLAGS) -o $@ $<
 
 $(BUILD_DIR):
 	mkdir -p $@

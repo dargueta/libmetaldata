@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * A doubly-linked circular linked list.
+ * A doubly-linked circular linked list of blocks of memory.
  *
  * - Pushes and pops from both ends are O(1).
  * - Accessing the first and last elements are also O(1).
@@ -80,10 +80,7 @@ struct MDLMemBlkList_
     MDLState *mds;
 
     /**
-     * A pointer to the first node in the list.
-     *
-     * This is always allocated, even if the list is empty. It simplifies the code by
-     * not making us check for a null pointer all the time.
+     * A pointer to the first node in the list, or NULL if and only if the list is empty.
      */
     MDLMemBlkListNode *head;
 
@@ -92,10 +89,6 @@ struct MDLMemBlkList_
 
     /**
      * The number of elements in the list.
-     *
-     * Note, this is not necessarily the number of nodes allocated. It's only the length
-     * of the list as far as the user is concerned. As mentioned above, @ref head is
-     * always allocated, even if the list is empty.
      */
     size_t length;
 

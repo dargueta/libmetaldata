@@ -14,7 +14,7 @@ Standard Library Usage
 The following, and *only* the following parts of the C standard library are used.
 MetalData comes with some built-in fallbacks when compiled in unhosted
 ("freestanding" or "bare metal") mode. Unsupported functionality must be provided
-by client code. More on that in the docs.
+by client code; more on that in the docs.
 
 ========= ========= ==================
 What      Header    Unhosted Fallbacks
@@ -152,7 +152,8 @@ Installing to a specific directory
 **********************************
 
 By default, everything is installed relative to ``/usr/share`` on \*NIX systems,
-including Cygwin. You can change where the files are installed during configuration:
+including Cygwin. You can change where the files are installed during
+configuration:
 
 .. code-block:: shell
 
@@ -179,7 +180,7 @@ Optional tools:
 License
 -------
 
-Apache 2.0 License. See ``LICENSE.txt`` for the legal details.
+Apache 2.0 License. See ``LICENSE`` for the legal details.
 
 Acknowledgments
 ---------------

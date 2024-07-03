@@ -121,6 +121,61 @@ MunitResult test_memblklist__relindex__basic(const MunitParameter params[], void
     return MUNIT_OK;
 }
 
+MunitResult test_memblklist__pop__empty(const MunitParameter params[], void *udata)
+{
+    (void)params;
+
+    MDLState *mds = (MDLState *)udata;
+    MDLMemBlkList list;
+
+    mdl_memblklist_init(mds, &list, 32);
+    int error = mdl_memblklist_pop(&list);
+    munit_assert_int(error, ==, MDL_ERROR_EMPTY);
+
+    mdl_memblklist_destroy(&list);
+    return MUNIT_OK;
+}
+
+MunitResult test_memblklist__popcopy__empty(const MunitParameter params[], void *udata)
+{
+    (void)params;
+
+    MDLState *mds = (MDLState *)udata;
+    MDLMemBlkList list;
+    char expected_contents[23];
+    char block_buf[sizeof(expected_contents)];
+
+    mdl_memblklist_init(mds, &list, sizeof(expected_contents));
+
+    // Fill the buffer with random bytes. This will let us detect if popcopy stomped on
+    // the buffer.
+    for (size_t i = 0; i < sizeof(expected_contents); i++)
+        expected_contents[i] = (char)(rand() % CHAR_MAX);
+    memcpy(block_buf, expected_contents, sizeof(expected_contents));
+
+    int error = mdl_memblklist_popcopy(&list, block_buf);
+    munit_assert_int(error, ==, MDL_ERROR_EMPTY);
+    munit_assert_memory_equal(sizeof(expected_contents), block_buf, expected_contents);
+
+    mdl_memblklist_destroy(&list);
+    return MUNIT_OK;
+}
+
+MunitResult test_memblklist__popfront__empty(const MunitParameter params[], void *udata)
+{
+    (void)params;
+
+    MDLState *mds = (MDLState *)udata;
+    MDLMemBlkList list;
+
+    mdl_memblklist_init(mds, &list, 32);
+    int error = mdl_memblklist_popfront(&list);
+    munit_assert_int(error, ==, MDL_ERROR_EMPTY);
+
+    mdl_memblklist_destroy(&list);
+    return MUNIT_OK;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // Helpers
 

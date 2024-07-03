@@ -12,7 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "metaldata/array.h"
+#include "metaldata/map.h"
+#include "metaldata/memblklist.h"
 #include "metaldata/metaldata.h"
+#include "metaldata/reader.h"
+#include "metaldata/writer.h"
 #include "munit/munit.h"
 #include <stddef.h>
 
@@ -172,6 +177,9 @@ import_test(memblklist, add_many_odd);
 import_test(memblklist, add_many_even);
 import_test(memblklist, relindex__empty);
 import_test(memblklist, relindex__basic);
+import_test(memblklist, pop__empty);
+import_test(memblklist, popcopy__empty);
+import_test(memblklist, popfront__empty);
 import_test(reader, buffer_init_static);
 import_test(reader, buffer_init_malloc);
 import_test(reader, buffer_getc);
@@ -200,6 +208,9 @@ static MunitTest memblklist_tests[] = {
     define_plain_test_case(memblklist, add_many_even),
     define_plain_test_case(memblklist, relindex__empty),
     define_plain_test_case(memblklist, relindex__basic),
+    define_plain_test_case(memblklist, pop__empty),
+    define_plain_test_case(memblklist, popcopy__empty),
+    define_plain_test_case(memblklist, popfront__empty),
     SUITE_END_SENTINEL};
 
 static MunitTest reader_tests[] = {
@@ -224,8 +235,21 @@ static MunitSuite all_subsuites[] = {define_test_suite(array),
 
 static const MunitSuite suite = {"", NULL, all_subsuites, 1, MUNIT_SUITE_OPTION_NONE};
 
+#define show_sizeof(t) munit_logf(MUNIT_LOG_INFO, "sizeof(" #t "): %zuB", sizeof(t));
+
 int main(int argc, char **argv)
 {
     StateTracking state_tracking;
+    show_sizeof(MDLState);
+    show_sizeof(MDLArray);
+    show_sizeof(MDLArrayBlock);
+    show_sizeof(MDLArrayIterator);
+    show_sizeof(MDLMemBlkList);
+    show_sizeof(MDLMemBlkListIterator);
+    show_sizeof(MDLMap);
+    show_sizeof(MDLMapNode);
+    show_sizeof(MDLMapBucket);
+    show_sizeof(MDLReader);
+    show_sizeof(MDLWriter);
     return munit_suite_main(&suite, &state_tracking, argc, argv);
 }

@@ -152,24 +152,26 @@ else
   compiler_override=
 fi
 
-echo "Modes"
-echo "-----"
-echo "Debug    : $(int_to_yesno $debug)"
-echo "Unhosted : $(int_to_yesno $unhosted)"
-echo "Compiler override  : $cc"
-echo "Non-fatal warnings : $(int_to_yesno $no_fatal_warnings)"
-echo
-echo "Install Targets"
-echo "---------------"
-echo "  Prefix    : $absolute_top"
-echo "  Headers   : ${install_target_include:-PREFIX/include/metaldata}"
-echo "  Library   : ${install_target_lib:-PREFIX/lib}"
-echo "  pkgconfig : ${install_target_pkgconfig:-LIBDIR/pkgconfig}"
-echo
-echo "User-defined macros: $additional_defines"
-echo "Target architecture: ${machine:-(native)}"
-echo
-echo "Generating Makefile.in..."
+echo "
+Modes
+-----
+Debug    : $(int_to_yesno $debug)
+Unhosted : $(int_to_yesno $unhosted)
+Compiler override  : $cc
+Non-fatal warnings : $(int_to_yesno $no_fatal_warnings)
+
+Install Targets
+---------------
+  Prefix    : $absolute_top
+  Headers   : ${install_target_include:-PREFIX/include/metaldata}
+  Library   : ${install_target_lib:-PREFIX/lib}
+  pkgconfig : ${install_target_pkgconfig:-LIBDIR/pkgconfig}
+
+User-defined macros: $additional_defines
+Target architecture: ${machine:-(native)}
+
+Generating Makefile.in...
+"
 cat <<EOF > Makefile.in
 UNHOSTED_IMPLEMENTATION=$unhosted
 DEBUG_MODE=$debug

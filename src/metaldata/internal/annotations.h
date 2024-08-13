@@ -45,6 +45,9 @@
  * Like @ref MDL_ANNOTN__ACCESS but used specifically for pointers to memory whose size is
  * given by another argument to the function.
  *
+ * @param mode The access mode for the pointer.
+ * @param argn The 1-based index of the pointer argument this annotation applies to.
+ * @param sizen The 1-based index of the argument giving the size of the buffer, in bytes.
  *
  * @def MDL_ANNOTN__DEPRECATED
  * Marks a function as deprecated and should not be used in new code.
@@ -101,8 +104,10 @@
  * A function attribute required by the SDCC compiler in certain instances for some
  * compilation targets.
  *
+ *
  * @def MDL_ANNOTN__NONSTRING
  * Tell the compiler that a `char *` variable might not point to a null-terminated string.
+ *
  *
  * @def GNU_ATTRIBUTE
  * A convenience macro that expands GCC attributes only if the compiler is compatible with

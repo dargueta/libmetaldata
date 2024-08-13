@@ -137,6 +137,8 @@ int_to_yesno() {
   fi
 }
 
+# Force `prefix` to be an absolute path. We do this by checking to see if the
+# first character of the path is`/`.
 if [ "${prefix}" != "${prefix#/}" ]; then
   absolute_top=$prefix
 else

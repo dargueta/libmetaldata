@@ -12,13 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "metaldata/internal/annotations.h"
 #include "metaldata/memblklist.h"
 #include "metaldata/errors.h"
 #include "munit/munit.h"
 #include <limits.h>
 
+MDL_ANNOTN__NONNULL
 static void create_and_test_list_using_push(MDLMemBlkList *list, MDLState *mds,
                                             size_t n_elements, size_t element_size);
+
+/**
+ * Fill a buffer with random bytes.
+ *
+ * @param target A pointer to the memory to randomize.
+ * @param size The size of the memory block, in bytes.
+ */
+MDL_ANNOTN__NONNULL
+MDL_ANNOTN__ACCESS_SIZED(read_write, 1, 2)
+static void randomize_buffer(void *target, size_t size);
+
 
 MunitResult test_memblklist__length_zero(const MunitParameter params[], void *udata)
 {
@@ -149,8 +162,7 @@ MunitResult test_memblklist__popcopy__empty(const MunitParameter params[], void 
 
     // Fill the buffer with random bytes. This will let us detect if popcopy stomped on
     // the buffer.
-    for (size_t i = 0; i < sizeof(expected_contents); i++)
-        expected_contents[i] = (char)(rand() % CHAR_MAX);
+    randomize_buffer(expected_contents, sizeof(expected_contents));
     memcpy(block_buf, expected_contents, sizeof(expected_contents));
 
     int error = mdl_memblklist_popcopy(&list, block_buf);
@@ -215,4 +227,11 @@ static void create_and_test_list_using_push(MDLMemBlkList *list, MDLState *mds,
         munit_assert_ptr(allocated_pointers[i], ==, this_block);
         munit_assert_memory_equal(element_size, this_block, test_data[i]);
     }
+}
+
+
+static void randomize_buffer(void *target, size_t size)
+{
+    for (size_t i = 0; i < size; i++)
+        ((char *)target)[i] = rand() % CHAR_MAX;
 }

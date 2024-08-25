@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "metaldata/array.h"
-#include "metaldata/map.h"
 #include "metaldata/memblklist.h"
 #include "metaldata/metaldata.h"
 #include "metaldata/reader.h"
@@ -246,9 +245,6 @@ int main(int argc, char **argv)
     show_sizeof(MDLArrayIterator);
     show_sizeof(MDLMemBlkList);
     show_sizeof(MDLMemBlkListIterator);
-    show_sizeof(MDLMap);
-    show_sizeof(MDLMapNode);
-    show_sizeof(MDLMapBucket);
     show_sizeof(MDLReader);
     show_sizeof(MDLWriter);
     return munit_suite_main(&suite, &state_tracking, argc, argv);

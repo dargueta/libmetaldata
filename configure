@@ -18,7 +18,7 @@ install_target_bin=
 install_target_pkgconfig=
 cc=${CC:-}
 machine=
-c_standard=c99
+c_standard='c99'
 
 HELP_TEXT="
 General-Purpose Flags

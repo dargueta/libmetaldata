@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "metaldata/internal/annotations.h"
 #include "metaldata/memblklist.h"
 #include "metaldata/errors.h"
+#include "metaldata/internal/annotations.h"
 #include "munit/munit.h"
 #include <limits.h>
 
@@ -31,7 +31,6 @@ static void create_and_test_list_using_push(MDLMemBlkList *list, MDLState *mds,
 MDL_ANNOTN__NONNULL
 MDL_ANNOTN__ACCESS_SIZED(read_write, 1, 2)
 static void randomize_buffer(void *target, size_t size);
-
 
 MunitResult test_memblklist__length_zero(const MunitParameter params[], void *udata)
 {
@@ -228,7 +227,6 @@ static void create_and_test_list_using_push(MDLMemBlkList *list, MDLState *mds,
         munit_assert_memory_equal(element_size, this_block, test_data[i]);
     }
 }
-
 
 static void randomize_buffer(void *target, size_t size)
 {

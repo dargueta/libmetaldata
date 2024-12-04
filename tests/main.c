@@ -23,20 +23,13 @@
 #define import_test(suite, name)                                                         \
     extern MunitResult test_##suite##__##name(const MunitParameter params[], void *udata)
 #define define_plain_test_case(suite, name)                                              \
-    {                                                                                    \
-        "/" #name, test_##suite##__##name, test_setup, test_tear_down,                   \
-            MUNIT_TEST_OPTION_NONE, NULL                                                 \
-    }
+    {"/" #name,      test_##suite##__##name, test_setup,                                 \
+     test_tear_down, MUNIT_TEST_OPTION_NONE, NULL}
 
 #define define_test_suite(name)                                                          \
-    {                                                                                    \
-        "/" #name, name##_tests, NULL, 1, MUNIT_SUITE_OPTION_NONE                        \
-    }
+    {"/" #name, name##_tests, NULL, 1, MUNIT_SUITE_OPTION_NONE}
 
-#define SUITE_END_SENTINEL                                                               \
-    {                                                                                    \
-        NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL                             \
-    }
+#define SUITE_END_SENTINEL {NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL}
 
 typedef struct
 {

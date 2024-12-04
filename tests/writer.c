@@ -15,7 +15,6 @@
 #include "metaldata/writer.h"
 #include "metaldata/errors.h"
 #include "munit/munit.h"
-#include <stdbool.h>
 
 MunitResult test_writer__buffer_init_static(const MunitParameter params[], void *udata)
 {

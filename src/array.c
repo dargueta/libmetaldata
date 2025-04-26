@@ -339,7 +339,9 @@ static int resize_block_list(MDLArray *array, size_t new_total)
             if (new_block == NULL)
             {
                 // Failed to allocate a new block. Free any new blocks we'd previously
-                // allocated inside this loop, as well as the resized block list.
+                // allocated inside this loop, as well as the resized block list. We
+                // decrement i in the initial condition because `new_block_list[i]` hasn't
+                // been set yet.
                 for (--i; i >= n_current_blocks; i--)
                     mdl_free(array->mds, new_block_list[i], sizeof(MDLArrayBlock));
 

@@ -16,20 +16,24 @@ MetalData comes with some built-in fallbacks when compiled in unhosted
 ("freestanding" or "bare metal") mode. Unsupported functionality must be provided
 by client code; more on that in the docs.
 
-========= ========= ==================
-What      Header    Unhosted Fallbacks
-========= ========= ==================
-bool      stdbool.h \*
-free      stdlib.h  N
-malloc    stdlib.h  N
-memcmp    string.h  Y
-memcpy    string.h  Y
-memset    string.h  Y
-realloc   stdlib.h  N
-SIZE_MAX  stdint.h  \*
-size_t    stddef.h  \*
-strcmp    string.h  Y
-========= ========= ==================
+=========== ========= ===================
+What        Header    Unhosted Fallbacks
+=========== ========= ===================
+bool        stdbool.h \*
+free        stdlib.h  N
+malloc      stdlib.h  N
+memcmp      string.h  Y
+memcpy      string.h  Y
+memset      string.h  Y
+realloc     stdlib.h  N
+SIZE_MAX    stdint.h  \*
+size_t      stddef.h  \*
+strcmp      string.h  Y
+uintmax_t   stdint.h  \*
+UINTMAX_MAX stdint.h  \*
+uintptr_t   stdint.h  (Only if available)
+UINTPTR_MAX stdint.h  (Only if available)
+=========== ========= ===================
 
 *\*The C standard requires these to be available in unhosted mode. If you're
 using a standards-compliant compiler, this won't be an issue.*

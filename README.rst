@@ -180,7 +180,7 @@ Optional tools:
 License
 -------
 
-Apache 2.0 License. See ``LICENSE`` for the legal details.
+Mozilla 2.0 License. See ``LICENSE`` for the legal details.
 
 Acknowledgments
 ---------------

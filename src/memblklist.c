@@ -110,12 +110,10 @@ int mdl_memblklist_pop(MDLMemBlkList *list)
 
 int mdl_memblklist_popcopy(MDLMemBlkList *list, void *buf)
 {
-    MDLMemBlkListNode *tail;
-
     if (list->length == 0)
         return MDL_ERROR_EMPTY;
 
-    tail = mdl_memblklist_tail(list);
+    MDLMemBlkListNode *tail = mdl_memblklist_tail(list);
     mdl_memcpy(buf, tail->data, list->elem_size);
     unlink_and_maybe_free_node(list, tail);
     return MDL_OK;
@@ -147,12 +145,10 @@ void *mdl_memblklist_pushfront(MDLMemBlkList *list)
 
 int mdl_memblklist_popfront(MDLMemBlkList *list)
 {
-    MDLMemBlkListNode *next_head;
-
     if (list->length == 0)
         return MDL_ERROR_EMPTY;
 
-    next_head = list->head->next;
+    MDLMemBlkListNode *next_head = list->head->next;
     unlink_and_free_node(list, list->head);
     list->head = next_head;
     list->length--;
@@ -314,9 +310,7 @@ int mdl_memblklist_removevalue(MDLMemBlkList *list, const void *value,
 
 MDLMemBlkListIterator *mdl_memblklist_getiterator(const MDLMemBlkList *list, bool reverse)
 {
-    MDLMemBlkListIterator *iter;
-
-    iter = mdl_malloc(list->mds, sizeof(*iter));
+    MDLMemBlkListIterator *iter = mdl_malloc(list->mds, sizeof(*iter));
     if (iter == NULL)
         return NULL;
 

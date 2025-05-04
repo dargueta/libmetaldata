@@ -22,9 +22,7 @@ static int get_node_location_by_index(const MDLArray *array, int index,
 
 MDLArray *mdl_array_new(MDLState *mds, mdl_destructor_fptr elem_destructor)
 {
-    MDLArray *array;
-
-    array = mdl_malloc(mds, sizeof(*array));
+    MDLArray *array = mdl_malloc(mds, sizeof(*array));
     if (array == NULL)
         return NULL;
 
@@ -139,7 +137,7 @@ int mdl_array_pop(MDLArray *array, void **item)
         return error;
 
     if (item != NULL)
-        *item = (*block).values[element_index];
+        *item = block->values[element_index];
 
     array->length--;
 
@@ -162,13 +160,12 @@ int mdl_array_getat(const MDLArray *array, int index, void **value)
 {
     MDLArrayBlock *block;
     size_t block_offset;
-    int result;
 
-    result = get_node_location_by_index(array, index, &block, &block_offset);
+    int result = get_node_location_by_index(array, index, &block, &block_offset);
     if (result != MDL_OK)
         return result;
 
-    *value = (*block).values[block_offset];
+    *value = block->values[block_offset];
     return MDL_OK;
 }
 
@@ -176,13 +173,12 @@ int mdl_array_setat(MDLArray *array, int index, void *new_value)
 {
     MDLArrayBlock *block;
     size_t block_offset;
-    int result;
 
-    result = get_node_location_by_index(array, index, &block, &block_offset);
+    int result = get_node_location_by_index(array, index, &block, &block_offset);
     if (result != MDL_OK)
         return result;
 
-    (*block).values[block_offset] = new_value;
+    block->values[block_offset] = new_value;
     return MDL_OK;
 }
 
@@ -375,7 +371,7 @@ static int resize_block_list(MDLArray *array, size_t new_total)
 static int get_node_location_by_index(const MDLArray *array, int index,
                                       MDLArrayBlock **block, size_t *offset)
 {
-    size_t absolute_index, block_number;
+    size_t absolute_index;
 
     if (index >= 0)
         absolute_index = (size_t)index;
@@ -385,7 +381,7 @@ static int get_node_location_by_index(const MDLArray *array, int index,
     if (absolute_index >= array->length)
         return MDL_ERROR_OUT_OF_RANGE;
 
-    block_number = absolute_index / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
+    size_t block_number = absolute_index / MDL_DEFAULT_ARRAY_BLOCK_SIZE;
 
     *block = array->blocks[block_number];
     *offset = absolute_index % MDL_DEFAULT_ARRAY_BLOCK_SIZE;

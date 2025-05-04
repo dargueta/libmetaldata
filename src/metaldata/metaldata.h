@@ -78,10 +78,10 @@ typedef struct MDLState_
 /**
  * Initialize a new MetalData state.
  *
- * @param mds       The MetalData state.
- * @param alloc    The function to use for memory allocation. Hosted implementations can
- *                 use @ref mdl_default_hosted_alloc by including @file hosted_allocator.c
- *                 in their sources.
+ * @param mds   The MetalData state.
+ * @param alloc The function to use for memory allocation. Hosted implementations can use
+ *              @ref mdl_default_hosted_alloc by including @file hosted_allocator.c in
+ *              their sources.
  * @param udata User-defined data to store on the state, made available to callbacks.
  *                 MetalData ignores this.
  */

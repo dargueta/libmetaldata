@@ -19,8 +19,7 @@ static int memory_putc(MDLWriter *writer, int chr);
 MDLWriter *mdl_writer_new(MDLState *mds, mdl_writer_putc_fptr putc_ptr,
                           mdl_writer_close_fptr close_ptr, void *udata)
 {
-    MDLWriter *writer;
-    writer = mdl_malloc(mds, sizeof(*writer));
+    MDLWriter *writer = mdl_malloc(mds, sizeof(*writer));
     if (writer == NULL)
         return NULL;
 
@@ -94,10 +93,9 @@ int mdl_writer_putc(MDLWriter *writer, int chr)
 
 size_t mdl_writer_write(MDLWriter *writer, const void *data, size_t size)
 {
-    size_t n_written;
     const char *current_byte = data;
 
-    for (n_written = 0; n_written < size; n_written++)
+    for (size_t n_written = 0; n_written < size; n_written++)
     {
         int result = writer->putc_ptr(writer, *current_byte);
         if (result != MDL_OK)

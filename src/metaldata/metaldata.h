@@ -228,19 +228,4 @@ MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__NODISCARD
 void *mdl_realloc(MDLState *mds, void *pointer, size_t new_size, size_t old_size);
 
-/**
- * The largest unsigned scalar value available.
- *
- * For systems defining `uintptr_t` this is guaranteed to be convertible to and from a
- * pointer. For systems that don't have `uintptr_t`, extreme care must be taken.
- */
-typedef uintmax_t mdl_scalar_type;
-#define MDL_SCALAR_MAX UINTMAX_MAX
-
-#if defined(UINTPTR_MAX)
-// If uintptr_t is defined, then uintmax_t must be at least that large.
-#define MDL_SCALAR_CAN_HOLD_POINTER 1
-#else
-#define MDL_SCALAR_CAN_HOLD_POINTER 0
-#endif // UINTPTR_MAX
 #endif

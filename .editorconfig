@@ -3,9 +3,16 @@ root = true
 [*]
 charset = utf-8
 indent_style = space
-
-[*.{c,h,rst}]
 end_of_line = lf
 indent_size = 4
 insert_final_newline = true
 trim_trailing_whitespace = true
+
+[configure]
+indent_size = 2
+
+[Makefile]
+indent_style = unset
+
+[*.{sh,yml,yaml}]
+indent_size = 2

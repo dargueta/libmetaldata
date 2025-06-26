@@ -16,8 +16,8 @@
 
 #include "configuration.h"
 #include "internal/annotations.h"
+#include <inttypes.h> // Some versions of MSVC don't have stdint.h but have this.
 #include <stddef.h>
-#include <stdint.h>
 
 /**
  * A pointer to a function handling all memory allocation for MetalData.
@@ -227,5 +227,22 @@ MDL_API
 MDL_ANNOTN__NONNULL_ARGS(1)
 MDL_ANNOTN__NODISCARD
 void *mdl_realloc(MDLState *mds, void *pointer, size_t new_size, size_t old_size);
+
+/**
+ * @typedef mdl_scalar_type  The larger of `uintmax_t` and `uintptr_t`.
+ *
+ * @def MDL_SCALAR_MAX  The maximum value of a @ref mdl_scalar_type.
+ */
+
+// To avoid potential overflow situations in the preprocessor, we take advantage of
+// well-defined unsigned right shifting behavior, and shift both sides by 15 before
+// comparing. Lua does this.
+#if (UINTMAX_MAX >> 15) >= (UINTPTR_MAX >> 15)
+typedef uintmax_t mdl_scalar_type;
+#    define MDL_SCALAR_MAX UINTMAX_MAX
+#else
+typedef uintptr_t mdl_scalar_type;
+#    define MDL_SCALAR_MAX UINTPTR_MAX
+#endif
 
 #endif

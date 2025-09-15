@@ -19,7 +19,7 @@ mdl_hash_type mdl_hash_string(const char *restrict string)
     mdl_hash_type hash = djb2_hash_init;
 
     for (size_t i = 0; string[i] != '\0'; i++)
-        hash = ((hash << 5) + hash) + string[i]; // hash = (hash * 33) + s[i]
+        hash = ((hash << 5) + hash) + string[i]; // hash = (hash * 33) + string[i]
     return hash;
 }
 

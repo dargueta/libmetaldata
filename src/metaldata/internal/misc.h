@@ -22,9 +22,9 @@ typedef unsigned long mdl_hash_type;
 /**
  * Generate a hash value for the given string.
  *
- * If @a s is NULL, this will return 0.
+ * If @a string is NULL, this will return 0.
  *
- * @param[in] s The string to create a hash for.
+ * @param[in] string The string to create a hash for.
  * @return The integer hash of the string.
  */
 MDL_API
@@ -33,10 +33,10 @@ mdl_hash_type mdl_hash_string(const char *restrict string);
 /**
  * Generate a hash value for the given block of memory.
  *
- * If @a p is NULL, this will return 0.
+ * If @a block is NULL, this will return 0.
  *
  * @param[in] block  A pointer to the block of memory to hash.
- * @param size   The size in bytes of the memory block @a p points to.
+ * @param size   The size in bytes of @a block.
  * @return The integer hash of the memory block.
  */
 MDL_API

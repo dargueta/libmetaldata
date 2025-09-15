@@ -154,8 +154,13 @@ int mdl_default_string_comparator(MDLState *mds, const void *left, const void *r
 
 typedef void (*mdl_destructor_fptr)(MDLState *mds, void *item) MDL_REENTRANT_MARKER;
 
+/**
+ * A destructor that does nothing and immediately returns.
+ *
+ * @param mds Ignored, for compatibility with @ref mdl_destructor_fptr.
+ * @param item Ignored, for compatibility with @ref mdl_destructor_fptr.
+ */
 MDL_API
-MDL_ANNOTN__NONNULL_ARGS(1)
 void mdl_no_op_destructor(MDLState *mds, void *item) MDL_REENTRANT_MARKER;
 
 /**
